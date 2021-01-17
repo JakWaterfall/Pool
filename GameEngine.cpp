@@ -4,7 +4,30 @@ GameEngine::GameEngine()
 {
 	running = true;
 	// Balls
-	balls.push_back(Ball(550, 20, 10, true));
+	balls.push_back(new Ball(BLACK_POINT_X-40, BLACK_POINT_Y, true));
+	balls.push_back(new Ball(BLACK_POINT_X, BLACK_POINT_Y, true));
+
+	balls.push_back(new Ball(BLACK_POINT_X-20, BLACK_POINT_Y-10, false));
+	balls.push_back(new Ball(BLACK_POINT_X-20, BLACK_POINT_Y+10, false));
+
+	balls.push_back(new Ball(BLACK_POINT_X, BLACK_POINT_Y-20, true));
+	balls.push_back(new Ball(BLACK_POINT_X, BLACK_POINT_Y+20, true));
+	//
+	balls.push_back(new Ball(BLACK_POINT_X + 20, BLACK_POINT_Y - 10, false));
+	balls.push_back(new Ball(BLACK_POINT_X + 20, BLACK_POINT_Y + 10, true));
+
+	balls.push_back(new Ball(BLACK_POINT_X + 20, BLACK_POINT_Y - 30, false));
+	balls.push_back(new Ball(BLACK_POINT_X + 20, BLACK_POINT_Y + 30, false));
+
+	balls.push_back(new Ball(BLACK_POINT_X + 40, BLACK_POINT_Y, true));
+
+	balls.push_back(new Ball(BLACK_POINT_X + 40, BLACK_POINT_Y-20, false));
+	balls.push_back(new Ball(BLACK_POINT_X + 40, BLACK_POINT_Y+20, false));
+
+	balls.push_back(new Ball(BLACK_POINT_X + 40, BLACK_POINT_Y - 40, true));
+	balls.push_back(new Ball(BLACK_POINT_X + 40, BLACK_POINT_Y + 40, true));
+
+	balls.push_back(new WhiteBall(0, 0, true));
 
 	// Pockets
 	pockets.push_back(Pocket(TABLE_X, TABLE_Y));
@@ -40,6 +63,7 @@ GameEngine::GameEngine()
 		}
 	}
 }
+
 
 void GameEngine::run()
 {
@@ -79,17 +103,36 @@ void GameEngine::quit()
 	SDL_Quit();
 }
 
+void GameEngine::deleteBalls()
+{
+	balls.erase(std::remove_if(balls.begin(), balls.end(),
+		[this](Ball* b)
+		{
+			if (b->getDeleteFlag())
+			{
+				delete b;
+				b = nullptr;
+				return true;
+			}
+			else return false;
+		}
+	), balls.end());
+}
+
 void GameEngine::update()
 {
+
 	for (auto& b : balls)
 	{
-		b.update(balls);
+		b->update(balls);
 	}
 
 	for (auto& pocket : pockets)
 	{
 		pocket.update(balls);
 	}
+	// Delete Marked Balls
+	deleteBalls();
 }
 
 void GameEngine::eventHandler()
@@ -99,7 +142,7 @@ void GameEngine::eventHandler()
 		if (e.type == SDL_QUIT) running = false;
 		for (auto& b : balls)
 		{
-			b.eventHandler(&e);
+			b->eventHandler(&e);
 		}
 	}
 }
@@ -114,10 +157,10 @@ void GameEngine::render()
 	// draw table
 	renderBackground();
 
-	// objects render
+	// objects 
 	for (auto& b : balls)
 	{
-		b.render(renderer);
+		b->render(renderer);
 	}
 
 	//Update screen
@@ -126,18 +169,23 @@ void GameEngine::render()
 void GameEngine::renderBackground()
 {
 	SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
-	SDL_Rect side = { TABLE_X, TABLE_Y, 200, TABLE_HEIGHT };
+	SDL_Rect side = { TABLE_X, TABLE_Y, TABLE_LINE_FROM_X, TABLE_HEIGHT };
 	SDL_RenderFillRect(renderer, &side);
 
-	Ball dec = Ball(TABLE_X+200, TABLE_H / 2 + TABLE_Y / 2, 75, false);
+	Ball dec = Ball(TABLE_X + TABLE_LINE_FROM_X, TABLE_H / 2 + TABLE_Y / 2, true, 75);
 	dec.render(renderer);
 
 	SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
-	SDL_Rect cover = { TABLE_X + 200, TABLE_Y, TABLE_WIDTH-200, TABLE_HEIGHT };
+	SDL_Rect cover = { TABLE_X + TABLE_LINE_FROM_X, TABLE_Y, TABLE_WIDTH - TABLE_LINE_FROM_X, TABLE_HEIGHT };
 	SDL_RenderFillRect(renderer, &cover);
 
 	SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF);
-	SDL_RenderDrawLine(renderer, TABLE_X + 200, TABLE_Y, TABLE_X + 200, TABLE_H);
+	SDL_RenderDrawLine(renderer, TABLE_X + TABLE_LINE_FROM_X, TABLE_Y, TABLE_X + TABLE_LINE_FROM_X, TABLE_H);
+
+	
+	dec = Ball(BLACK_POINT_X, BLACK_POINT_Y, true, 2);
+	dec.render(renderer);
+	SDL_RenderDrawPoint(renderer, TABLE_W / 2 + TABLE_X / 2, TABLE_H / 2 + TABLE_Y / 2);
 
 	for (auto& pocket : pockets)
 	{

@@ -6,6 +6,7 @@
 #include "Constants.h"
 #include "Ball.h"
 #include "Pocket.h"
+#include "WhiteBall.h"
 
 class GameEngine
 {
@@ -17,7 +18,7 @@ class GameEngine
 
 	bool running;
 
-	std::vector<Ball> balls;
+	std::vector<Ball*> balls;
 	std::vector<Pocket> pockets;
 
 public:
@@ -32,6 +33,7 @@ private:
 	void update();
 	void eventHandler();
 	void quit();
+	void deleteBalls();
 	SDL_Surface* loadImage(const char* filePath);
 
 

@@ -18,23 +18,25 @@ protected:
 	int radius;
 	Vector position;
 	Vector velocity;
+	bool deleteFlag = false;
 
 public:
-	Ball(float _x, float _y, int _radius, bool isRed);
+	Ball(float _x, float _y, bool isRed, int _radius = 10);
 
 public:
-	virtual void update(std::vector<Ball> & balls);
+	virtual void update(std::vector<Ball*> & balls);
 	virtual void render(SDL_Renderer* renderer);
 	virtual void eventHandler(SDL_Event* e);
-	void gravToMouse(); // remove
 	Vector& getPosition(){ return position; }
 	int getRadius() { return radius; }
+	virtual void markForDelete(std::vector<Ball*>& balls);
+	bool getDeleteFlag() { return deleteFlag; }
 
 protected:
 	void applyFriction();
 	void wallCollision();
 	void drawCirle(SDL_Renderer* renderer, Vector position, int radius);
-	virtual void objectCollision(std::vector<Ball> & balls);
+	virtual void objectCollision(std::vector<Ball*> & balls);
 
 };
 

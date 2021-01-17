@@ -1,6 +1,6 @@
 #include "Ball.h"
 
-Ball::Ball(float _x, float _y, int _radius, bool isRed)
+Ball::Ball(float _x, float _y, bool isRed, int _radius)
 	: position({ _x, _y }), radius(_radius), velocity({ 0, 0 }), mouse({ 0, 0 }), isRed(isRed)
 {
 	if (isRed)
@@ -14,11 +14,9 @@ Ball::Ball(float _x, float _y, int _radius, bool isRed)
 }
 
 
-void Ball::update(std::vector<Ball> & balls)
+void Ball::update(std::vector<Ball*> & balls)
 {
-	//velocity += gravity;
 	position += velocity;
-	//gravToMouse();
 	applyFriction();
 	wallCollision();
 	objectCollision(balls);
@@ -26,66 +24,16 @@ void Ball::update(std::vector<Ball> & balls)
 
 void Ball::eventHandler(SDL_Event* e)
 {
-	if (e->type == SDL_MOUSEMOTION)
-	{
-		int x, y;
-		SDL_GetMouseState(&x, &y);
-		mouse.setX(x);
-		mouse.setY(y);
-		//std::cout << "x: " << mouse.getX() << " y: " << mouse.getY() << std::endl;
 
-	}
-	if (e->type == SDL_MOUSEBUTTONDOWN)
-	{
-		Vector hit = position - mouse;
-		hit *= 0.1;
-		if (hit.magnitude() > 10)
-		{
-			hit.setMagnitude(10);
-		}
-		velocity += hit;
-	}
 }
 
 void Ball::render(SDL_Renderer* renderer)
 {
-	Vector qwe = position - mouse;
-	if (qwe.magnitude() > 100)
-	{
-		qwe.setMagnitude(100);
-	}
-	Vector qwe1 = position + qwe;
-
 	SDL_SetRenderDrawColor(renderer, r, g, b, 0xFF);
-	if (velocity.getX() == 0 && velocity.getY() == 0)SDL_RenderDrawLine(renderer, position.getX(), position.getY(), qwe1.getX(), qwe1.getY());
-
-
-	drawCirle(renderer, position, radius);
-	
-}
-
-void Ball::gravToMouse()
-{
-	Vector move = mouse - position;
-	float mag = move.magnitude();
-	if (mag <= 40)
+	for (auto i = 0; i < 3; i++)
 	{
-		move.setMagnitude(2.0f);
+		drawCirle(renderer, position, radius + i);
 	}
-	else if (mag > 40 && mag <= 80)
-	{
-		move.setMagnitude(1.5f);
-	}
-	else if (mag > 80 && mag <= 100)
-	{
-		move.setMagnitude(1.0f);
-	}
-	else if (mag > 100)
-	{
-		move.setMagnitude(0.5f);
-	}
-
-	velocity += move;
 }
 
 void Ball::applyFriction()
@@ -135,21 +83,26 @@ void Ball::wallCollision()
 	}
 }
 
-void Ball::objectCollision(std::vector<Ball> & balls)
+void Ball::objectCollision(std::vector<Ball*> & balls)
 {
 	for (auto& b : balls)
 	{
-		if (&b != this)
+		if (b != this)
 		{
-			Vector test = position - b.position;
+			Vector test = position - b->position;
 			float dist = test.magnitude();
-			if (dist < radius + b.radius)
+			if (dist < radius + b->radius && b->radius < 15) // this is so when the white ball is being dropped it dosent hit the other balls
 			{
-				test.setMagnitude(2); // impliment vs speed as well. so calc how fast it was going and use that(poistion - (poistion + velocity))= vector in dir its going then get the magnitude for speed value.
+				test.setMagnitude(3); // impliment vs speed as well. so calc how fast it was going and use that(poistion - (poistion + velocity))= vector in dir its going then get the magnitude for speed value.
 				velocity += test;
 			}
 		}
 	}
+}
+
+void Ball::markForDelete(std::vector<Ball*>& balls)
+{
+	deleteFlag = true;
 }
 
 void Ball::drawCirle(SDL_Renderer* renderer, Vector position, int radius)
