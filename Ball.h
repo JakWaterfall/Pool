@@ -2,38 +2,37 @@
 #include <SDL.h>
 #include<iostream>
 #include <vector>
+#include <cstdint>
 #include "Constants.h"
 #include "Vector.h"
 
 class Ball
-{
-	bool isPocket;
-	bool isWhite;
-	float mass;
-	Vector position;
-	int radius;
-	Vector velocity;
+{	
+	bool isRed;
 	Vector mouse;
-	Vector acc;
-	Vector gravity;
 
-	Vector center;
+protected:
+	Uint8 r;
+	Uint8 g;
+	Uint8 b;
+	int radius;
+	Vector position;
+	Vector velocity;
 
 public:
-	Ball(float _x, float _y, int _radius, float mass, bool isPocket, bool isWhite);
+	Ball(float _x, float _y, int _radius, bool isRed);
 
 public:
-	void update(std::vector<Ball> & balls);
-	void render(SDL_Renderer* renderer);
-	void gravToMouse();
+	virtual void update(std::vector<Ball> & balls);
+	virtual void render(SDL_Renderer* renderer);
+	void gravToMouse(); // remove
+	virtual void eventHandler(SDL_Event* e);
+
+protected:
 	void applyFriction();
-	void eventHandler(SDL_Event* e);
-	float getMass() { return mass; }
-
-private:
 	void wallCollision();
-	void objectCollision(std::vector<Ball> & balls);
 	void drawCirle(SDL_Renderer* renderer, Vector position, int radius);
+	virtual void objectCollision(std::vector<Ball> & balls);
 
 };
 

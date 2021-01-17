@@ -5,6 +5,7 @@
 
 #include "Constants.h"
 #include "Ball.h"
+#include "Pocket.h"
 
 class GameEngine
 {

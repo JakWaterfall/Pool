@@ -1,9 +1,16 @@
 #include "Ball.h"
 
-Ball::Ball(float _x, float _y, int _radius, float mass, bool isPocket, bool isWhite)
-	: position({ _x, _y }), radius(_radius), mass(mass), velocity({ 0, 0 }), mouse({ 0, 0 }), center({ 0, 0 }), acc({ 1, 1 }), gravity({0, 2}), isPocket(isPocket),
-	isWhite(isWhite)
+Ball::Ball(float _x, float _y, int _radius, bool isRed)
+	: position({ _x, _y }), radius(_radius), velocity({ 0, 0 }), mouse({ 0, 0 }), isRed(isRed)
 {
+	if (isRed)
+	{
+		r = 0xFF; g = 0x00, b = 0x00;
+	}
+	else
+	{
+		r = 0xFF; g = 0xFF, b = 0x00;
+	}
 }
 
 
@@ -49,12 +56,11 @@ void Ball::render(SDL_Renderer* renderer)
 	}
 	Vector qwe1 = position + qwe;
 
-	SDL_SetRenderDrawColor(renderer, 0xFF, 0x00, 0x00, 0xFF);
-	if (velocity.getX() == 0 && velocity.getY() == 0 && isWhite)SDL_RenderDrawLine(renderer, position.getX(), position.getY(), qwe1.getX(), qwe1.getY());
-	for (auto i = 0; i < 1; i++)
-	{
-		drawCirle(renderer, position, radius-i);
-	}
+	SDL_SetRenderDrawColor(renderer, r, g, b, 0xFF);
+	if (velocity.getX() == 0 && velocity.getY() == 0)SDL_RenderDrawLine(renderer, position.getX(), position.getY(), qwe1.getX(), qwe1.getY());
+
+
+	drawCirle(renderer, position, radius);
 	
 }
 
@@ -139,42 +145,10 @@ void Ball::objectCollision(std::vector<Ball> & balls)
 			float dist = test.magnitude();
 			if (dist < radius + b.radius)
 			{
-				test.setMagnitude(b.getMass()); // impliment vs speed as well. so calc how fast it was going and use that(poistion - (poistion + velocity))= vector in dir its going then get the magnitude for speed value.
+				test.setMagnitude(2); // impliment vs speed as well. so calc how fast it was going and use that(poistion - (poistion + velocity))= vector in dir its going then get the magnitude for speed value.
 				velocity += test;
 			}
-			
-
-			/*float x = position.getX() - radius;
-			float y = position.getY() - radius;
-			float w = position.getX() + radius;
-			float h = position.getY() + radius;
-
-			float x1 = b.position.getX() - b.radius;
-			float y1 = b.position.getY() - b.radius;
-			float w1 = b.position.getX() + b.radius;
-			float h1 = b.position.getY() + b.radius;
-
-			if (x < w1 && x > x1 && y <= h1 && h >= y1)
-			{
-				std::cout << "true" << std::endl;
-				velocity.setX(-velocity.getX());
-				position.setX(b.position.getX() + radius);
-			}
-			if (w > x1 && w < w1 && y <= h1 && h >= y1)
-			{
-				velocity.setX(-velocity.getX());
-				position.setX(b.position.getX() - radius);
-			}
-			if (y < h1)
-			{
-				velocity.setY(-velocity.getY());
-				position.setY(h1);
-			}
-			if ( h > y1)
-			{
-				velocity.setY(-velocity.getY());
-				position.setY(y1);
-			}*/
+	
 		}
 	}
 }

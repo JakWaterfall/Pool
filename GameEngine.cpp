@@ -3,7 +3,7 @@
 GameEngine::GameEngine()
 {
 	running = true;
-	balls.push_back(Ball(550, 20, 10, 2, false, true));
+	balls.push_back(Ball(550, 20, 10, true));
 
 	if (SDL_Init(SDL_INIT_VIDEO) < 0)
 	{
@@ -115,7 +115,7 @@ void GameEngine::renderBackground()
 	SDL_Rect side = { TABLE_X, TABLE_Y, 200, TABLE_HEIGHT };
 	SDL_RenderFillRect(renderer, &side);
 
-	Ball dec = Ball(TABLE_X+200, TABLE_H / 2 + TABLE_Y / 2, 75, 1, true, false);
+	Ball dec = Ball(TABLE_X+200, TABLE_H / 2 + TABLE_Y / 2, 75, false);
 	dec.render(renderer);
 
 	SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
@@ -125,22 +125,22 @@ void GameEngine::renderBackground()
 	SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF);
 	SDL_RenderDrawLine(renderer, TABLE_X + 200, TABLE_Y, TABLE_X + 200, TABLE_H);
 
-	Ball topLeftPocket = Ball(TABLE_X, TABLE_Y, 20, 1, true, false);
+	Pocket topLeftPocket = Pocket(TABLE_X, TABLE_Y);
 	topLeftPocket.render(renderer);
 
-	Ball topRightPocket = Ball(TABLE_W, TABLE_Y, 20, 1, true, false);
+	Pocket topRightPocket = Pocket(TABLE_W, TABLE_Y);
 	topRightPocket.render(renderer);
 
-	Ball bottemLeftPocket = Ball(TABLE_X, TABLE_H, 20, 1, true, false);
+	Pocket bottemLeftPocket = Pocket(TABLE_X, TABLE_H);
 	bottemLeftPocket.render(renderer);
 
-	Ball bottemRightPocket = Ball(TABLE_W, TABLE_H, 20, 1, true, false);
+	Pocket bottemRightPocket = Pocket(TABLE_W, TABLE_H);
 	bottemRightPocket.render(renderer);
 
-	Ball topMiddlePocket = Ball(TABLE_W/2+TABLE_X/2, TABLE_Y -10, 20, 1, true, false);
+	Pocket topMiddlePocket = Pocket(TABLE_W/2+TABLE_X/2, TABLE_Y -10);
 	topMiddlePocket.render(renderer);
 
-	Ball bottemMiddlePocket = Ball(TABLE_W / 2 + TABLE_X / 2, TABLE_H + 10, 20, 1, true, false);
+	Pocket bottemMiddlePocket = Pocket(TABLE_W / 2 + TABLE_X / 2, TABLE_H + 10);
 	bottemMiddlePocket.render(renderer);
 
 	SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF);
