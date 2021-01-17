@@ -3,7 +3,17 @@
 GameEngine::GameEngine()
 {
 	running = true;
+	// Balls
 	balls.push_back(Ball(550, 20, 10, true));
+
+	// Pockets
+	pockets.push_back(Pocket(TABLE_X, TABLE_Y));
+	pockets.push_back(Pocket(TABLE_W, TABLE_Y));
+	pockets.push_back(Pocket(TABLE_X, TABLE_H));
+	pockets.push_back(Pocket(TABLE_W, TABLE_H));
+	pockets.push_back(Pocket(TABLE_W / 2 + TABLE_X / 2, TABLE_Y - 10));
+	pockets.push_back(Pocket(TABLE_W / 2 + TABLE_X / 2, TABLE_H + 10));
+
 
 	if (SDL_Init(SDL_INIT_VIDEO) < 0)
 	{
@@ -75,7 +85,11 @@ void GameEngine::update()
 	{
 		b.update(balls);
 	}
-	
+
+	for (auto& pocket : pockets)
+	{
+		pocket.update(balls);
+	}
 }
 
 void GameEngine::eventHandler()
@@ -125,23 +139,10 @@ void GameEngine::renderBackground()
 	SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF);
 	SDL_RenderDrawLine(renderer, TABLE_X + 200, TABLE_Y, TABLE_X + 200, TABLE_H);
 
-	Pocket topLeftPocket = Pocket(TABLE_X, TABLE_Y);
-	topLeftPocket.render(renderer);
-
-	Pocket topRightPocket = Pocket(TABLE_W, TABLE_Y);
-	topRightPocket.render(renderer);
-
-	Pocket bottemLeftPocket = Pocket(TABLE_X, TABLE_H);
-	bottemLeftPocket.render(renderer);
-
-	Pocket bottemRightPocket = Pocket(TABLE_W, TABLE_H);
-	bottemRightPocket.render(renderer);
-
-	Pocket topMiddlePocket = Pocket(TABLE_W/2+TABLE_X/2, TABLE_Y -10);
-	topMiddlePocket.render(renderer);
-
-	Pocket bottemMiddlePocket = Pocket(TABLE_W / 2 + TABLE_X / 2, TABLE_H + 10);
-	bottemMiddlePocket.render(renderer);
+	for (auto& pocket : pockets)
+	{
+		pocket.render(renderer);
+	}
 
 	SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF);
 	SDL_Rect tableOutline = { TABLE_X, TABLE_Y, TABLE_WIDTH, TABLE_HEIGHT };

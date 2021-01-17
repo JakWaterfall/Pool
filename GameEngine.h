@@ -18,6 +18,7 @@ class GameEngine
 	bool running;
 
 	std::vector<Ball> balls;
+	std::vector<Pocket> pockets;
 
 public:
 	//Constuctors

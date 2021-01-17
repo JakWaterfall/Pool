@@ -148,7 +148,6 @@ void Ball::objectCollision(std::vector<Ball> & balls)
 				test.setMagnitude(2); // impliment vs speed as well. so calc how fast it was going and use that(poistion - (poistion + velocity))= vector in dir its going then get the magnitude for speed value.
 				velocity += test;
 			}
-	
 		}
 	}
 }

@@ -25,8 +25,10 @@ public:
 public:
 	virtual void update(std::vector<Ball> & balls);
 	virtual void render(SDL_Renderer* renderer);
-	void gravToMouse(); // remove
 	virtual void eventHandler(SDL_Event* e);
+	void gravToMouse(); // remove
+	Vector& getPosition(){ return position; }
+	int getRadius() { return radius; }
 
 protected:
 	void applyFriction();
