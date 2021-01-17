@@ -1,7 +1,8 @@
 #include "Ball.h"
 
-Ball::Ball(float _x, float _y, int _radius, float mass)
-	: position({ _x, _y }), radius(_radius), mass(mass), velocity({ 4, 1 }), mouse({ 0, 0 }), center({ 0, 0 }), acc({ 1, 1 }), gravity({0, 2})
+Ball::Ball(float _x, float _y, int _radius, float mass, bool isPocket, bool isWhite)
+	: position({ _x, _y }), radius(_radius), mass(mass), velocity({ 0, 0 }), mouse({ 0, 0 }), center({ 0, 0 }), acc({ 1, 1 }), gravity({0, 2}), isPocket(isPocket),
+	isWhite(isWhite)
 {
 }
 
@@ -49,7 +50,7 @@ void Ball::render(SDL_Renderer* renderer)
 	Vector qwe1 = position + qwe;
 
 	SDL_SetRenderDrawColor(renderer, 0xFF, 0x00, 0x00, 0xFF);
-	if (velocity.getX() == 0 && velocity.getY() == 0)SDL_RenderDrawLine(renderer, position.getX(), position.getY(), qwe1.getX(), qwe1.getY());
+	if (velocity.getX() == 0 && velocity.getY() == 0 && isWhite)SDL_RenderDrawLine(renderer, position.getX(), position.getY(), qwe1.getX(), qwe1.getY());
 	for (auto i = 0; i < 1; i++)
 	{
 		drawCirle(renderer, position, radius-i);
@@ -106,25 +107,25 @@ void Ball::wallCollision()
 {
 	int x = position.getX();
 	int y = position.getY();
-	if (x - radius < 0)
+	if (x - radius < TABLE_X)
 	{
 		velocity.setX(-velocity.getX());
-		position.setX(radius);
+		position.setX(TABLE_X+radius);
 	}
-	if (x + radius > SCREEN_WIDTH)
+	if (x + radius > TABLE_W)
 	{
 		velocity.setX(-velocity.getX());
-		position.setX(SCREEN_WIDTH - radius);
+		position.setX(TABLE_W - radius);
 	}
-	if (y - radius < 0)
+	if (y - radius < TABLE_Y)
 	{
 		velocity.setY(-velocity.getY());
-		position.setY(radius);
+		position.setY(TABLE_Y+radius);
 	}
-	if (y + radius > SCREEN_HEIGHT)
+	if (y + radius > TABLE_H)
 	{
 		velocity.setY(-velocity.getY());
-		position.setY(SCREEN_HEIGHT - radius);
+		position.setY(TABLE_H - radius);
 	}
 }
 

@@ -7,6 +7,8 @@
 
 class Ball
 {
+	bool isPocket;
+	bool isWhite;
 	float mass;
 	Vector position;
 	int radius;
@@ -18,7 +20,7 @@ class Ball
 	Vector center;
 
 public:
-	Ball(float _x, float _y, int _radius, float mass);
+	Ball(float _x, float _y, int _radius, float mass, bool isPocket, bool isWhite);
 
 public:
 	void update(std::vector<Ball> & balls);
