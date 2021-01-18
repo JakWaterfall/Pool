@@ -23,9 +23,9 @@ void WhiteBall::update(std::vector<Ball*>& balls)
 void WhiteBall::render(SDL_Renderer* renderer)
 {
 	Vector target = position - mouse;
-	if (target.magnitude() > 100)
+	if (target.magnitude() > aimerMaxLenght)
 	{
-		target.setMagnitude(100);
+		target.setMagnitude(aimerMaxLenght);
 	}
 	Vector aimer = position + target;
 
@@ -63,11 +63,18 @@ void WhiteBall::eventHandler(SDL_Event* e)
 
 void WhiteBall::droppingBall(SDL_Event* e)
 {
-	position = mouse;
-	if (e->type == SDL_MOUSEBUTTONDOWN)
+	// Check mouse is in ball drop area
+	if (mouse.getX() < TABLE_X + TABLE_LINE_FROM_X && mouse.getX() > TABLE_X)
 	{
-		radius = 10;
-		dropBall = false;
+		if (mouse.getY() < TABLE_H && mouse.getY() > TABLE_Y)
+		{
+			position = mouse;
+			if (e->type == SDL_MOUSEBUTTONDOWN)
+			{
+				radius = 10;
+				dropBall = false;
+			}
+		}
 	}
 }
 

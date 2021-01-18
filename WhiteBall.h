@@ -4,6 +4,7 @@ class WhiteBall : public Ball
 {
 	bool dropBall; // MAKE BETTER IMPLIMENTATION THEN USING RADIUS
 	Vector mouse;
+	float aimerMaxLenght = 200;
 public:
 	WhiteBall(float _x, float _y, bool dropBall);
 
