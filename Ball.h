@@ -5,6 +5,7 @@ class Ball : public SphereEntity
 {	
 protected:
 	Vector velocity;
+	bool isInteractable = true;
 	bool deleteFlag = false;
 
 public:

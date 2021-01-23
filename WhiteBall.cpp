@@ -10,14 +10,11 @@ void WhiteBall::update(std::vector<Ball*>& balls)
 	if (dropBall)
 	{
 		radius = 15;
+		isInteractable = false;
 		dropBallCollision();
 		return;
 	}
 	Ball::update(balls);
-	/*position += velocity;
-	applyFriction();
-	wallCollision();
-	ballCollision(balls);*/
 }
 
 
@@ -31,7 +28,8 @@ void WhiteBall::render(SDL_Renderer* renderer)
 	Vector aimer = position + target;
 
 	SDL_SetRenderDrawColor(renderer, r, g, b, 0xFF);
-	if (velocity.getX() == 0 && velocity.getY() == 0 && !dropBall)SDL_RenderDrawLine(renderer, position.getX(), position.getY(), aimer.getX(), aimer.getY());
+	if (velocity.getX() == 0 && velocity.getY() == 0 && !dropBall)
+		SDL_RenderDrawLine(renderer, position.getX(), position.getY(), aimer.getX(), aimer.getY());
 
 	drawCirle(renderer, position, radius);
 }
@@ -73,6 +71,7 @@ void WhiteBall::droppingBall(SDL_Event* e)
 			if (e->type == SDL_MOUSEBUTTONDOWN)
 			{
 				radius = 10;
+				isInteractable = true;
 				dropBall = false;
 			}
 		}
