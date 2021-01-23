@@ -6,6 +6,7 @@
 #include "Constants.h"
 #include "Vector.h"
 
+// CHANGE CLASS SYSTEM SO SHYERE ENTITY IS BASE. THEN POCKET AND BALLS, THEN WHITE AND BLACK BALL ARE SUB CLASSES OF BALL.
 class Ball
 {	
 	bool isRed;

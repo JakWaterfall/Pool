@@ -83,17 +83,18 @@ void Ball::wallCollision()
 	}
 }
 
+// maybe split up the collision test for testing on ball drop???
 void Ball::objectCollision(std::vector<Ball*> & balls)
 {
 	for (auto& b : balls)
 	{
 		if (b != this)
 		{
-			Vector test = position - b->position;
+			Vector test = position - b->position; // change variables names from test
 			float dist = test.magnitude();
-			if (dist < radius + b->radius && b->radius < 15) // this is so when the white ball is being dropped it dosent hit the other balls
+			if (dist < radius + b->radius && b->radius < 15) // this is so when the white ball is being dropped it dosent hit the other balls // MAKE BOOL IS INTERACTABLE
 			{
-				test.setMagnitude(3); // impliment vs speed as well. so calc how fast it was going and use that(poistion - (poistion + velocity))= vector in dir its going then get the magnitude for speed value.
+				test.setMagnitude(2); // impliment vs speed as well. so calc how fast it was going and use that(poistion - (poistion + velocity))= vector in dir its going then get the magnitude for speed value.
 				velocity += test;
 			}
 		}

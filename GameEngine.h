@@ -10,7 +10,6 @@
 
 class GameEngine
 {
-
 	SDL_Window* win = NULL;
 	SDL_Surface* winSurface = NULL;
 	SDL_Renderer* renderer = NULL;
