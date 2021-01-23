@@ -14,6 +14,7 @@ void Ball::update(std::vector<Ball*> & balls)
 	ballCollision(balls);
 }
 
+// what do to with event handler??
 void Ball::eventHandler(SDL_Event* e)
 {
 
@@ -22,20 +23,18 @@ void Ball::eventHandler(SDL_Event* e)
 
 void Ball::applyFriction()
 {
-	if (velocity.getX() != 0)
+	if (ballMoving())
 	{
-		if (velocity.getY() != 0)
+		Vector friction = position - (position + velocity);
+		friction.setMagnitude(frictionStrength);
+		velocity += friction;
+		// clamp velocity so when its close enough to 0; it sets x and y to 0
+		if (velocity.getX() < 0.5 && velocity.getX() > -0.5)
 		{
-			Vector friction = position - (position + velocity);
-			friction.setMagnitude(0.03);
-			velocity += friction;
-			if (velocity.getX() < 0.5 && velocity.getX() > -0.5)
+			if (velocity.getY() < 0.5 && velocity.getY() > -0.5)
 			{
-				if (velocity.getY() < 0.5 && velocity.getY() > -0.5)
-				{
-					velocity.setX(0);
-					velocity.setY(0);
-				}
+				velocity.setX(0);
+				velocity.setY(0);
 			}
 		}
 	}
@@ -65,6 +64,11 @@ void Ball::wallCollision()
 		velocity.setY(-velocity.getY());
 		position.setY(TABLE_H - radius);
 	}
+}
+
+bool Ball::ballMoving()
+{
+	return velocity.getX() != 0 || velocity.getY() != 0;
 }
 
 // maybe split up the collision test for testing on ball drop???

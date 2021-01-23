@@ -3,6 +3,8 @@
 
 class Ball : public SphereEntity
 {	
+
+	float frictionStrength = 0.03;
 protected:
 	Vector velocity;
 	bool isInteractable = true;
@@ -22,6 +24,7 @@ public:
 protected:
 	void applyFriction();
 	void wallCollision();
+	bool ballMoving();
 	virtual void ballCollision(std::vector<Ball*> & balls);
 
 };
