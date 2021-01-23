@@ -30,7 +30,7 @@ void WhiteBall::render(SDL_Renderer* renderer)
 	Vector aimer = position + target;
 
 	SDL_SetRenderDrawColor(renderer, r, g, b, 0xFF);
-	if (velocity.getX() == 0 && velocity.getY() == 0 && !dropBall)
+	if (!ballMoving() && !dropBall)
 		SDL_RenderDrawLine(renderer, position.getX(), position.getY(), aimer.getX(), aimer.getY());
 
 	drawCirle(renderer, position, radius);
