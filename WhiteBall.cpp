@@ -64,22 +64,32 @@ void WhiteBall::eventHandler(SDL_Event* e)
 void WhiteBall::droppingBall(SDL_Event* e)
 {
 	// Check mouse is in ball drop area
+	if (mouseWithinDropBallArea())
+	{
+		position = mouse;
+		if (!collideWithBall)
+		{
+			if (e->type == SDL_MOUSEBUTTONDOWN)
+			{
+				radius = 10;
+				isInteractable = true;
+				dropBall = false;
+			}
+		}
+	}
+}
+
+bool WhiteBall::mouseWithinDropBallArea()
+{
 	if (mouse.getX() < TABLE_X + TABLE_LINE_FROM_X && mouse.getX() > TABLE_X)
 	{
 		if (mouse.getY() < TABLE_H && mouse.getY() > TABLE_Y)
 		{
-			position = mouse;
-			if (!collideWithBall)
-			{
-				if (e->type == SDL_MOUSEBUTTONDOWN)
-				{
-					radius = 10;
-					isInteractable = true;
-					dropBall = false;
-				}
-			}
+			return true;
 		}
+		return false;
 	}
+	return false;
 }
 
 bool WhiteBall::willCollideWithBall(std::vector<Ball*>& balls)
