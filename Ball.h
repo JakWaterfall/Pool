@@ -16,6 +16,7 @@ public:
 	virtual void eventHandler(SDL_Event* e);
 	virtual void markForDelete(std::vector<Ball*>& balls);
 	bool getDeleteFlag();
+	bool getIsInteractable() { return isInteractable; }
 
 protected:
 	void applyFriction();

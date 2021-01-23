@@ -11,6 +11,7 @@ void WhiteBall::update(std::vector<Ball*>& balls)
 	{
 		radius = 15;
 		isInteractable = false;
+		collideWithBall = willCollideWithBall(balls);
 		dropBallCollision();
 		return;
 	}
@@ -68,14 +69,34 @@ void WhiteBall::droppingBall(SDL_Event* e)
 		if (mouse.getY() < TABLE_H && mouse.getY() > TABLE_Y)
 		{
 			position = mouse;
-			if (e->type == SDL_MOUSEBUTTONDOWN)
+			if (!collideWithBall)
 			{
-				radius = 10;
-				isInteractable = true;
-				dropBall = false;
+				if (e->type == SDL_MOUSEBUTTONDOWN)
+				{
+					radius = 10;
+					isInteractable = true;
+					dropBall = false;
+				}
 			}
 		}
 	}
+}
+
+bool WhiteBall::willCollideWithBall(std::vector<Ball*>& balls)
+{
+	for (auto& b : balls)
+	{
+		if (b != this)
+		{
+			Vector v_FromBallToBall = position - b->getPosition(); 
+			float dist = v_FromBallToBall.magnitude();
+			if (dist < radius + b->getRadius() && b->getIsInteractable()) // this is so when the white ball is being dropped it dosent hit the other balls
+			{
+				return true;
+			}
+		}
+	}
+	return false;
 }
 
 void WhiteBall::dropBallCollision()

@@ -5,6 +5,9 @@ class WhiteBall : public Ball
 	bool dropBall; // MAKE BETTER IMPLIMENTATION THEN USING RADIUS
 	Vector mouse;
 	float aimerMaxLenght = 200;
+
+	bool collideWithBall = false;
+	bool willCollideWithBall(std::vector<Ball*>& balls);
 public:
 	WhiteBall(float _x, float _y, bool dropBall, SphereEntity::Colours colour = SphereEntity::Colours::white);
 
