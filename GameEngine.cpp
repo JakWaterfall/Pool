@@ -3,29 +3,30 @@
 GameEngine::GameEngine()
 {
 	running = true;
+
 	// Balls
-	balls.push_back(new Ball(BLACK_POINT_X-40, BLACK_POINT_Y, true));
-	balls.push_back(new Ball(BLACK_POINT_X, BLACK_POINT_Y, true));
+	balls.push_back(new Ball(BLACK_POINT_X-40, BLACK_POINT_Y, SphereEntity::Colours::red));
+	balls.push_back(new Ball(BLACK_POINT_X, BLACK_POINT_Y, SphereEntity::Colours::red));
 
-	balls.push_back(new Ball(BLACK_POINT_X-20, BLACK_POINT_Y-10, false));
-	balls.push_back(new Ball(BLACK_POINT_X-20, BLACK_POINT_Y+10, false));
+	balls.push_back(new Ball(BLACK_POINT_X-20, BLACK_POINT_Y-10, SphereEntity::Colours::yellow));
+	balls.push_back(new Ball(BLACK_POINT_X-20, BLACK_POINT_Y+10, SphereEntity::Colours::yellow));
 
-	balls.push_back(new Ball(BLACK_POINT_X, BLACK_POINT_Y-20, true));
-	balls.push_back(new Ball(BLACK_POINT_X, BLACK_POINT_Y+20, true));
+	balls.push_back(new Ball(BLACK_POINT_X, BLACK_POINT_Y-20, SphereEntity::Colours::red));
+	balls.push_back(new Ball(BLACK_POINT_X, BLACK_POINT_Y+20, SphereEntity::Colours::red));
 	//
-	balls.push_back(new Ball(BLACK_POINT_X + 20, BLACK_POINT_Y - 10, false));
-	balls.push_back(new Ball(BLACK_POINT_X + 20, BLACK_POINT_Y + 10, true));
+	balls.push_back(new Ball(BLACK_POINT_X + 20, BLACK_POINT_Y - 10, SphereEntity::Colours::yellow));
+	balls.push_back(new Ball(BLACK_POINT_X + 20, BLACK_POINT_Y + 10, SphereEntity::Colours::red));
 
-	balls.push_back(new Ball(BLACK_POINT_X + 20, BLACK_POINT_Y - 30, false));
-	balls.push_back(new Ball(BLACK_POINT_X + 20, BLACK_POINT_Y + 30, false));
+	balls.push_back(new Ball(BLACK_POINT_X + 20, BLACK_POINT_Y - 30, SphereEntity::Colours::yellow));
+	balls.push_back(new Ball(BLACK_POINT_X + 20, BLACK_POINT_Y + 30, SphereEntity::Colours::yellow));
 
-	balls.push_back(new Ball(BLACK_POINT_X + 40, BLACK_POINT_Y, true));
+	balls.push_back(new Ball(BLACK_POINT_X + 40, BLACK_POINT_Y, SphereEntity::Colours::red));
 
-	balls.push_back(new Ball(BLACK_POINT_X + 40, BLACK_POINT_Y-20, false));
-	balls.push_back(new Ball(BLACK_POINT_X + 40, BLACK_POINT_Y+20, false));
+	balls.push_back(new Ball(BLACK_POINT_X + 40, BLACK_POINT_Y-20, SphereEntity::Colours::yellow));
+	balls.push_back(new Ball(BLACK_POINT_X + 40, BLACK_POINT_Y+20, SphereEntity::Colours::yellow));
 
-	balls.push_back(new Ball(BLACK_POINT_X + 40, BLACK_POINT_Y - 40, true));
-	balls.push_back(new Ball(BLACK_POINT_X + 40, BLACK_POINT_Y + 40, true));
+	balls.push_back(new Ball(BLACK_POINT_X + 40, BLACK_POINT_Y - 40, SphereEntity::Colours::red));
+	balls.push_back(new Ball(BLACK_POINT_X + 40, BLACK_POINT_Y + 40, SphereEntity::Colours::red));
 
 	balls.push_back(new WhiteBall(0, 0, true));
 
@@ -166,13 +167,14 @@ void GameEngine::render()
 	//Update screen
 	SDL_RenderPresent(renderer);
 }
+// change variable names 
 void GameEngine::renderBackground()
 {
 	SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
 	SDL_Rect side = { TABLE_X, TABLE_Y, TABLE_LINE_FROM_X, TABLE_HEIGHT };
 	SDL_RenderFillRect(renderer, &side);
 
-	Ball dec = Ball(TABLE_X + TABLE_LINE_FROM_X, TABLE_H / 2 + TABLE_Y / 2, true, 75);
+	Ball dec = Ball(TABLE_X + TABLE_LINE_FROM_X, TABLE_H / 2 + TABLE_Y / 2, SphereEntity::Colours::black, 75);
 	dec.render(renderer);
 
 	SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
@@ -183,7 +185,7 @@ void GameEngine::renderBackground()
 	SDL_RenderDrawLine(renderer, TABLE_X + TABLE_LINE_FROM_X, TABLE_Y, TABLE_X + TABLE_LINE_FROM_X, TABLE_H);
 
 	
-	dec = Ball(BLACK_POINT_X, BLACK_POINT_Y, true, 2);
+	dec = Ball(BLACK_POINT_X, BLACK_POINT_Y, SphereEntity::Colours::black, 2);
 	dec.render(renderer);
 	SDL_RenderDrawPoint(renderer, TABLE_W / 2 + TABLE_X / 2, TABLE_H / 2 + TABLE_Y / 2);
 

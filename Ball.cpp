@@ -1,16 +1,8 @@
 #include "Ball.h"
 
-Ball::Ball(float _x, float _y, bool isRed, int _radius)
-	: position({ _x, _y }), radius(_radius), velocity({ 0, 0 }), mouse({ 0, 0 }), isRed(isRed)
+Ball::Ball(float _x, float _y, SphereEntity::Colours colour, int radius)
+	: SphereEntity(_x, _y, colour, radius), velocity({ 0, 0 })
 {
-	if (isRed)
-	{
-		r = 0xFF; g = 0x00, b = 0x00;
-	}
-	else
-	{
-		r = 0xFF; g = 0xFF, b = 0x00;
-	}
 }
 
 
@@ -19,7 +11,7 @@ void Ball::update(std::vector<Ball*> & balls)
 	position += velocity;
 	applyFriction();
 	wallCollision();
-	objectCollision(balls);
+	ballCollision(balls);
 }
 
 void Ball::eventHandler(SDL_Event* e)
@@ -27,14 +19,6 @@ void Ball::eventHandler(SDL_Event* e)
 
 }
 
-void Ball::render(SDL_Renderer* renderer)
-{
-	SDL_SetRenderDrawColor(renderer, r, g, b, 0xFF);
-	for (auto i = 0; i < 3; i++)
-	{
-		drawCirle(renderer, position, radius + i);
-	}
-}
 
 void Ball::applyFriction()
 {
@@ -84,7 +68,7 @@ void Ball::wallCollision()
 }
 
 // maybe split up the collision test for testing on ball drop???
-void Ball::objectCollision(std::vector<Ball*> & balls)
+void Ball::ballCollision(std::vector<Ball*> & balls)
 {
 	for (auto& b : balls)
 	{
@@ -101,41 +85,13 @@ void Ball::objectCollision(std::vector<Ball*> & balls)
 	}
 }
 
+
 void Ball::markForDelete(std::vector<Ball*>& balls)
 {
 	deleteFlag = true;
 }
 
-void Ball::drawCirle(SDL_Renderer* renderer, Vector position, int radius)
+bool Ball::getDeleteFlag()
 {
-	// https://www.thecrazyprogrammer.com/2016/12/bresenhams-midpoint-circle-algorithm-c-c.html
-
-	int x0 = position.getX();
-	int y0 = position.getY();
-	int x = radius;
-	int y = 0;
-	int err = 0;
-	while (x >= y)
-	{
-		SDL_RenderDrawPoint(renderer, x0 + x, y0 + y);
-		SDL_RenderDrawPoint(renderer, x0 + y, y0 + x);
-		SDL_RenderDrawPoint(renderer, x0 - y, y0 + x);
-		SDL_RenderDrawPoint(renderer, x0 - x, y0 + y);
-		SDL_RenderDrawPoint(renderer, x0 - x, y0 - y);
-		SDL_RenderDrawPoint(renderer, x0 - y, y0 - x);
-		SDL_RenderDrawPoint(renderer, x0 + y, y0 - x);
-		SDL_RenderDrawPoint(renderer, x0 + x, y0 - y);
-
-		if (err <= 0)
-		{
-			y += 1;
-			err += 2 * y + 1;
-		}
-
-		if (err > 0)
-		{
-			x -= 1;
-			err -= 2 * x + 1;
-		}
-	}
+	return deleteFlag;
 }

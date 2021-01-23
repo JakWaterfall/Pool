@@ -1,8 +1,8 @@
 #include "WhiteBall.h"
 
-WhiteBall::WhiteBall(float _x, float _y, bool dropBall): Ball(_x, _y, false), mouse({ 0, 0 }), dropBall(dropBall)
+WhiteBall::WhiteBall(float _x, float _y, bool dropBall, SphereEntity::Colours colour)
+	: Ball(_x, _y, colour), mouse({ 0, 0 }), dropBall(dropBall)
 {
-	r = 0x00; g = 0x00, b = 0x00;
 }
 
 void WhiteBall::update(std::vector<Ball*>& balls)
@@ -13,12 +13,13 @@ void WhiteBall::update(std::vector<Ball*>& balls)
 		dropBallCollision();
 		return;
 	}
-
-	position += velocity;
+	Ball::update(balls);
+	/*position += velocity;
 	applyFriction();
 	wallCollision();
-	objectCollision(balls);
+	ballCollision(balls);*/
 }
+
 
 void WhiteBall::render(SDL_Renderer* renderer)
 {

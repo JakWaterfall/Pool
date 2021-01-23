@@ -6,7 +6,7 @@ class WhiteBall : public Ball
 	Vector mouse;
 	float aimerMaxLenght = 200;
 public:
-	WhiteBall(float _x, float _y, bool dropBall);
+	WhiteBall(float _x, float _y, bool dropBall, SphereEntity::Colours colour = SphereEntity::Colours::white);
 
 	void update(std::vector<Ball*>& balls);
 	void render(SDL_Renderer* renderer);

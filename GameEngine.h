@@ -4,6 +4,7 @@
 #include <chrono>
 
 #include "Constants.h"
+#include "SphereEntity.h"
 #include "Ball.h"
 #include "Pocket.h"
 #include "WhiteBall.h"
