@@ -15,6 +15,7 @@ void WhiteBall::update(std::vector<Ball*>& balls)
 		dropBallCollision();
 		return;
 	}
+	ballsMoving = checkIfballsMoving(balls);
 	Ball::update(balls);
 }
 
@@ -49,7 +50,7 @@ void WhiteBall::eventHandler(SDL_Event* e)
 		droppingBall(e);
 		return;
 	}
-	if (e->type == SDL_MOUSEBUTTONDOWN && velocity.getX() == 0 && velocity.getY() == 0) // change to only hit if all balls vel is 0
+	if (e->type == SDL_MOUSEBUTTONDOWN && !ballsMoving) // change to only hit if all balls vel is 0
 	{
 		Vector hit = position - mouse;
 		hit *= 0.1;
@@ -59,6 +60,16 @@ void WhiteBall::eventHandler(SDL_Event* e)
 		}
 		velocity += hit;
 	}
+}
+
+bool WhiteBall::checkIfballsMoving(std::vector<Ball*>& balls)
+{
+	for (auto& b : balls)
+	{
+		if (b->getVelocity().getX() != 0 && b->getVelocity().getY() != 0)
+			return true;
+	}
+	return false;
 }
 
 void WhiteBall::droppingBall(SDL_Event* e)

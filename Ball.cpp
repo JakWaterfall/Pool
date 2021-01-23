@@ -95,3 +95,8 @@ bool Ball::getDeleteFlag()
 {
 	return deleteFlag;
 }
+
+Vector& Ball::getVelocity()
+{
+	return velocity;
+}

@@ -17,6 +17,7 @@ public:
 	virtual void markForDelete(std::vector<Ball*>& balls);
 	bool getDeleteFlag();
 	bool getIsInteractable() { return isInteractable; }
+	Vector& getVelocity();
 
 protected:
 	void applyFriction();
