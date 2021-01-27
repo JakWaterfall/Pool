@@ -12,22 +12,22 @@ void WhiteBall::update(std::vector<Ball*>& balls)
 		radius = 15;
 		isInteractable = false;
 		collideWithBall = willCollideWithBall(balls);
-		dropBallCollision();
+		keepInDropBallArea();
 		return;
 	}
-	ballsMoving = checkIfballsMoving(balls);
+	anyBallsMoving = checkIfballsMoving(balls);
 	Ball::update(balls);
 }
 
 
 void WhiteBall::render(SDL_Renderer* renderer)
 {
-	Vector target = position - mouse;
+	Vector target = position - mouse;		// creates a vector which points from the mouse to the white ball.
+
 	if (target.magnitude() > aimerMaxLenght)
-	{
-		target.setMagnitude(aimerMaxLenght);
-	}
-	Vector aimer = position + target;
+		target.setMagnitude(aimerMaxLenght); // clamp vector magnitude so the aimer doesn't get too big.
+	
+	Vector aimer = position + target; // adds the vector to the white balls position; transforming the tail of the vector from the mouse to the white ball.
 
 	SDL_SetRenderDrawColor(renderer, r, g, b, 0xFF);
 	if (!ballMoving() && !dropBall)
@@ -50,13 +50,13 @@ void WhiteBall::eventHandler(SDL_Event* e)
 		droppingBall(e);
 		return;
 	}
-	if (e->type == SDL_MOUSEBUTTONDOWN && !ballsMoving) // change to only hit if all balls vel is 0
+	if (e->type == SDL_MOUSEBUTTONDOWN && !anyBallsMoving) 
 	{
 		Vector hit = position - mouse;
-		hit *= 0.1;
-		if (hit.magnitude() > 10)
+		hit *= 0.1f;
+		if (hit.magnitude() > greatestHitStrength)
 		{
-			hit.setMagnitude(10);
+			hit.setMagnitude(greatestHitStrength);
 		}
 		velocity += hit;
 	}
@@ -74,11 +74,10 @@ bool WhiteBall::checkIfballsMoving(std::vector<Ball*>& balls)
 
 void WhiteBall::droppingBall(SDL_Event* e)
 {
-	// Check mouse is in ball drop area
 	if (mouseWithinDropBallArea())
 	{
 		position = mouse;
-		if (!collideWithBall)
+		if (!collideWithBall && !anyBallsMoving)
 		{
 			if (e->type == SDL_MOUSEBUTTONDOWN)
 			{
@@ -92,38 +91,36 @@ void WhiteBall::droppingBall(SDL_Event* e)
 
 bool WhiteBall::mouseWithinDropBallArea()
 {
-	if (mouse.getX() < TABLE_X + TABLE_LINE_FROM_X && mouse.getX() > TABLE_X)
-	{
-		if (mouse.getY() < TABLE_H && mouse.getY() > TABLE_Y)
-		{
-			return true;
-		}
-		return false;
-	}
-	return false;
+	return	mouse.getX() < TABLE_X + TABLE_LINE_FROM_X &&
+			mouse.getX() > TABLE_X &&
+			mouse.getY() < TABLE_H &&
+			mouse.getY() > TABLE_Y;
 }
 
 bool WhiteBall::willCollideWithBall(std::vector<Ball*>& balls)
 {
 	for (auto& b : balls)
 	{
-		if (b != this)
+		if (b == this)
+			continue;
+
+		Vector v_FromBallToBall = position - b->getPosition();	// Create a vector which points from one ball to another.
+		float dist = v_FromBallToBall.magnitude();				// return the magnitude of that vector to work out the distance between them.
+
+		// Test to see if the distance between the 2 balls is greater then thier radii, which would indicate the balls were colliding.
+		if (dist < radius + b->getRadius())
 		{
-			Vector v_FromBallToBall = position - b->getPosition(); 
-			float dist = v_FromBallToBall.magnitude();
-			if (dist < radius + b->getRadius() && b->getIsInteractable()) // this is so when the white ball is being dropped it dosent hit the other balls
-			{
-				return true;
-			}
+			return true;
 		}
 	}
 	return false;
 }
 
-void WhiteBall::dropBallCollision()
+void WhiteBall::keepInDropBallArea()
 {
 	int x = position.getX();
 	int y = position.getY();
+
 	if (x - radius < TABLE_X)
 	{
 		position.setX(TABLE_X + radius);

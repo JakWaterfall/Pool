@@ -4,7 +4,8 @@
 class Ball : public SphereEntity
 {	
 
-	float frictionStrength = 0.03;
+	float frictionStrength = 0.03; // impliment super slippery mode??
+	int ballCollisionStrenght = 2;
 protected:
 	Vector velocity;
 	bool isInteractable = true;

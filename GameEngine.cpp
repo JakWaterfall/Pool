@@ -6,7 +6,7 @@ GameEngine::GameEngine()
 
 	// Balls
 	balls.push_back(new Ball(BLACK_POINT_X-40, BLACK_POINT_Y, SphereEntity::Colours::red));
-	balls.push_back(new Ball(BLACK_POINT_X, BLACK_POINT_Y, SphereEntity::Colours::red));
+	balls.push_back(new Ball(BLACK_POINT_X, BLACK_POINT_Y, SphereEntity::Colours::black));
 
 	balls.push_back(new Ball(BLACK_POINT_X-20, BLACK_POINT_Y-10, SphereEntity::Colours::yellow));
 	balls.push_back(new Ball(BLACK_POINT_X-20, BLACK_POINT_Y+10, SphereEntity::Colours::yellow));
@@ -45,7 +45,7 @@ GameEngine::GameEngine()
 	}
 	else
 	{
-		win = SDL_CreateWindow("Testing! :D", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+		win = SDL_CreateWindow("Billiards!", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
 		if (!win)
 		{
 			std::cout << "Creating window didnt work! " << SDL_GetError() << std::endl;
@@ -70,12 +70,15 @@ void GameEngine::run()
 {
 	// 60 Ticks per second by calling update function every 0.01633 seconds
 	std::chrono::duration<float> delta;
+
 	auto lastTime = std::chrono::steady_clock::now();
-	float sixtyFramesPerSecond = 0.01633;
+	float sixtyFramesPerSecond = 0.01633f;
+
 	while (running)
 	{
 		// Event Queue
 		eventHandler();
+
 		auto now = std::chrono::steady_clock::now();
 		delta = now - lastTime;
 		while (delta.count() > sixtyFramesPerSecond)
@@ -94,7 +97,7 @@ void GameEngine::run()
 
 void GameEngine::quit()
 {
-
+	// DELETE ALL BALL OBJECTS!!!!!!
 	SDL_DestroyRenderer(renderer);
 	renderer = NULL;
 
@@ -120,6 +123,20 @@ void GameEngine::deleteBalls()
 	), balls.end());
 }
 
+void GameEngine::eventHandler()
+{
+	while (SDL_PollEvent(&e))
+	{
+		if (e.type == SDL_QUIT) 
+			running = false;
+
+		for (auto& b : balls)
+		{
+			b->eventHandler(&e); // maybe change to only white ball
+		}
+	}
+}
+
 void GameEngine::update()
 {
 
@@ -132,22 +149,10 @@ void GameEngine::update()
 	{
 		pocket.update(balls);
 	}
+
 	// Delete Marked Balls
 	deleteBalls();
 }
-
-void GameEngine::eventHandler()
-{
-	while (SDL_PollEvent(&e))
-	{
-		if (e.type == SDL_QUIT) running = false;
-		for (auto& b : balls)
-		{
-			b->eventHandler(&e);
-		}
-	}
-}
-
 
 void GameEngine::render()
 {
@@ -159,6 +164,11 @@ void GameEngine::render()
 	renderBackground();
 
 	// objects 
+	for (auto& pocket : pockets)
+	{
+		pocket.render(renderer);
+	}
+
 	for (auto& b : balls)
 	{
 		b->render(renderer);
@@ -167,6 +177,7 @@ void GameEngine::render()
 	//Update screen
 	SDL_RenderPresent(renderer);
 }
+
 // change variable names 
 void GameEngine::renderBackground()
 {
@@ -189,16 +200,13 @@ void GameEngine::renderBackground()
 	dec.render(renderer);
 	SDL_RenderDrawPoint(renderer, TABLE_W / 2 + TABLE_X / 2, TABLE_H / 2 + TABLE_Y / 2);
 
-	for (auto& pocket : pockets)
-	{
-		pocket.render(renderer);
-	}
 
 	SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF);
 	SDL_Rect tableOutline = { TABLE_X, TABLE_Y, TABLE_WIDTH, TABLE_HEIGHT };
 	SDL_RenderDrawRect(renderer, &tableOutline);
 }
 
+// MAYBE USE THIS FOR BALL IMGS 
 SDL_Surface* GameEngine::loadImage(const char* filePath)
 {
 	SDL_Surface* surface = SDL_LoadBMP(filePath);

@@ -2,12 +2,13 @@
 #include "Ball.h"
 class WhiteBall : public Ball
 {
-	bool dropBall; // MAKE BETTER IMPLIMENTATION THEN USING RADIUS
 	Vector mouse;
+	bool dropBall; 
 	float aimerMaxLenght = 200;
+	float greatestHitStrength = 10;
 
 	bool collideWithBall = false;
-	bool ballsMoving = false;
+	bool anyBallsMoving = false;
 
 	bool willCollideWithBall(std::vector<Ball*>& balls);
 	bool mouseWithinDropBallArea();
@@ -19,7 +20,7 @@ public:
 	void render(SDL_Renderer* renderer);
 	void eventHandler(SDL_Event* e);
 	void droppingBall(SDL_Event* e);
-	void dropBallCollision();
+	void keepInDropBallArea();
 	void markForDelete(std::vector<Ball*>& balls);
 };
 
