@@ -40,8 +40,9 @@ private:
 	void deleteBalls();
 
 	void placeNewBalls();
-	void saveStateOfTable();
 	void placeBallsFromFile();
+	void saveStateOfTable();
+	void saveGameDialog();
 
 	SDL_Surface* loadImage(const char* filePath);
 

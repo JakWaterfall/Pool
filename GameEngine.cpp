@@ -86,28 +86,7 @@ void GameEngine::quit()
 {
 	if (!gameOver)
 	{
-		HWND hwnd = GetConsoleWindow();
-		SetForegroundWindow(hwnd);
-		bool finished = false;
-		while (!finished)
-		{
-			char answer;
-			std::cout << "Do You Wish To Save The Game? y or n" << std::endl;
-			std::cin >> answer;
-			switch (answer)
-			{
-			case 'y':
-				saveStateOfTable();
-				finished = true;
-				break;
-			case 'n':
-				finished = true;
-				break;
-			default:
-				std::cout << "Incorrect answer chosen. Place type 'y' or 'n' " << std::endl;
-				break;
-			}
-		}
+		saveGameDialog();
 	}
 	// DELETE ALL BALL OBJECTS!!!!!!
 	for (auto& b : balls)
@@ -268,6 +247,30 @@ void GameEngine::saveStateOfTable()
 	}
 
 	file.close();
+}
+
+void GameEngine::saveGameDialog()
+{
+	HWND hwnd = GetConsoleWindow();
+	SetForegroundWindow(hwnd); // Brings the console window the the front to allow save game functionality
+
+	while (true)
+	{
+		char answer;
+		std::cout << "Do You Wish To Save The Game? y or n" << std::endl;
+		std::cin >> answer;
+		switch (answer)
+		{
+		case 'y':
+			saveStateOfTable();
+			return;
+		case 'n':
+			return;
+		default:
+			std::cout << "Incorrect answer chosen. Place type 'y' or 'n' " << std::endl;
+			break;
+		}
+	}
 }
 
 void GameEngine::placeBallsFromFile()
