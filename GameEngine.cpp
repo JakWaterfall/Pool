@@ -1,11 +1,19 @@
 #include "GameEngine.h"
 
-GameEngine::GameEngine() : whiteBall(WhiteBall(0, 0, true))
+GameEngine::GameEngine(bool resume) : whiteBall(0, 0, true)
 {
 	running = true;
+	gameOver = false;
 
-	// Balls
-	createBalls();
+	// Place Balls
+	if (resume)
+	{
+		placeBallsFromFile();
+	}
+	else
+	{
+		placeNewBalls();
+	}
 
 	// Pockets
 	pockets.push_back(Pocket(TABLE_X, TABLE_Y));
@@ -74,7 +82,19 @@ void GameEngine::run()
 
 void GameEngine::quit()
 {
+	if (!gameOver)
+	{
+		saveGameDialog();
+	}
+
 	// DELETE ALL BALL OBJECTS!!!!!!
+	for (auto& b : balls)
+	{
+		if (b != &whiteBall) // because white ball is a local object that does not need deleteing 
+			delete b;
+	}
+	balls.clear();
+
 	SDL_DestroyRenderer(renderer);
 	renderer = NULL;
 
@@ -124,9 +144,13 @@ void GameEngine::update()
 
 	for (auto& pocket : pockets)
 	{
-		pocket.update(balls);
+		pocket.update(balls, pottedBalls);
 	}
-
+	// DEBUG TO SEE POTTED BALLS
+	for (auto& b : pottedBalls)
+	{
+		std::cout << (int)b.getColour() << std::endl;
+	}
 	// Delete Marked Balls
 	deleteBalls();
 }
@@ -183,7 +207,7 @@ void GameEngine::renderBackground()
 	SDL_RenderDrawRect(renderer, &tableOutline);
 }
 
-void GameEngine::createBalls()
+void GameEngine::placeNewBalls()
 {
 	balls.push_back(new Ball(BLACK_POINT_X - 40, BLACK_POINT_Y, SphereEntity::Colours::red));
 	balls.push_back(new Ball(BLACK_POINT_X, BLACK_POINT_Y, SphereEntity::Colours::black));
@@ -210,6 +234,76 @@ void GameEngine::createBalls()
 
 	balls.push_back(&whiteBall);
 	//balls.push_back(new WhiteBall(0, 0, true));
+}
+
+void GameEngine::saveStateOfTable()
+{
+	using namespace std;
+
+	ofstream file("balls.txt");
+
+	for (auto& b : balls)
+	{
+		file << b->getPosition().getX() << endl;
+		file << b->getPosition().getY() << endl;
+		file << (int)b->getColour() << endl;
+	}
+
+	file.close();
+}
+
+void GameEngine::placeBallsFromFile()
+{
+	using namespace std;
+
+	ifstream file("balls.txt");
+	balls.clear();
+
+	float x;
+	float y;
+	int colour;
+
+	while (true)
+	{
+		file >> x;
+		file >> y;
+		file >> colour;
+		if (file.eof()) break;
+		if ((SphereEntity::Colours)colour == SphereEntity::Colours::white)
+		{
+			whiteBall = WhiteBall(x, y, false);
+			balls.push_back(&whiteBall);
+		}
+		else
+		{
+			balls.push_back(new Ball(x, y, (SphereEntity::Colours)colour));
+		}
+	}
+	file.close();
+}
+
+void GameEngine::saveGameDialog()
+{
+	HWND hwnd = GetConsoleWindow();
+	SetForegroundWindow(hwnd); // Brings the console window the the front to allow save game functionality
+
+	while (true)
+	{
+		char answer;
+		std::cout << "Do You Wish To Save The Game? y or n" << std::endl;
+		std::cin >> answer;
+		switch (answer)
+		{
+		case 'y':
+			saveStateOfTable();
+			return;
+		case 'n':
+			return;
+		default:
+			std::cout << "Incorrect answer chosen. Place type 'y' or 'n' " << std::endl;
+			break;
+		}
+	}
 }
 
 // MAYBE USE THIS FOR BALL IMGS 

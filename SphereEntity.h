@@ -11,12 +11,13 @@ class SphereEntity
 public:
 	enum class Colours
 	{
-		white, black, red, yellow
+		white = 0, black = 1, red = 2, yellow = 3
 	};
 protected:
 	Uint8 r;
 	Uint8 g;
 	Uint8 b;
+	Colours colour;
 	int radius;
 	Vector position;
 	
@@ -27,6 +28,7 @@ public:
 	virtual void render(SDL_Renderer* renderer);
 	Vector& getPosition();
 	int getRadius();
+	Colours getColour();
 
 protected:
 	void drawCirle(SDL_Renderer* renderer, Vector position, int radius);

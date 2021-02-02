@@ -9,7 +9,7 @@ class Pocket : public SphereEntity
 public:
 	Pocket(float _x, float _y);
 
-	void update(std::vector<Ball*>& balls);
+	void update(std::vector<Ball*>& balls, std::vector<Ball>& pottedBalls);
 private:
-	void objectCollision(std::vector<Ball*>& balls);
+	void objectCollision(std::vector<Ball*>& balls, std::vector<Ball>& pottedBalls);
 };

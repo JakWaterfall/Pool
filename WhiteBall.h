@@ -2,6 +2,13 @@
 #include "Ball.h"
 class WhiteBall : public Ball
 {
+	struct Info
+	{
+		bool endTurn;
+		bool hit;
+		bool hitOtherBall;
+		SphereEntity::Colours colourHitFirst;
+	};
 	Vector mouse;
 	bool dropBall; 
 	float aimerMaxLenght = 200;
@@ -15,6 +22,8 @@ class WhiteBall : public Ball
 	bool checkIfballsMoving(std::vector<Ball*>& balls);
 public:
 	WhiteBall(float _x, float _y, bool dropBall, SphereEntity::Colours colour = SphereEntity::Colours::white);
+
+	Info info;
 
 	void update(std::vector<Ball*>& balls);
 	void render(SDL_Renderer* renderer);

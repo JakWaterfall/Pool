@@ -2,6 +2,8 @@
 #include <SDL.h>
 #include <iostream>
 #include <chrono>
+#include <fstream>
+#include <windows.h>
 
 #include "Constants.h"
 #include "SphereEntity.h"
@@ -17,15 +19,17 @@ class GameEngine
 	SDL_Event e;
 
 	bool running;
+	bool gameOver; // impliment game over on black ball potted!
 
 	WhiteBall whiteBall;
 	std::vector<Ball*> balls;
 	std::vector<Pocket> pockets;
+	std::vector<Ball> pottedBalls;
 
 
 public:
 	//Constuctors
-	GameEngine();
+	GameEngine(bool resume);
 
 private:
 	// Functions
@@ -36,7 +40,12 @@ private:
 	void eventHandler();
 	void quit();
 	void deleteBalls();
-	void createBalls();
+
+	void placeNewBalls();
+	void saveStateOfTable();
+	void placeBallsFromFile();
+	void saveGameDialog();
+
 	SDL_Surface* loadImage(const char* filePath);
 
 

@@ -1,7 +1,7 @@
 #include "SphereEntity.h"
 
 SphereEntity::SphereEntity(float _x, float _y, Colours colour, int _radius)
-	: position({ _x, _y }), radius(_radius)
+	: position({ _x, _y }), radius(_radius), colour(colour)
 {
 	switch (colour)
 	{
@@ -41,6 +41,11 @@ Vector& SphereEntity::getPosition()
 int SphereEntity::getRadius()
 {
 	return radius;
+}
+
+SphereEntity::Colours SphereEntity::getColour()
+{
+	return colour;
 }
 
 void SphereEntity::drawCirle(SDL_Renderer* renderer, Vector position, int radius)
