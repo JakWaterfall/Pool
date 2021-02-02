@@ -7,6 +7,7 @@ WhiteBall::WhiteBall(float _x, float _y, bool dropBall, SphereEntity::Colours co
 
 void WhiteBall::update(std::vector<Ball*>& balls)
 {
+	anyBallsMoving = checkIfballsMoving(balls);
 	if (dropBall)
 	{
 		radius = 15;
@@ -15,7 +16,6 @@ void WhiteBall::update(std::vector<Ball*>& balls)
 		keepInDropBallArea();
 		return;
 	}
-	anyBallsMoving = checkIfballsMoving(balls);
 	Ball::update(balls);
 }
 

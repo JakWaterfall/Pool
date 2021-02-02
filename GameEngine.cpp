@@ -1,34 +1,21 @@
 #include "GameEngine.h"
 
-GameEngine::GameEngine()
+GameEngine::GameEngine(bool resume)
 {
 	running = true;
+	gameOver = false;
 
-	// Balls
-	balls.push_back(new Ball(BLACK_POINT_X-40, BLACK_POINT_Y, SphereEntity::Colours::red));
-	balls.push_back(new Ball(BLACK_POINT_X, BLACK_POINT_Y, SphereEntity::Colours::black));
-
-	balls.push_back(new Ball(BLACK_POINT_X-20, BLACK_POINT_Y-10, SphereEntity::Colours::yellow));
-	balls.push_back(new Ball(BLACK_POINT_X-20, BLACK_POINT_Y+10, SphereEntity::Colours::yellow));
-
-	balls.push_back(new Ball(BLACK_POINT_X, BLACK_POINT_Y-20, SphereEntity::Colours::red));
-	balls.push_back(new Ball(BLACK_POINT_X, BLACK_POINT_Y+20, SphereEntity::Colours::red));
-	//
-	balls.push_back(new Ball(BLACK_POINT_X + 20, BLACK_POINT_Y - 10, SphereEntity::Colours::yellow));
-	balls.push_back(new Ball(BLACK_POINT_X + 20, BLACK_POINT_Y + 10, SphereEntity::Colours::red));
-
-	balls.push_back(new Ball(BLACK_POINT_X + 20, BLACK_POINT_Y - 30, SphereEntity::Colours::yellow));
-	balls.push_back(new Ball(BLACK_POINT_X + 20, BLACK_POINT_Y + 30, SphereEntity::Colours::yellow));
-
-	balls.push_back(new Ball(BLACK_POINT_X + 40, BLACK_POINT_Y, SphereEntity::Colours::red));
-
-	balls.push_back(new Ball(BLACK_POINT_X + 40, BLACK_POINT_Y-20, SphereEntity::Colours::yellow));
-	balls.push_back(new Ball(BLACK_POINT_X + 40, BLACK_POINT_Y+20, SphereEntity::Colours::yellow));
-
-	balls.push_back(new Ball(BLACK_POINT_X + 40, BLACK_POINT_Y - 40, SphereEntity::Colours::red));
-	balls.push_back(new Ball(BLACK_POINT_X + 40, BLACK_POINT_Y + 40, SphereEntity::Colours::red));
-
-	balls.push_back(new WhiteBall(0, 0, true));
+	// Place Balls
+	if (resume)
+	{
+		placeBallsFromFile();
+	}
+	else
+	{
+		placeNewBalls();
+	}
+	
+	
 
 	// Pockets
 	pockets.push_back(Pocket(TABLE_X, TABLE_Y));
@@ -97,7 +84,38 @@ void GameEngine::run()
 
 void GameEngine::quit()
 {
+	if (!gameOver)
+	{
+		HWND hwnd = GetConsoleWindow();
+		SetForegroundWindow(hwnd);
+		bool finished = false;
+		while (!finished)
+		{
+			char answer;
+			std::cout << "Do You Wish To Save The Game? y or n" << std::endl;
+			std::cin >> answer;
+			switch (answer)
+			{
+			case 'y':
+				saveStateOfTable();
+				finished = true;
+				break;
+			case 'n':
+				finished = true;
+				break;
+			default:
+				std::cout << "Incorrect answer chosen. Place type 'y' or 'n' " << std::endl;
+				break;
+			}
+		}
+	}
 	// DELETE ALL BALL OBJECTS!!!!!!
+	for (auto& b : balls)
+	{
+		delete b;
+	}
+	balls.clear();
+
 	SDL_DestroyRenderer(renderer);
 	renderer = NULL;
 
@@ -122,6 +140,8 @@ void GameEngine::deleteBalls()
 		}
 	), balls.end());
 }
+
+
 
 void GameEngine::eventHandler()
 {
@@ -205,6 +225,80 @@ void GameEngine::renderBackground()
 	SDL_Rect tableOutline = { TABLE_X, TABLE_Y, TABLE_WIDTH, TABLE_HEIGHT };
 	SDL_RenderDrawRect(renderer, &tableOutline);
 }
+
+void GameEngine::placeNewBalls()
+{
+	balls.push_back(new Ball(BLACK_POINT_X - 40, BLACK_POINT_Y, SphereEntity::Colours::red));
+	balls.push_back(new Ball(BLACK_POINT_X, BLACK_POINT_Y, SphereEntity::Colours::black));
+
+	balls.push_back(new Ball(BLACK_POINT_X - 20, BLACK_POINT_Y - 10, SphereEntity::Colours::yellow));
+	balls.push_back(new Ball(BLACK_POINT_X - 20, BLACK_POINT_Y + 10, SphereEntity::Colours::yellow));
+
+	balls.push_back(new Ball(BLACK_POINT_X, BLACK_POINT_Y - 20, SphereEntity::Colours::red));
+	balls.push_back(new Ball(BLACK_POINT_X, BLACK_POINT_Y + 20, SphereEntity::Colours::red));
+	
+	balls.push_back(new Ball(BLACK_POINT_X + 20, BLACK_POINT_Y - 10, SphereEntity::Colours::yellow));
+	balls.push_back(new Ball(BLACK_POINT_X + 20, BLACK_POINT_Y + 10, SphereEntity::Colours::red));
+
+	balls.push_back(new Ball(BLACK_POINT_X + 20, BLACK_POINT_Y - 30, SphereEntity::Colours::yellow));
+	balls.push_back(new Ball(BLACK_POINT_X + 20, BLACK_POINT_Y + 30, SphereEntity::Colours::yellow));
+
+	balls.push_back(new Ball(BLACK_POINT_X + 40, BLACK_POINT_Y, SphereEntity::Colours::red));
+
+	balls.push_back(new Ball(BLACK_POINT_X + 40, BLACK_POINT_Y - 20, SphereEntity::Colours::yellow));
+	balls.push_back(new Ball(BLACK_POINT_X + 40, BLACK_POINT_Y + 20, SphereEntity::Colours::yellow));
+
+	balls.push_back(new Ball(BLACK_POINT_X + 40, BLACK_POINT_Y - 40, SphereEntity::Colours::red));
+	balls.push_back(new Ball(BLACK_POINT_X + 40, BLACK_POINT_Y + 40, SphereEntity::Colours::red));
+
+	balls.push_back(new WhiteBall(0, 0, true));
+}
+
+void GameEngine::saveStateOfTable()
+{
+	using namespace std;
+
+	ofstream file("balls.txt");
+
+	for (auto& b : balls)
+	{
+		file << b->getPosition().getX() << endl;
+		file << b->getPosition().getY() << endl;
+		file << (int)b->getColour() << endl;
+	}
+
+	file.close();
+}
+
+void GameEngine::placeBallsFromFile()
+{
+	using namespace std;
+
+	ifstream file("balls.txt");
+	balls.clear();
+
+	float x;
+	float y;
+	int colour;
+
+	while (true)
+	{
+		file >> x;
+		file >> y;
+		file >> colour;
+		if (file.eof()) break;
+		if ((SphereEntity::Colours)colour == SphereEntity::Colours::white)
+		{
+			balls.push_back(new WhiteBall(x, y, false));
+		}
+		else
+		{
+			balls.push_back(new Ball(x, y, (SphereEntity::Colours)colour));
+		}
+	}
+	file.close();
+}
+
 
 // MAYBE USE THIS FOR BALL IMGS 
 SDL_Surface* GameEngine::loadImage(const char* filePath)
