@@ -94,8 +94,9 @@ void Ball::ballCollision(std::vector<Ball*> & balls)
 }
 
 
-void Ball::markForDelete(std::vector<Ball*>& balls)
+void Ball::potted(std::vector<Ball*>& balls)
 {
+	//pottedBalls.push_back(*this.);
 	deleteFlag = true;
 }
 

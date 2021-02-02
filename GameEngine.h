@@ -18,8 +18,10 @@ class GameEngine
 
 	bool running;
 
+	WhiteBall whiteBall;
 	std::vector<Ball*> balls;
 	std::vector<Pocket> pockets;
+
 
 public:
 	//Constuctors
@@ -34,6 +36,7 @@ private:
 	void eventHandler();
 	void quit();
 	void deleteBalls();
+	void createBalls();
 	SDL_Surface* loadImage(const char* filePath);
 
 

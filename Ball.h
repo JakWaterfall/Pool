@@ -13,11 +13,12 @@ protected:
 
 public:
 	Ball(float _x, float _y, SphereEntity::Colours colour, int radius = 10);
+	static std::vector<SphereEntity::Colours> pottedBalls;
 
 public:
 	virtual void update(std::vector<Ball*> & balls);
 	virtual void eventHandler(SDL_Event* e);
-	virtual void markForDelete(std::vector<Ball*>& balls);
+	virtual void potted(std::vector<Ball*>& balls);
 	bool getDeleteFlag();
 	bool getIsInteractable() { return isInteractable; }
 	Vector& getVelocity();

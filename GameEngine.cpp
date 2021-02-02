@@ -1,34 +1,11 @@
 #include "GameEngine.h"
 
-GameEngine::GameEngine()
+GameEngine::GameEngine() : whiteBall(WhiteBall(0, 0, true))
 {
 	running = true;
 
 	// Balls
-	balls.push_back(new Ball(BLACK_POINT_X-40, BLACK_POINT_Y, SphereEntity::Colours::red));
-	balls.push_back(new Ball(BLACK_POINT_X, BLACK_POINT_Y, SphereEntity::Colours::black));
-
-	balls.push_back(new Ball(BLACK_POINT_X-20, BLACK_POINT_Y-10, SphereEntity::Colours::yellow));
-	balls.push_back(new Ball(BLACK_POINT_X-20, BLACK_POINT_Y+10, SphereEntity::Colours::yellow));
-
-	balls.push_back(new Ball(BLACK_POINT_X, BLACK_POINT_Y-20, SphereEntity::Colours::red));
-	balls.push_back(new Ball(BLACK_POINT_X, BLACK_POINT_Y+20, SphereEntity::Colours::red));
-	//
-	balls.push_back(new Ball(BLACK_POINT_X + 20, BLACK_POINT_Y - 10, SphereEntity::Colours::yellow));
-	balls.push_back(new Ball(BLACK_POINT_X + 20, BLACK_POINT_Y + 10, SphereEntity::Colours::red));
-
-	balls.push_back(new Ball(BLACK_POINT_X + 20, BLACK_POINT_Y - 30, SphereEntity::Colours::yellow));
-	balls.push_back(new Ball(BLACK_POINT_X + 20, BLACK_POINT_Y + 30, SphereEntity::Colours::yellow));
-
-	balls.push_back(new Ball(BLACK_POINT_X + 40, BLACK_POINT_Y, SphereEntity::Colours::red));
-
-	balls.push_back(new Ball(BLACK_POINT_X + 40, BLACK_POINT_Y-20, SphereEntity::Colours::yellow));
-	balls.push_back(new Ball(BLACK_POINT_X + 40, BLACK_POINT_Y+20, SphereEntity::Colours::yellow));
-
-	balls.push_back(new Ball(BLACK_POINT_X + 40, BLACK_POINT_Y - 40, SphereEntity::Colours::red));
-	balls.push_back(new Ball(BLACK_POINT_X + 40, BLACK_POINT_Y + 40, SphereEntity::Colours::red));
-
-	balls.push_back(new WhiteBall(0, 0, true));
+	createBalls();
 
 	// Pockets
 	pockets.push_back(Pocket(TABLE_X, TABLE_Y));
@@ -204,6 +181,35 @@ void GameEngine::renderBackground()
 	SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF);
 	SDL_Rect tableOutline = { TABLE_X, TABLE_Y, TABLE_WIDTH, TABLE_HEIGHT };
 	SDL_RenderDrawRect(renderer, &tableOutline);
+}
+
+void GameEngine::createBalls()
+{
+	balls.push_back(new Ball(BLACK_POINT_X - 40, BLACK_POINT_Y, SphereEntity::Colours::red));
+	balls.push_back(new Ball(BLACK_POINT_X, BLACK_POINT_Y, SphereEntity::Colours::black));
+
+	balls.push_back(new Ball(BLACK_POINT_X - 20, BLACK_POINT_Y - 10, SphereEntity::Colours::yellow));
+	balls.push_back(new Ball(BLACK_POINT_X - 20, BLACK_POINT_Y + 10, SphereEntity::Colours::yellow));
+
+	balls.push_back(new Ball(BLACK_POINT_X, BLACK_POINT_Y - 20, SphereEntity::Colours::red));
+	balls.push_back(new Ball(BLACK_POINT_X, BLACK_POINT_Y + 20, SphereEntity::Colours::red));
+
+	balls.push_back(new Ball(BLACK_POINT_X + 20, BLACK_POINT_Y - 10, SphereEntity::Colours::yellow));
+	balls.push_back(new Ball(BLACK_POINT_X + 20, BLACK_POINT_Y + 10, SphereEntity::Colours::red));
+
+	balls.push_back(new Ball(BLACK_POINT_X + 20, BLACK_POINT_Y - 30, SphereEntity::Colours::yellow));
+	balls.push_back(new Ball(BLACK_POINT_X + 20, BLACK_POINT_Y + 30, SphereEntity::Colours::yellow));
+
+	balls.push_back(new Ball(BLACK_POINT_X + 40, BLACK_POINT_Y, SphereEntity::Colours::red));
+
+	balls.push_back(new Ball(BLACK_POINT_X + 40, BLACK_POINT_Y - 20, SphereEntity::Colours::yellow));
+	balls.push_back(new Ball(BLACK_POINT_X + 40, BLACK_POINT_Y + 20, SphereEntity::Colours::yellow));
+
+	balls.push_back(new Ball(BLACK_POINT_X + 40, BLACK_POINT_Y - 40, SphereEntity::Colours::red));
+	balls.push_back(new Ball(BLACK_POINT_X + 40, BLACK_POINT_Y + 40, SphereEntity::Colours::red));
+
+	balls.push_back(&whiteBall);
+	//balls.push_back(new WhiteBall(0, 0, true));
 }
 
 // MAYBE USE THIS FOR BALL IMGS 

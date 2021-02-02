@@ -21,6 +21,6 @@ public:
 	void eventHandler(SDL_Event* e);
 	void droppingBall(SDL_Event* e);
 	void keepInDropBallArea();
-	void markForDelete(std::vector<Ball*>& balls);
+	void potted(std::vector<Ball*>& balls);
 };
 

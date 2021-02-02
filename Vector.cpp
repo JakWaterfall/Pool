@@ -22,6 +22,7 @@ void Vector::setMagnitude(float scaler)
     *this *= scaler;
 }
 
+// NOT USED?? REMOVE?
 void Vector::limit(float _limiter)
 {
     if (!b_limit)

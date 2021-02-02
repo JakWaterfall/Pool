@@ -18,7 +18,7 @@ void Pocket::objectCollision(std::vector<Ball*>& balls)
 		float dist = test.magnitude();
 		if (dist < radius + b->getRadius() && b->getIsInteractable())  // this is so when the white ball is being dropped it dosent hit the other balls
 		{
-			b->markForDelete(balls);
+			b->potted(balls);
 		}
 	}
 }

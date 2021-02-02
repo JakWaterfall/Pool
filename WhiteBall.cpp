@@ -7,6 +7,7 @@ WhiteBall::WhiteBall(float _x, float _y, bool dropBall, SphereEntity::Colours co
 
 void WhiteBall::update(std::vector<Ball*>& balls)
 {
+	anyBallsMoving = checkIfballsMoving(balls);
 	if (dropBall)
 	{
 		radius = 15;
@@ -15,7 +16,6 @@ void WhiteBall::update(std::vector<Ball*>& balls)
 		keepInDropBallArea();
 		return;
 	}
-	anyBallsMoving = checkIfballsMoving(balls);
 	Ball::update(balls);
 }
 
@@ -38,6 +38,14 @@ void WhiteBall::render(SDL_Renderer* renderer)
 
 void WhiteBall::eventHandler(SDL_Event* e)
 {
+	if (e->type == SDL_KEYUP)
+	{
+		velocity.setX(0);
+		velocity.setY(0);
+		dropBall = true;
+		//anyBallsMoving = false;
+	}
+
 	if (e->type == SDL_MOUSEMOTION)
 	{
 		int x, y;
@@ -139,9 +147,13 @@ void WhiteBall::keepInDropBallArea()
 	}
 }
 
-void WhiteBall::markForDelete(std::vector<Ball*>& balls)
+void WhiteBall::potted(std::vector<Ball*>& balls)
 {
-	balls.push_back(new WhiteBall(0, 0, true));
-	deleteFlag = true;
+	//balls.push_back(new WhiteBall(0, 0, true));
+	//deleteFlag = true;
+	velocity.setX(0);
+	velocity.setY(0);
+	dropBall = true;
+	anyBallsMoving = false;
 }
 
