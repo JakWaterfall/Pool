@@ -8,21 +8,21 @@ class Players
 	SphereEntity::Colours black = SphereEntity::Colours::black;
 	SphereEntity::Colours white = SphereEntity::Colours::white;
 
-	bool giveOtherPlayer2Shots;
-	bool areColoursSetup;
-	bool player1Turn;
-	int player1Shots;
-	int player2Shots;
+	bool foulBall;
+	bool arePlayerColoursSetup;
+	bool isPlayer1Turn;
+	int player1ShotsLeft;
+	int player2ShotsLeft;
 	SphereEntity::Colours player1Colour;
 	SphereEntity::Colours player2Colour;
 
 public:
 	struct saveVariables
 	{
-		bool areColoursSetup;
-		bool player1Turn;
-		int player1Shots;
-		int player2Shots;
+		bool arePlayerColoursSetup;
+		bool isPlayer1Turn;
+		int player1ShotsLeft;
+		int player2ShotsLeft;
 		SphereEntity::Colours player1Colour;
 		SphereEntity::Colours player2Colour;
 	};
@@ -41,6 +41,8 @@ private:
 	void whiteHitOrMissOtherBall(WhiteBall& white);
 	void resolvePottedBalls(std::vector<Ball>& pottedBalls);
 	void setupColours(std::vector<Ball>& pottedBalls);
-	void resolve2Shots();
+	void resolveFoulBall();
+	void resolvePlayerTurn();
+
+	void debugConsoleLogInfo();
 };
-// Change variable names

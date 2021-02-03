@@ -17,6 +17,10 @@ class WhiteBall : public Ball
 	bool collideWithBall = false;
 	bool anyBallsMoving = false;
 
+public:
+	Info info;
+
+private:
 	bool willCollideWithBall(std::vector<Ball*>& balls);
 	bool mouseWithinDropBallArea();
 	bool checkIfballsMoving(std::vector<Ball*>& balls);
@@ -24,7 +28,6 @@ class WhiteBall : public Ball
 public:
 	WhiteBall(float _x, float _y, bool dropBall, SphereEntity::Colours colour = SphereEntity::Colours::white);
 
-	Info info;
 
 	void update(std::vector<Ball*>& balls);
 	void render(SDL_Renderer* renderer);

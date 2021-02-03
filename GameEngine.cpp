@@ -251,10 +251,10 @@ void GameEngine::saveStateOfTable()
 	}
 	
 	Players::saveVariables saveVar = players.getSaveVariables();
-	playerFile << saveVar.player1Turn << endl;
-	playerFile << saveVar.areColoursSetup << endl;
-	playerFile << saveVar.player1Shots << endl;
-	playerFile << saveVar.player2Shots << endl;
+	playerFile << saveVar.isPlayer1Turn << endl;
+	playerFile << saveVar.arePlayerColoursSetup << endl;
+	playerFile << saveVar.player1ShotsLeft << endl;
+	playerFile << saveVar.player2ShotsLeft << endl;
 	playerFile << (int)saveVar.player1Colour << endl;
 	playerFile << (int)saveVar.player2Colour << endl;
 
@@ -294,10 +294,10 @@ void GameEngine::setupBallsAndPlayersFromFile()
 	ifstream playerFile("player.txt");
 
 	Players::saveVariables saveVar;
-	playerFile >> saveVar.player1Turn;
-	playerFile >> saveVar.areColoursSetup;
-	playerFile >> saveVar.player1Shots;
-	playerFile >> saveVar.player2Shots;
+	playerFile >> saveVar.isPlayer1Turn;
+	playerFile >> saveVar.arePlayerColoursSetup;
+	playerFile >> saveVar.player1ShotsLeft;
+	playerFile >> saveVar.player2ShotsLeft;
 	int colour1;
 	int colour2;
 	playerFile >> colour1;
