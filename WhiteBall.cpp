@@ -1,7 +1,7 @@
 #include "WhiteBall.h"
 
 WhiteBall::WhiteBall(float _x, float _y, bool dropBall, SphereEntity::Colours colour)
-	: Ball(_x, _y, colour), mouse({ 0, 0 }), dropBall(dropBall)
+	: Ball(_x, _y, colour), mouse({ 0, 0 }), dropBall(dropBall), info({false, false, false, SphereEntity::Colours::white})
 {
 }
 

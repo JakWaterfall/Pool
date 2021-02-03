@@ -43,7 +43,7 @@ void Players::update(WhiteBall& white, std::vector<Ball>& pottedBalls)
 		white.info.hitOtherBall = false;
 		pottedBalls.clear();
 
-
+		// DEGUB
 		using namespace std;
  		cout << "player turn: " << (player1Turn ? "1" : "2") << endl;
 		cout << "shots left: " << (player1Turn ? player1Shots : player2Shots) << endl;
@@ -95,8 +95,9 @@ void Players::update(WhiteBall& white, std::vector<Ball>& pottedBalls)
 
 void Players::render(SDL_Renderer* renderer)
 {
-
+	// render turns and score to screen
 }
+
 
 void Players::whiteHitOrMissOtherBall(WhiteBall& white)
 {
@@ -132,7 +133,7 @@ void Players::whiteHitOrMissOtherBall(WhiteBall& white)
 				giveOtherPlayer2Shots = true;
 				break;
 		default:
-			std::cout << "something went wrong";
+			std::cout << "something went wrong11";
 			break;
 		}
 	}
@@ -229,3 +230,17 @@ void Players::resolve2Shots()
 	giveOtherPlayer2Shots = false;
 }
 
+Players::saveVariables Players::getSaveVariables()
+{
+	return { areColoursSetup, player1Turn, player1Shots, player2Shots, player1Colour, player2Colour };
+}
+
+void Players::setVariablesFromFile(saveVariables saveVar)
+{
+	areColoursSetup = saveVar.areColoursSetup;
+	player1Turn = saveVar.player1Turn;
+	player1Shots = saveVar.player1Shots;
+	player2Shots = saveVar.player2Shots;
+	player1Colour = saveVar.player1Colour;
+	player2Colour = saveVar.player2Colour;
+}

@@ -27,7 +27,9 @@ class GameEngine
 	std::vector<Pocket> pockets;
 	std::vector<Ball> pottedBalls;
 
-	Players p;
+	Players players;
+
+	SDL_Texture* wb = NULL;
 
 
 public:
@@ -46,10 +48,11 @@ private:
 
 	void placeNewBalls();
 	void saveStateOfTable();
-	void placeBallsFromFile();
+	void setupBallsAndPlayersFromFile();
 	void saveGameDialog();
 
 	SDL_Surface* loadImage(const char* filePath);
+	SDL_Texture* loadTexture(const char* filePath);
 
 
 };

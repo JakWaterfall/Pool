@@ -13,9 +13,10 @@ int main(int argc, char* args[])
 
 bool checkResumingGame()
 {
-	std::ifstream file("balls.txt");
+	std::ifstream ballFile("balls.txt");
+	std::ifstream playersFile("player.txt");
 
-	while (file.good())
+	while (ballFile.good() && playersFile.good())
 	{
 		char answer;
 		std::cout << "Do You Wish To Resume Your Last Game? y or n" << std::endl;
@@ -23,11 +24,13 @@ bool checkResumingGame()
 		switch (answer)
 		{
 		case 'y':
-			file.close();
+			ballFile.close();
+			playersFile.close();
 			return true;
 			break;
 		case 'n':
-			file.close();
+			ballFile.close();
+			playersFile.close();
 			return false;
 			break;
 		default:
@@ -35,6 +38,7 @@ bool checkResumingGame()
 			break;
 		}
 	}
-	file.close();
+	ballFile.close();
+	playersFile.close();
 	return false;
 }

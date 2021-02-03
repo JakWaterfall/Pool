@@ -8,24 +8,39 @@ class Players
 	SphereEntity::Colours black = SphereEntity::Colours::black;
 	SphereEntity::Colours white = SphereEntity::Colours::white;
 
-	bool areColoursSetup;
 	bool giveOtherPlayer2Shots;
+	bool areColoursSetup;
 	bool player1Turn;
 	int player1Shots;
 	int player2Shots;
 	SphereEntity::Colours player1Colour;
 	SphereEntity::Colours player2Colour;
+
+public:
+	struct saveVariables
+	{
+		bool areColoursSetup;
+		bool player1Turn;
+		int player1Shots;
+		int player2Shots;
+		SphereEntity::Colours player1Colour;
+		SphereEntity::Colours player2Colour;
+	};
+
 public:
 	Players();
 
 	void update(WhiteBall & white, std::vector<Ball>& pottedBalls);
 	void render(SDL_Renderer* renderer);
+
+	// Getters / Setter from file
+	saveVariables getSaveVariables();
+	void setVariablesFromFile(saveVariables saveVar);
+
 private:
 	void whiteHitOrMissOtherBall(WhiteBall& white);
 	void resolvePottedBalls(std::vector<Ball>& pottedBalls);
 	void setupColours(std::vector<Ball>& pottedBalls);
 	void resolve2Shots();
 };
-// only evaluate after all balls have stopped moving
-//if was hit and vel == 0 and didnt hit ball either way --shot and if didnt hit give 2 shots to other player
-// hit and hit oppersite player ball 
+// Change variable names

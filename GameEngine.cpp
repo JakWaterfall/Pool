@@ -8,7 +8,7 @@ GameEngine::GameEngine(bool resume) : whiteBall(0, 0, true)
 	// Place Balls
 	if (resume)
 	{
-		placeBallsFromFile();
+		setupBallsAndPlayersFromFile();
 	}
 	else
 	{
@@ -45,6 +45,7 @@ GameEngine::GameEngine(bool resume) : whiteBall(0, 0, true)
 				std::cout << "Creating renderer didnt work! " << SDL_GetError() << std::endl;
 			}
 
+			wb = loadTexture("Images/whiteball2.bmp");
 			run();
 		}
 	}
@@ -147,7 +148,7 @@ void GameEngine::update()
 		pocket.update(balls, pottedBalls);
 	}
 	// DEBUG TO SEE POTTED BALLS
-	p.update(whiteBall, pottedBalls);
+	players.update(whiteBall, pottedBalls);
 	// Delete Marked Balls
 	deleteBalls();
 }
@@ -171,6 +172,9 @@ void GameEngine::render()
 	{
 		b->render(renderer);
 	}
+
+	SDL_Rect ball = { 0, 0, 20, 20 };
+	SDL_RenderCopy(renderer, wb, NULL, &ball);
 
 	//Update screen
 	SDL_RenderPresent(renderer);
@@ -230,30 +234,39 @@ void GameEngine::placeNewBalls()
 	balls.push_back(new Ball(BLACK_POINT_X + 40, BLACK_POINT_Y + 40, SphereEntity::Colours::red));
 
 	balls.push_back(&whiteBall);
-	//balls.push_back(new WhiteBall(0, 0, true));
 }
 
 void GameEngine::saveStateOfTable()
 {
 	using namespace std;
 
-	ofstream file("balls.txt");
+	ofstream ballFile("balls.txt");
+	ofstream playerFile("player.txt");
 
 	for (auto& b : balls)
 	{
-		file << b->getPosition().getX() << endl;
-		file << b->getPosition().getY() << endl;
-		file << (int)b->getColour() << endl;
+		ballFile << b->getPosition().getX() << endl;
+		ballFile << b->getPosition().getY() << endl;
+		ballFile << (int)b->getColour() << endl;
 	}
+	
+	Players::saveVariables saveVar = players.getSaveVariables();
+	playerFile << saveVar.player1Turn << endl;
+	playerFile << saveVar.areColoursSetup << endl;
+	playerFile << saveVar.player1Shots << endl;
+	playerFile << saveVar.player2Shots << endl;
+	playerFile << (int)saveVar.player1Colour << endl;
+	playerFile << (int)saveVar.player2Colour << endl;
 
-	file.close();
+	ballFile.close();
+	playerFile.close();
 }
 
-void GameEngine::placeBallsFromFile()
+void GameEngine::setupBallsAndPlayersFromFile()
 {
 	using namespace std;
 
-	ifstream file("balls.txt");
+	ifstream ballFile("balls.txt");
 	balls.clear();
 
 	float x;
@@ -262,10 +275,10 @@ void GameEngine::placeBallsFromFile()
 
 	while (true)
 	{
-		file >> x;
-		file >> y;
-		file >> colour;
-		if (file.eof()) break;
+		ballFile >> x;
+		ballFile >> y;
+		ballFile >> colour;
+		if (ballFile.eof()) break;
 		if ((SphereEntity::Colours)colour == SphereEntity::Colours::white)
 		{
 			whiteBall = WhiteBall(x, y, false);
@@ -276,7 +289,25 @@ void GameEngine::placeBallsFromFile()
 			balls.push_back(new Ball(x, y, (SphereEntity::Colours)colour));
 		}
 	}
-	file.close();
+	ballFile.close();
+
+	ifstream playerFile("player.txt");
+
+	Players::saveVariables saveVar;
+	playerFile >> saveVar.player1Turn;
+	playerFile >> saveVar.areColoursSetup;
+	playerFile >> saveVar.player1Shots;
+	playerFile >> saveVar.player2Shots;
+	int colour1;
+	int colour2;
+	playerFile >> colour1;
+	playerFile >> colour2;
+	saveVar.player1Colour = (SphereEntity::Colours)colour1;
+	saveVar.player2Colour = (SphereEntity::Colours)colour2;
+
+	players.setVariablesFromFile(saveVar);
+
+	playerFile.close();
 }
 
 void GameEngine::saveGameDialog()
@@ -312,4 +343,29 @@ SDL_Surface* GameEngine::loadImage(const char* filePath)
 		std::cout << "load image didnt work! " << SDL_GetError() << std::endl;
 	}
 	return surface;
+}
+
+SDL_Texture* GameEngine::loadTexture(const char* filePath)
+{
+	SDL_Texture* newTexture = NULL;
+
+	SDL_Surface* loadedSurface = loadImage(filePath);
+
+	if (loadedSurface == NULL)
+	{
+		std::cout << "load image didnt work! " << SDL_GetError() << std::endl;
+	}
+	else
+	{
+		newTexture = SDL_CreateTextureFromSurface(renderer, loadedSurface);
+		if (newTexture == NULL)
+		{
+			std::cout << "load texture didnt work! " << SDL_GetError() << std::endl;
+		}
+
+		//Get rid of old loaded surface
+		SDL_FreeSurface(loadedSurface);
+	}
+
+	return newTexture;
 }
