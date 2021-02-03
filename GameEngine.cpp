@@ -147,10 +147,7 @@ void GameEngine::update()
 		pocket.update(balls, pottedBalls);
 	}
 	// DEBUG TO SEE POTTED BALLS
-	for (auto& b : pottedBalls)
-	{
-		std::cout << (int)b.getColour() << std::endl;
-	}
+	p.update(whiteBall, pottedBalls);
 	// Delete Marked Balls
 	deleteBalls();
 }

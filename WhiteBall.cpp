@@ -59,6 +59,8 @@ void WhiteBall::eventHandler(SDL_Event* e)
 	}
 	if (e->type == SDL_MOUSEBUTTONDOWN && !anyBallsMoving) 
 	{
+		info.hit = true;
+
 		Vector hit = position - mouse;
 		hit *= 0.1f;
 		if (hit.magnitude() > greatestHitStrength)
@@ -69,6 +71,49 @@ void WhiteBall::eventHandler(SDL_Event* e)
 	}
 }
 
+void WhiteBall::ballCollision(std::vector<Ball*>& balls)
+{
+	Vector v_FromBallToBall(0, 0);
+	for (auto& b : balls)
+	{
+		if (b == this) // dont check ball with itself
+			continue;
+
+		if (testCollision(v_FromBallToBall, *b))
+		{
+			v_FromBallToBall.setMagnitude(ballCollisionStrenght); //!!!!!!!! impliment vs speed as well. so calc how fast it was going and use that(poistion - (poistion + velocity))= vector in dir its going then get the magnitude for speed value.
+			velocity += v_FromBallToBall; // apply vector to velocity to push ball away from colliding ball in the direction they got hit from.
+
+			if (!info.hitOtherBall)
+			{
+				info.hitOtherBall = true;
+				info.colourHitFirst = b->getColour();
+
+				std::string colour;
+				switch (b->getColour())
+				{
+				case SphereEntity::Colours::white:
+					colour = "white";
+					break;
+				case SphereEntity::Colours::black:
+					colour = "black";
+					break;
+				case SphereEntity::Colours::red:
+					colour = "red";
+					break;
+				case SphereEntity::Colours::yellow:
+					colour = "yellow";
+					break;
+				default:
+					break;
+				}
+				std::cout << "first ball hit " << colour << std::endl << std::endl;
+			}
+		}
+	}
+
+}
+
 bool WhiteBall::checkIfballsMoving(std::vector<Ball*>& balls)
 {
 	for (auto& b : balls)
@@ -76,6 +121,8 @@ bool WhiteBall::checkIfballsMoving(std::vector<Ball*>& balls)
 		if (b->getVelocity().getX() != 0 || b->getVelocity().getY() != 0)
 			return true;
 	}
+	if (info.hit)
+		info.endTurn = true;
 	return false;
 }
 
@@ -111,14 +158,9 @@ bool WhiteBall::willCollideWithBall(std::vector<Ball*>& balls)
 		if (b == this)
 			continue;
 
-		Vector v_FromBallToBall = position - b->getPosition();	// Create a vector which points from one ball to another.
-		float dist = v_FromBallToBall.magnitude();				// return the magnitude of that vector to work out the distance between them.
-
-		// Test to see if the distance between the 2 balls is greater then thier radii, which would indicate the balls were colliding.
-		if (dist < radius + b->getRadius())
-		{
+		Vector v_FromBallToBall(0, 0);
+		if (Ball::testCollision(v_FromBallToBall, *b))
 			return true;
-		}
 	}
 	return false;
 }

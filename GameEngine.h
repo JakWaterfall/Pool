@@ -10,6 +10,7 @@
 #include "Ball.h"
 #include "Pocket.h"
 #include "WhiteBall.h"
+#include "Players.h"
 
 class GameEngine
 {
@@ -25,6 +26,8 @@ class GameEngine
 	std::vector<Ball*> balls;
 	std::vector<Pocket> pockets;
 	std::vector<Ball> pottedBalls;
+
+	Players p;
 
 
 public:

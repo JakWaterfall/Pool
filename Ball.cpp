@@ -73,30 +73,41 @@ bool Ball::ballMoving()
 	return velocity.getX() != 0 || velocity.getY() != 0;
 }
 
-// maybe split up the collision test for testing on ball drop???
-void Ball::ballCollision(std::vector<Ball*> & balls)
+
+bool Ball::testCollision(Vector & v_FromBallToBall, Ball & b)
 {
+	v_FromBallToBall = position - b.position;	// Create a vector which points from one ball to another.
+	float dist = v_FromBallToBall.magnitude();			// return the magnitude of that vector to work out the distance between them.
+
+	// Test to see if the distance between the 2 balls is greater then thier radii, which would indicate the balls were colliding.
+	if (dist < radius + b.radius && b.isInteractable) // isInteractable so when the white ball is being dropped it dosent hit the other balls
+	{
+		return true;
+	}
+	return false;
+}
+
+void Ball::ballCollision(std::vector<Ball*>& balls)
+{
+	Vector v_FromBallToBall(0,0);
 	for (auto& b : balls)
 	{
-		if (b  == this)
+		if (b == this) // dont check ball with itself
 			continue;
-		 
-		Vector v_FromBallToBall = position - b->position;	// Create a vector which points from one ball to another.
-		float dist = v_FromBallToBall.magnitude();			// return the magnitude of that vector to work out the distance between them.
 
-		// Test to see if the distance between the 2 balls is greater then thier radii, which would indicate the balls were colliding.
-		if (dist < radius + b->radius && b->isInteractable) // isInteractable so when the white ball is being dropped it dosent hit the other balls
+		if (testCollision(v_FromBallToBall, *b))
 		{
 			v_FromBallToBall.setMagnitude(ballCollisionStrenght); //!!!!!!!! impliment vs speed as well. so calc how fast it was going and use that(poistion - (poistion + velocity))= vector in dir its going then get the magnitude for speed value.
 			velocity += v_FromBallToBall; // apply vector to velocity to push ball away from colliding ball in the direction they got hit from.
 		}
 	}
+	
 }
+
 
 
 void Ball::potted(std::vector<Ball*>& balls)
 {
-	//pottedBalls.push_back(*this.);
 	deleteFlag = true;
 }
 

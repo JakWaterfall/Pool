@@ -5,8 +5,8 @@ class Ball : public SphereEntity
 {	
 
 	float frictionStrength = 0.03; // impliment super slippery mode??
-	int ballCollisionStrenght = 2;
 protected:
+	int ballCollisionStrenght = 2;
 	Vector velocity;
 	bool isInteractable = true;
 	bool deleteFlag = false;
@@ -27,6 +27,7 @@ protected:
 	void wallCollision();
 	bool ballMoving();
 	virtual void ballCollision(std::vector<Ball*> & balls);
+	virtual bool testCollision(Vector& v_FromBallToBall, Ball& b);
 
 };
 
