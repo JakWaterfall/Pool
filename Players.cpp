@@ -1,7 +1,7 @@
 #include "Players.h"
 
 Players::Players()
-	: arePlayerColoursSetup(false), foulBall(false), isPlayer1Turn(true), player1ShotsLeft(1), player2ShotsLeft(0), player1Colour(black), player2Colour(black)
+	: arePlayerColoursSetup(false), foulBall(false), isPlayer1Turn(true), player1({1, black}), player2({ 0, black })//player1ShotsLeft(1), player2ShotsLeft(0), player1Colour(black), player2Colour(black)
 {
 
 }
@@ -11,8 +11,8 @@ void Players::update(WhiteBall& white, std::vector<Ball>& pottedBalls)
 	
 	if (white.info.endTurn)
 	{
-		resolvePottedBalls(pottedBalls);
 		whiteHitOrMissOtherBall(white);
+		resolvePottedBalls(pottedBalls);
 		resolvePlayerTurn();
 		
 		// reset white ball info
@@ -42,13 +42,13 @@ void Players::whiteHitOrMissOtherBall(WhiteBall& white)
 		switch (white.info.colourHitFirst)
 		{
 		case SphereEntity::Colours::red:
-			if (isPlayer1Turn && player1Colour == yellow || !isPlayer1Turn && player2Colour == yellow)
+			if (getCurrentPlayer().Colour == yellow) //(isPlayer1Turn && player1Colour == yellow || !isPlayer1Turn && player2Colour == yellow)
 			{
 				foulBall = true;
 			}
 			break;
 		case SphereEntity::Colours::yellow:
-			if (isPlayer1Turn && player1Colour == red || !isPlayer1Turn && player2Colour == red)
+			if (getCurrentPlayer().Colour == red) // (isPlayer1Turn && player1Colour == red || !isPlayer1Turn && player2Colour == red)
 			{
 				foulBall = true;
 			}
@@ -67,32 +67,18 @@ void Players::resolvePottedBalls(std::vector<Ball>& pottedBalls)
 {
 	if (!pottedBalls.empty())
 	{
-		if (!arePlayerColoursSetup)
-			setupColours(pottedBalls);
-
 		SphereEntity::Colours firstBallColour = pottedBalls[0].getColour();
+		
+		if (!arePlayerColoursSetup)
+			setupColours(pottedBalls, firstBallColour);
 
-		if (isPlayer1Turn)
+		if (getCurrentPlayer().Colour == firstBallColour)
 		{
-			if (player1Colour == firstBallColour)
-			{
-				player1ShotsLeft++;
-			}
-			else //if (arePlayerColoursSetup) // (player1Colour != black) dont think this is needed
-			{
-				foulBall = true;
-			}
+			getCurrentPlayer().ShotsLeft++;
 		}
 		else
 		{
-			if (player2Colour == firstBallColour)
-			{
-				player2ShotsLeft++;
-			}
-			else //if (arePlayerColoursSetup) //(player2Colour != black)
-			{
-				foulBall = true;
-			}
+			foulBall = true;
 		}
 
 		for (auto& b : pottedBalls)
@@ -106,10 +92,12 @@ void Players::resolvePottedBalls(std::vector<Ball>& pottedBalls)
 			{
 				if (isPlayer1Turn)
 				{
+					foulBall = true;
 					std::cout << "player 1 loses" << std::endl;
 				}
 				else
 				{
+					foulBall = true;
 					std::cout << "player 2 loses" << std::endl;
 				}
 			}
@@ -117,39 +105,23 @@ void Players::resolvePottedBalls(std::vector<Ball>& pottedBalls)
 	}
 }
 
-void Players::setupColours(std::vector<Ball>& pottedBalls)
+void Players::setupColours(std::vector<Ball>& pottedBalls, SphereEntity::Colours & firstBallColour)
 {
-	SphereEntity::Colours firstBallColour = pottedBalls[0].getColour();
-
 	if (firstBallColour != white && firstBallColour != black)
 	{
 		SphereEntity::Colours secondBallColour = firstBallColour == red ? yellow : red;
-		if (isPlayer1Turn)
-		{
-			player1Colour = firstBallColour;
-			player2Colour = secondBallColour;
-		}
-		else
-		{
-			player2Colour = firstBallColour;
-			player1Colour = secondBallColour;
-		}
+
+		getCurrentPlayer().Colour = firstBallColour;
+		getOtherPlayer().Colour = secondBallColour;
+
 		arePlayerColoursSetup = true;
 	}
 }
 
 void Players::resolveFoulBall()
 {
-	if (isPlayer1Turn)
-	{
-		player2ShotsLeft = 2;
-		isPlayer1Turn = false;
-	}
-	else
-	{
-		player1ShotsLeft = 2;
-		isPlayer1Turn = true;
-	}
+	getOtherPlayer().ShotsLeft = 2;
+	isPlayer1Turn = !isPlayer1Turn;
 	foulBall = false;
 }
 
@@ -161,23 +133,22 @@ void Players::resolvePlayerTurn()
 	}
 	else
 	{
-		if (isPlayer1Turn)
+		if (--getCurrentPlayer().ShotsLeft < 1)
 		{
-			if (--player1ShotsLeft < 1)
-			{
-				player2ShotsLeft = 1;
-				isPlayer1Turn = false;
-			}
-		}
-		else
-		{
-			if (--player2ShotsLeft < 1)
-			{
-				player1ShotsLeft = 1;
-				isPlayer1Turn = true;
-			}
+			getOtherPlayer().ShotsLeft = 1;
+			isPlayer1Turn = !isPlayer1Turn;
 		}
 	}
+}
+
+Players::Player& Players::getCurrentPlayer()
+{
+	return isPlayer1Turn ? player1 : player2;
+}
+
+Players::Player& Players::getOtherPlayer()
+{
+	return isPlayer1Turn ? player2 : player1;
 }
 
 void Players::debugConsoleLogInfo()
@@ -185,62 +156,39 @@ void Players::debugConsoleLogInfo()
 	// DEGUB
 	using namespace std;
 	cout << "player turn: " << (isPlayer1Turn ? "1" : "2") << endl;
-	cout << "shots left: " << (isPlayer1Turn ? player1ShotsLeft : player2ShotsLeft) << endl;
+	cout << "shots left: " << getCurrentPlayer().ShotsLeft << endl;
 	string colour;
-	if (isPlayer1Turn)
+
+	switch (getCurrentPlayer().Colour)
 	{
-		switch (player1Colour)
-		{
-		case SphereEntity::Colours::white:
-			colour = "white";
-			break;
-		case SphereEntity::Colours::black:
-			colour = "black";
-			break;
-		case SphereEntity::Colours::red:
+	case SphereEntity::Colours::white:
+		colour = "white";
+		break;
+	case SphereEntity::Colours::black:
+		colour = "black";
+		break;
+	case SphereEntity::Colours::red:
 			colour = "red";
-			break;
-		case SphereEntity::Colours::yellow:
-			colour = "yelow";
-			break;
-		default:
-			break;
-		}
+		break;
+	case SphereEntity::Colours::yellow:
+		colour = "yelow";
+		break;
+	default:
+		break;
 	}
-	else
-	{
-		switch (player2Colour)
-		{
-		case SphereEntity::Colours::white:
-			colour = "white";
-			break;
-		case SphereEntity::Colours::black:
-			colour = "black";
-			break;
-		case SphereEntity::Colours::red:
-			colour = "red";
-			break;
-		case SphereEntity::Colours::yellow:
-			colour = "yellow";
-			break;
-		default:
-			break;
-		}
-	}
+
 	cout << "colour: " << colour << endl << endl;
 }
 
 Players::saveVariables Players::getSaveVariables()
 {
-	return { arePlayerColoursSetup, isPlayer1Turn, player1ShotsLeft, player2ShotsLeft, player1Colour, player2Colour };
+	return { arePlayerColoursSetup, isPlayer1Turn, player1, player2 };
 }
 
 void Players::setVariablesFromFile(saveVariables saveVar)
 {
 	arePlayerColoursSetup = saveVar.arePlayerColoursSetup;
 	isPlayer1Turn = saveVar.isPlayer1Turn;
-	player1ShotsLeft = saveVar.player1ShotsLeft;
-	player2ShotsLeft = saveVar.player2ShotsLeft;
-	player1Colour = saveVar.player1Colour;
-	player2Colour = saveVar.player2Colour;
+	player1 = saveVar.player1;
+	player2 = saveVar.player2;
 }

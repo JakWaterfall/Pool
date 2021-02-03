@@ -253,10 +253,10 @@ void GameEngine::saveStateOfTable()
 	Players::saveVariables saveVar = players.getSaveVariables();
 	playerFile << saveVar.isPlayer1Turn << endl;
 	playerFile << saveVar.arePlayerColoursSetup << endl;
-	playerFile << saveVar.player1ShotsLeft << endl;
-	playerFile << saveVar.player2ShotsLeft << endl;
-	playerFile << (int)saveVar.player1Colour << endl;
-	playerFile << (int)saveVar.player2Colour << endl;
+	playerFile << saveVar.player1.ShotsLeft << endl;
+	playerFile << saveVar.player2.ShotsLeft << endl;
+	playerFile << (int)saveVar.player1.Colour << endl;
+	playerFile << (int)saveVar.player2.Colour << endl;
 
 	ballFile.close();
 	playerFile.close();
@@ -296,14 +296,14 @@ void GameEngine::setupBallsAndPlayersFromFile()
 	Players::saveVariables saveVar;
 	playerFile >> saveVar.isPlayer1Turn;
 	playerFile >> saveVar.arePlayerColoursSetup;
-	playerFile >> saveVar.player1ShotsLeft;
-	playerFile >> saveVar.player2ShotsLeft;
+	playerFile >> saveVar.player1.ShotsLeft;
+	playerFile >> saveVar.player2.ShotsLeft;
 	int colour1;
 	int colour2;
 	playerFile >> colour1;
 	playerFile >> colour2;
-	saveVar.player1Colour = (SphereEntity::Colours)colour1;
-	saveVar.player2Colour = (SphereEntity::Colours)colour2;
+	saveVar.player1.Colour = (SphereEntity::Colours)colour1;
+	saveVar.player2.Colour = (SphereEntity::Colours)colour2;
 
 	players.setVariablesFromFile(saveVar);
 

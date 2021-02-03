@@ -3,6 +3,11 @@
 
 class Players
 {
+	struct Player
+	{
+		int ShotsLeft;
+		SphereEntity::Colours Colour;
+	};
 	SphereEntity::Colours red = SphereEntity::Colours::red;
 	SphereEntity::Colours yellow = SphereEntity::Colours::yellow;
 	SphereEntity::Colours black = SphereEntity::Colours::black;
@@ -11,20 +16,17 @@ class Players
 	bool foulBall;
 	bool arePlayerColoursSetup;
 	bool isPlayer1Turn;
-	int player1ShotsLeft;
-	int player2ShotsLeft;
-	SphereEntity::Colours player1Colour;
-	SphereEntity::Colours player2Colour;
+	Player player1;
+	Player player2;
+
 
 public:
 	struct saveVariables
 	{
 		bool arePlayerColoursSetup;
 		bool isPlayer1Turn;
-		int player1ShotsLeft;
-		int player2ShotsLeft;
-		SphereEntity::Colours player1Colour;
-		SphereEntity::Colours player2Colour;
+		Player player1;
+		Player player2;
 	};
 
 public:
@@ -40,9 +42,12 @@ public:
 private:
 	void whiteHitOrMissOtherBall(WhiteBall& white);
 	void resolvePottedBalls(std::vector<Ball>& pottedBalls);
-	void setupColours(std::vector<Ball>& pottedBalls);
+	void setupColours(std::vector<Ball>& pottedBalls, SphereEntity::Colours & firstBallColour);
 	void resolveFoulBall();
 	void resolvePlayerTurn();
+
+	Player& getCurrentPlayer();
+	Player& getOtherPlayer();
 
 	void debugConsoleLogInfo();
 };

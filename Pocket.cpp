@@ -20,6 +20,29 @@ void Pocket::objectCollision(std::vector<Ball*>& balls, std::vector<Ball>& potte
 		{
 			pottedBalls.push_back(*b);
 			b->potted(balls);
+
+			//debug
+			std::string colour;
+
+			switch (b->getColour())
+			{
+			case SphereEntity::Colours::white:
+				colour = "white potted";
+				break;
+			case SphereEntity::Colours::black:
+				colour = "black potted";
+				break;
+			case SphereEntity::Colours::red:
+				colour = "red potted";
+				break;
+			case SphereEntity::Colours::yellow:
+				colour = "yellow potted";
+				break;
+			default:
+				break;
+			}
+
+			std::cout << "colour: " << colour << std::endl;
 		}
 	}
 }
