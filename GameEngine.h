@@ -1,5 +1,6 @@
 #pragma once
 #include <SDL.h>
+#include <SDL_ttf.h>
 #include <iostream>
 #include <chrono>
 #include <fstream>
@@ -15,7 +16,6 @@
 class GameEngine
 {
 	SDL_Window* win = NULL;
-	SDL_Surface* winSurface = NULL;
 	SDL_Renderer* renderer = NULL;
 	SDL_Event e;
 
@@ -27,10 +27,9 @@ class GameEngine
 	std::vector<Pocket> pockets;
 	std::vector<Ball> pottedBalls;
 
-	Players players;
+	Players* players;
 
 	SDL_Texture* wb = NULL;
-
 
 public:
 	//Constuctors

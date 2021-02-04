@@ -1,5 +1,8 @@
 #pragma once
 #include "WhiteBall.h"
+#include <SDL_ttf.h>
+#include <string>
+
 
 class Players
 {
@@ -19,6 +22,11 @@ class Players
 	Player player1;
 	Player player2;
 
+	TTF_Font* font = NULL;
+	SDL_Color textColor = { 0, 0, 0 };
+	SDL_Surface* textSurface = NULL;
+	SDL_Texture* TextTexture = NULL;
+	std::string colour = "Free Colour";
 
 public:
 	struct saveVariables
@@ -31,6 +39,7 @@ public:
 
 public:
 	Players();
+	~Players();
 
 	void update(WhiteBall & white, std::vector<Ball>& pottedBalls);
 	void render(SDL_Renderer* renderer);
@@ -45,6 +54,7 @@ private:
 	void setupColours(std::vector<Ball>& pottedBalls, SphereEntity::Colours & firstBallColour);
 	void resolveFoulBall();
 	void resolvePlayerTurn();
+	void renderText(SDL_Renderer* renderer, const char* text, int x, int y);
 
 	Player& getCurrentPlayer();
 	Player& getOtherPlayer();

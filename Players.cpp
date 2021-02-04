@@ -1,9 +1,24 @@
 #include "Players.h"
 
 Players::Players()
-	: arePlayerColoursSetup(false), foulBall(false), isPlayer1Turn(true), player1({1, black}), player2({ 0, black })//player1ShotsLeft(1), player2ShotsLeft(0), player1Colour(black), player2Colour(black)
+	: arePlayerColoursSetup(false), foulBall(false), isPlayer1Turn(true), player1({1, black}), player2({ 0, black })
 {
+	font = TTF_OpenFont("Fonts/arial.ttf", 28);
+	if (font == NULL)
+	{
+		std::cout << "font failed to load " << TTF_GetError() << std::endl;
+	}
+}
 
+Players::~Players()
+{
+	// free SDL pointers
+	SDL_FreeSurface(textSurface);
+	textSurface = NULL;
+	SDL_DestroyTexture(TextTexture);
+	TextTexture = NULL;
+	TTF_CloseFont(font);
+	font = NULL;
 }
 
 void Players::update(WhiteBall& white, std::vector<Ball>& pottedBalls)
@@ -27,9 +42,28 @@ void Players::update(WhiteBall& white, std::vector<Ball>& pottedBalls)
 
 void Players::render(SDL_Renderer* renderer)
 {
-	// render turns and score to screen
+	// sort this mess out
+	std::string newScring = "Player: "; 
+	newScring += (isPlayer1Turn) ? "1" : "2";
+	renderText(renderer, newScring.c_str(), 0, 0);
+
+	newScring = "Colour: " + colour;
+	renderText(renderer, newScring.c_str(), 0, 30);
+
+	newScring = "Shots Left: "; 
+	newScring += std::to_string(getCurrentPlayer().ShotsLeft);
+	renderText(renderer, newScring.c_str(), 0, 60);
 }
 
+void Players::renderText(SDL_Renderer* renderer, const char* text, int x, int y)
+{
+	textSurface = TTF_RenderText_Solid(font, text, textColor);
+	TextTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
+	int width = textSurface->w;
+	int height = textSurface->h;
+	SDL_Rect renderQuad = { x, y, width, height };
+	SDL_RenderCopy(renderer, TextTexture, NULL, &renderQuad);
+}
 
 void Players::whiteHitOrMissOtherBall(WhiteBall& white)
 {
@@ -141,6 +175,7 @@ void Players::resolvePlayerTurn()
 	}
 }
 
+
 Players::Player& Players::getCurrentPlayer()
 {
 	return isPlayer1Turn ? player1 : player2;
@@ -157,7 +192,7 @@ void Players::debugConsoleLogInfo()
 	using namespace std;
 	cout << "player turn: " << (isPlayer1Turn ? "1" : "2") << endl;
 	cout << "shots left: " << getCurrentPlayer().ShotsLeft << endl;
-	string colour;
+	colour = "";
 
 	switch (getCurrentPlayer().Colour)
 	{
@@ -165,13 +200,13 @@ void Players::debugConsoleLogInfo()
 		colour = "white";
 		break;
 	case SphereEntity::Colours::black:
-		colour = "black";
+		colour = "Free Colour";
 		break;
 	case SphereEntity::Colours::red:
-			colour = "red";
+			colour = "Red";
 		break;
 	case SphereEntity::Colours::yellow:
-		colour = "yelow";
+		colour = "Yellow";
 		break;
 	default:
 		break;

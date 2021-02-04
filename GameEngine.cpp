@@ -2,28 +2,6 @@
 
 GameEngine::GameEngine(bool resume) : whiteBall(0, 0, true)
 {
-	running = true;
-	gameOver = false;
-
-	// Place Balls
-	if (resume)
-	{
-		setupBallsAndPlayersFromFile();
-	}
-	else
-	{
-		placeNewBalls();
-	}
-
-	// Pockets
-	pockets.push_back(Pocket(TABLE_X, TABLE_Y));
-	pockets.push_back(Pocket(TABLE_W, TABLE_Y));
-	pockets.push_back(Pocket(TABLE_X, TABLE_H));
-	pockets.push_back(Pocket(TABLE_W, TABLE_H));
-	pockets.push_back(Pocket(TABLE_W / 2 + TABLE_X / 2, TABLE_Y - 10));
-	pockets.push_back(Pocket(TABLE_W / 2 + TABLE_X / 2, TABLE_H + 10));
-
-
 	if (SDL_Init(SDL_INIT_VIDEO) < 0)
 	{
 		std::cout << "Init didnt work! " << SDL_GetError() << std::endl;
@@ -37,15 +15,40 @@ GameEngine::GameEngine(bool resume) : whiteBall(0, 0, true)
 		}
 		else
 		{
-			winSurface = SDL_GetWindowSurface(win);
-
 			renderer = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED);
 			if (!renderer)
 			{
 				std::cout << "Creating renderer didnt work! " << SDL_GetError() << std::endl;
 			}
+			if (TTF_Init() == -1)
+			{
+				std::cout << "Init TTF didnt work! " << TTF_GetError() << std::endl;
+			}
 
-			wb = loadTexture("Images/whiteball2.bmp");
+			running = true;
+			gameOver = false;
+			players = new Players();
+
+			// Place Balls
+			if (resume)
+			{
+				setupBallsAndPlayersFromFile();
+			}
+			else
+			{
+				placeNewBalls();
+			}
+
+			// Pockets
+			pockets.push_back(Pocket(TABLE_X, TABLE_Y));
+			pockets.push_back(Pocket(TABLE_W, TABLE_Y));
+			pockets.push_back(Pocket(TABLE_X, TABLE_H));
+			pockets.push_back(Pocket(TABLE_W, TABLE_H));
+			pockets.push_back(Pocket(TABLE_W / 2 + TABLE_X / 2, TABLE_Y - 10));
+			pockets.push_back(Pocket(TABLE_W / 2 + TABLE_X / 2, TABLE_H + 10));
+
+			wb = loadTexture("Images/blackball.bmp"); // remove texture
+
 			run();
 		}
 	}
@@ -96,12 +99,18 @@ void GameEngine::quit()
 	}
 	balls.clear();
 
+	delete players;
+
+	SDL_DestroyTexture(wb);
+	wb = NULL;
+
 	SDL_DestroyRenderer(renderer);
 	renderer = NULL;
 
 	SDL_DestroyWindow(win);
 	win = NULL;
 
+	TTF_Quit();
 	SDL_Quit();
 }
 
@@ -148,7 +157,7 @@ void GameEngine::update()
 		pocket.update(balls, pottedBalls);
 	}
 	// DEBUG TO SEE POTTED BALLS
-	players.update(whiteBall, pottedBalls);
+	players->update(whiteBall, pottedBalls);
 	// Delete Marked Balls
 	deleteBalls();
 }
@@ -172,9 +181,10 @@ void GameEngine::render()
 	{
 		b->render(renderer);
 	}
+	players->render(renderer);
 
 	SDL_Rect ball = { 0, 0, 20, 20 };
-	SDL_RenderCopy(renderer, wb, NULL, &ball);
+	//SDL_RenderCopy(renderer, wb, NULL, &ball);
 
 	//Update screen
 	SDL_RenderPresent(renderer);
@@ -250,7 +260,7 @@ void GameEngine::saveStateOfTable()
 		ballFile << (int)b->getColour() << endl;
 	}
 	
-	Players::saveVariables saveVar = players.getSaveVariables();
+	Players::saveVariables saveVar = players->getSaveVariables();
 	playerFile << saveVar.isPlayer1Turn << endl;
 	playerFile << saveVar.arePlayerColoursSetup << endl;
 	playerFile << saveVar.player1.ShotsLeft << endl;
@@ -305,7 +315,7 @@ void GameEngine::setupBallsAndPlayersFromFile()
 	saveVar.player1.Colour = (SphereEntity::Colours)colour1;
 	saveVar.player2.Colour = (SphereEntity::Colours)colour2;
 
-	players.setVariablesFromFile(saveVar);
+	players->setVariablesFromFile(saveVar);
 
 	playerFile.close();
 }
