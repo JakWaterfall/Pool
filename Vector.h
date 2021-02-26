@@ -7,7 +7,7 @@ class Vector
 	bool b_limit = false;
 	float limiter = 0;
 public:
-	Vector(float x, float y);
+	Vector(float x = 0, float y = 0);
 
 	float getX() const { return x; }
 	float getY() const { return y; }

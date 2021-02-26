@@ -19,7 +19,7 @@ void Pocket::objectCollision(std::vector<Ball*>& balls, std::vector<Ball>& potte
 		if (dist < radius + b->getRadius() && b->getIsInteractable())  // this is so when the white ball is being dropped it dosent hit the other balls
 		{
 			pottedBalls.push_back(*b);
-			b->potted(balls);
+			b->potted();
 
 			//debug
 			std::string colour;

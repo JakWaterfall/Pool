@@ -158,6 +158,7 @@ void GameEngine::update()
 	}
 	// DEBUG TO SEE POTTED BALLS
 	players->update(whiteBall, pottedBalls);
+
 	// Delete Marked Balls
 	deleteBalls();
 }

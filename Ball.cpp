@@ -1,7 +1,7 @@
 #include "Ball.h"
 
 Ball::Ball(float _x, float _y, SphereEntity::Colours colour, int radius)
-	: SphereEntity(_x, _y, colour, radius), velocity({ 0, 0 })
+	: SphereEntity(_x, _y, colour, radius), velocity({ 0.0f, 0.0f })
 {
 }
 
@@ -30,12 +30,12 @@ void Ball::applyFriction()
 		velocity += friction;								// apply the friction to the velocity to slow the ball down to create the illusion of friction.
 		
 		// clamp velocity so when its close enough to 0; it sets x and y to 0
-		if (velocity.getX() < 0.5 && velocity.getX() > -0.5)
+		if (velocity.getX() < 0.5f && velocity.getX() > -0.5f)
 		{
-			if (velocity.getY() < 0.5 && velocity.getY() > -0.5)
+			if (velocity.getY() < 0.5f && velocity.getY() > -0.5f)
 			{
-				velocity.setX(0);
-				velocity.setY(0);
+				velocity.setX(0.0f);
+				velocity.setY(0.0f);
 			}
 		}
 	}
@@ -43,34 +43,34 @@ void Ball::applyFriction()
 
 void Ball::wallCollision()
 {
-	int x = position.getX();
-	int y = position.getY();
+	int x = (int)position.getX();
+	int y = (int)position.getY();
 
 	if (x - radius < TABLE_X)
 	{
 		velocity.setX(-velocity.getX());
-		position.setX(TABLE_X+radius);
+		position.setX((float)TABLE_X+radius);
 	}
 	if (x + radius > TABLE_W)
 	{
 		velocity.setX(-velocity.getX());
-		position.setX(TABLE_W - radius);
+		position.setX((float)TABLE_W - radius);
 	}
 	if (y - radius < TABLE_Y)
 	{
 		velocity.setY(-velocity.getY());
-		position.setY(TABLE_Y+radius);
+		position.setY((float)TABLE_Y+radius);
 	}
 	if (y + radius > TABLE_H)
 	{
 		velocity.setY(-velocity.getY());
-		position.setY(TABLE_H - radius);
+		position.setY((float)TABLE_H - radius);
 	}
 }
 
 bool Ball::ballMoving()
 {
-	return velocity.getX() != 0 || velocity.getY() != 0;
+	return velocity.getX() != 0.0f || velocity.getY() != 0.0f;
 }
 
 
@@ -89,7 +89,7 @@ bool Ball::testCollision(Vector & v_FromBallToBall, Ball & b)
 
 void Ball::ballCollision(std::vector<Ball*>& balls)
 {
-	Vector v_FromBallToBall(0,0);
+	Vector v_FromBallToBall;
 	for (auto& b : balls)
 	{
 		if (b == this) // dont check ball with itself
@@ -106,7 +106,7 @@ void Ball::ballCollision(std::vector<Ball*>& balls)
 
 
 
-void Ball::potted(std::vector<Ball*>& balls)
+void Ball::potted()
 {
 	deleteFlag = true;
 }

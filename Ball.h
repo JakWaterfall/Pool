@@ -4,9 +4,9 @@
 class Ball : public SphereEntity
 {	
 
-	float frictionStrength = 0.03; // impliment super slippery mode??
+	float frictionStrength = 0.03f; // impliment super slippery mode??
 protected:
-	int ballCollisionStrenght = 2;
+	float ballCollisionStrenght = 2.0f;
 	Vector velocity;
 	bool isInteractable = true;
 	bool deleteFlag = false;
@@ -17,7 +17,7 @@ public:
 public:
 	virtual void update(std::vector<Ball*> & balls);
 	virtual void eventHandler(SDL_Event* e);
-	virtual void potted(std::vector<Ball*>& balls);
+	virtual void potted();
 	bool getDeleteFlag();
 	bool getIsInteractable() { return isInteractable; }
 	Vector& getVelocity();

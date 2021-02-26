@@ -31,7 +31,7 @@ void WhiteBall::render(SDL_Renderer* renderer)
 
 	SDL_SetRenderDrawColor(renderer, r, g, b, 0xFF);
 	if (!ballMoving() && !dropBall)
-		SDL_RenderDrawLine(renderer, position.getX(), position.getY(), aimer.getX(), aimer.getY());
+		SDL_RenderDrawLine(renderer, (int)position.getX(), (int)position.getY(), (int)aimer.getX(), (int)aimer.getY());
 
 	drawCirle(renderer, position, radius);
 }
@@ -49,8 +49,8 @@ void WhiteBall::eventHandler(SDL_Event* e)
 	{
 		int x, y;
 		SDL_GetMouseState(&x, &y);
-		mouse.setX(x);
-		mouse.setY(y);
+		mouse.setX((float)x);
+		mouse.setY((float)y);
 	}
 	if (dropBall)
 	{
@@ -73,7 +73,7 @@ void WhiteBall::eventHandler(SDL_Event* e)
 
 void WhiteBall::ballCollision(std::vector<Ball*>& balls)
 {
-	Vector v_FromBallToBall(0, 0);
+	Vector v_FromBallToBall;
 	for (auto& b : balls)
 	{
 		if (b == this) // dont check ball with itself
@@ -89,6 +89,7 @@ void WhiteBall::ballCollision(std::vector<Ball*>& balls)
 				info.hitOtherBall = true;
 				info.colourHitFirst = b->getColour();
 
+				// debug
 				std::string colour;
 				switch (b->getColour())
 				{
@@ -158,7 +159,7 @@ bool WhiteBall::willCollideWithBall(std::vector<Ball*>& balls)
 		if (b == this)
 			continue;
 
-		Vector v_FromBallToBall(0, 0);
+		Vector v_FromBallToBall;
 		if (Ball::testCollision(v_FromBallToBall, *b))
 			return true;
 	}
@@ -167,32 +168,29 @@ bool WhiteBall::willCollideWithBall(std::vector<Ball*>& balls)
 
 void WhiteBall::keepInDropBallArea()
 {
-	int x = position.getX();
-	int y = position.getY();
+	int x = (int)position.getX();
+	int y = (int)position.getY();
 
 	if (x - radius < TABLE_X)
 	{
-		position.setX(TABLE_X + radius);
+		position.setX((float)TABLE_X + radius);
 	}
 	if (x + radius > TABLE_X + TABLE_LINE_FROM_X)
 	{
-		position.setX(TABLE_X + TABLE_LINE_FROM_X - radius);
+		position.setX((float)TABLE_X + TABLE_LINE_FROM_X - radius);
 	}
 	if (y - radius < TABLE_Y)
 	{
-		position.setY(TABLE_Y + radius);
+		position.setY((float)TABLE_Y + radius);
 	}
 	if (y + radius > TABLE_H)
 	{
-		position.setY(TABLE_H - radius);
+		position.setY((float)TABLE_H - radius);
 	}
 }
 
-void WhiteBall::potted(std::vector<Ball*>& balls)
+void WhiteBall::potted()
 {
-	/*balls.push_back(new WhiteBall(0, 0, true));
-	deleteFlag = true;*/
-
 	velocity.setX(0);
 	velocity.setY(0);
 	dropBall = true;

@@ -52,8 +52,8 @@ void SphereEntity::drawCirle(SDL_Renderer* renderer, Vector position, int radius
 {
 	// https://www.thecrazyprogrammer.com/2016/12/bresenhams-midpoint-circle-algorithm-c-c.html
 
-	int x0 = position.getX();
-	int y0 = position.getY();
+	int x0 = (int)position.getX();
+	int y0 = (int)position.getY();
 	int x = radius;
 	int y = 0;
 	int err = 0;

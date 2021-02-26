@@ -13,12 +13,21 @@ Players::Players()
 Players::~Players()
 {
 	// free SDL pointers
-	SDL_FreeSurface(textSurface);
-	textSurface = NULL;
-	SDL_DestroyTexture(TextTexture);
-	TextTexture = NULL;
-	TTF_CloseFont(font);
-	font = NULL;
+	if (textSurface)
+	{
+		SDL_FreeSurface(textSurface); 
+		textSurface = NULL;
+	}
+	if (textTexture)
+	{
+		SDL_DestroyTexture(textTexture);
+		textTexture = NULL;
+	}
+	if (font)
+	{
+		TTF_CloseFont(font);
+		font = NULL;
+	}
 }
 
 void Players::update(WhiteBall& white, std::vector<Ball>& pottedBalls)
@@ -47,7 +56,7 @@ void Players::render(SDL_Renderer* renderer)
 	newScring += (isPlayer1Turn) ? "1" : "2";
 	renderText(renderer, newScring.c_str(), 0, 0);
 
-	newScring = "Colour: " + colour;
+	newScring = "Colour: " + getColourString();
 	renderText(renderer, newScring.c_str(), 0, 30);
 
 	newScring = "Shots Left: "; 
@@ -58,11 +67,17 @@ void Players::render(SDL_Renderer* renderer)
 void Players::renderText(SDL_Renderer* renderer, const char* text, int x, int y)
 {
 	textSurface = TTF_RenderText_Solid(font, text, textColor);
-	TextTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
+	textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
 	int width = textSurface->w;
 	int height = textSurface->h;
 	SDL_Rect renderQuad = { x, y, width, height };
-	SDL_RenderCopy(renderer, TextTexture, NULL, &renderQuad);
+	SDL_RenderCopy(renderer, textTexture, NULL, &renderQuad);
+
+	// free space
+	SDL_FreeSurface(textSurface);
+	textSurface = NULL;
+	SDL_DestroyTexture(textTexture);
+	textTexture = NULL;
 }
 
 void Players::whiteHitOrMissOtherBall(WhiteBall& white)
@@ -192,27 +207,30 @@ void Players::debugConsoleLogInfo()
 	using namespace std;
 	cout << "player turn: " << (isPlayer1Turn ? "1" : "2") << endl;
 	cout << "shots left: " << getCurrentPlayer().ShotsLeft << endl;
-	colour = "";
 
+	cout << "colour: " << getColourString() << endl << endl;
+}
+
+std::string Players::getColourString()
+{
 	switch (getCurrentPlayer().Colour)
 	{
 	case SphereEntity::Colours::white:
-		colour = "white";
+		return "white";
 		break;
 	case SphereEntity::Colours::black:
-		colour = "Free Colour";
+		return "Free Colour";
 		break;
 	case SphereEntity::Colours::red:
-			colour = "Red";
+		return "Red";
 		break;
 	case SphereEntity::Colours::yellow:
-		colour = "Yellow";
+		return "Yellow";
 		break;
 	default:
+		return "ERROR";
 		break;
 	}
-
-	cout << "colour: " << colour << endl << endl;
 }
 
 Players::saveVariables Players::getSaveVariables()

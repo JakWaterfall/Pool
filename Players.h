@@ -25,8 +25,7 @@ class Players
 	TTF_Font* font = NULL;
 	SDL_Color textColor = { 0, 0, 0 };
 	SDL_Surface* textSurface = NULL;
-	SDL_Texture* TextTexture = NULL;
-	std::string colour = "Free Colour";
+	SDL_Texture* textTexture = NULL;
 
 public:
 	struct saveVariables
@@ -60,4 +59,5 @@ private:
 	Player& getOtherPlayer();
 
 	void debugConsoleLogInfo();
+	std::string getColourString();
 };

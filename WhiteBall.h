@@ -34,6 +34,6 @@ public:
 	void eventHandler(SDL_Event* e);
 	void droppingBall(SDL_Event* e);
 	void keepInDropBallArea();
-	void potted(std::vector<Ball*>& balls);
+	void potted();
 };
 
