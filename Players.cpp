@@ -139,6 +139,9 @@ void Players::resolvePottedBalls(std::vector<Ball>& pottedBalls)
 
 			if (b.getColour() == black)
 			{
+				// query all the balls on the table if no balls left are the current players colour they win else they lose.
+				// if the first ball you pot is the black ball and your colour is the black/freeball you will win the game
+				// check current players colour is black and they lose??
 				if (isPlayer1Turn)
 				{
 					foulBall = true;

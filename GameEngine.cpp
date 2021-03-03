@@ -79,7 +79,7 @@ void GameEngine::run()
 
 		render();
 	}
-
+	// maybe put a end game screen here or have the end game screen be in the console window 
 	// End Game
 	quit();
 }
@@ -156,7 +156,7 @@ void GameEngine::update()
 	{
 		pocket.update(balls, pottedBalls);
 	}
-	// DEBUG TO SEE POTTED BALLS
+	
 	players->update(whiteBall, pottedBalls);
 
 	// Delete Marked Balls
@@ -184,8 +184,8 @@ void GameEngine::render()
 	}
 	players->render(renderer);
 
-	SDL_Rect ball = { 0, 0, 20, 20 };
-	//SDL_RenderCopy(renderer, wb, NULL, &ball);
+	//SDL_Rect ball = { 0, 0, 20, 20 };
+	//SDL_RenderCopy(renderer, wb, NULL, &ball); // thid is test for texture 
 
 	//Update screen
 	SDL_RenderPresent(renderer);

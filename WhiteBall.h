@@ -12,7 +12,7 @@ class WhiteBall : public Ball
 	Vector mouse;
 	bool dropBall; 
 	float aimerMaxLenght = 200;
-	float greatestHitStrength = 10;
+	float maxHitStrength = 10;
 
 	bool collideWithBall = false;
 	bool anyBallsMoving = false;

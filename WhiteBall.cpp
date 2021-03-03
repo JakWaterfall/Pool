@@ -10,8 +10,8 @@ void WhiteBall::update(std::vector<Ball*>& balls)
 	anyBallsMoving = checkIfballsMoving(balls);
 	if (dropBall)
 	{
-		radius = 15;
-		isInteractable = false;
+		radius = 15; // maybe remove this and put in potted
+		isInteractable = false; // maybe remove this and put in potted
 		collideWithBall = willCollideWithBall(balls);
 		keepInDropBallArea();
 		return;
@@ -63,9 +63,9 @@ void WhiteBall::eventHandler(SDL_Event* e)
 
 		Vector hit = position - mouse;
 		hit *= 0.1f;
-		if (hit.magnitude() > greatestHitStrength)
+		if (hit.magnitude() > maxHitStrength)
 		{
-			hit.setMagnitude(greatestHitStrength);
+			hit.setMagnitude(maxHitStrength);
 		}
 		velocity += hit;
 	}
@@ -194,6 +194,8 @@ void WhiteBall::potted()
 	velocity.setX(0);
 	velocity.setY(0);
 	dropBall = true;
-	anyBallsMoving = false;
+	anyBallsMoving = false; // dont think this needs to be here? 
+
+	isInteractable = false;
 }
 
