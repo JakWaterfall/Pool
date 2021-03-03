@@ -1,7 +1,7 @@
 #include "Players.h"
 
 Players::Players()
-	: arePlayerColoursSetup(false), foulBall(false), isPlayer1Turn(true), player1({1, black}), player2({ 0, black })
+	: arePlayerColoursSetup(false), foulBall(false), isPlayer1Turn(true), gameOver(false), player1Won(false), player1({1, black}), player2({ 0, black })
 {
 	font = TTF_OpenFont("Fonts/arial.ttf", 28);
 	if (font == NULL)
@@ -30,19 +30,17 @@ Players::~Players()
 	}
 }
 
-void Players::update(WhiteBall& white, std::vector<Ball>& pottedBalls)
+void Players::update(WhiteBall& white, std::vector<Ball>& pottedBalls, std::vector<Ball*>& balls)
 {
 	
 	if (white.info.endTurn)
 	{
 		whiteHitOrMissOtherBall(white);
-		resolvePottedBalls(pottedBalls);
+		resolvePottedBalls(pottedBalls, balls, white);
 		resolvePlayerTurn();
 		
 		// reset white ball info
-		white.info.hit = false;
-		white.info.endTurn = false;
-		white.info.hitOtherBall = false;
+		white.resetInfo();
 		pottedBalls.clear();
 
 		debugConsoleLogInfo(); // debug
@@ -51,22 +49,44 @@ void Players::update(WhiteBall& white, std::vector<Ball>& pottedBalls)
 
 void Players::render(SDL_Renderer* renderer)
 {
-	// sort this mess out
-	std::string newScring = "Player: "; 
-	newScring += (isPlayer1Turn) ? "1" : "2";
-	renderText(renderer, newScring.c_str(), 0, 0);
+	std::string newScring;
+	if (!gameOver)
+	{
+		newScring = "Player: ";
+		newScring += (isPlayer1Turn) ? "1" : "2";
+		renderText(renderer, newScring.c_str(), 10, 0);
 
-	newScring = "Colour: " + getColourString();
-	renderText(renderer, newScring.c_str(), 0, 30);
+		newScring = "Colour: " + getColourString();
+		SDL_Color textColour;
+		if (getColourString() == "Red")
+		{
+			textColour = { 255, 0, 0 };
+		}
+		else if (getColourString() == "Yellow")
+		{
+			textColour = { 230, 230, 0 };
+		}
+		else
+		{
+			textColour = { 0, 0, 0 };
+		}
+		renderText(renderer, newScring.c_str(), 10, 30, textColour);
 
-	newScring = "Shots Left: "; 
-	newScring += std::to_string(getCurrentPlayer().ShotsLeft);
-	renderText(renderer, newScring.c_str(), 0, 60);
+		newScring = "Shots Left: ";
+		newScring += std::to_string(getCurrentPlayer().ShotsLeft);
+		renderText(renderer, newScring.c_str(), 10, 60);
+	}
+	else
+	{
+		newScring = "WINNER!!! Player: ";
+		newScring += (player1Won) ? "1" : "2";
+		renderText(renderer, newScring.c_str(), 500, 25);
+	}
 }
 
-void Players::renderText(SDL_Renderer* renderer, const char* text, int x, int y)
+void Players::renderText(SDL_Renderer* renderer, const char* text, int x, int y, SDL_Color textColour)
 {
-	textSurface = TTF_RenderText_Solid(font, text, textColor);
+	textSurface = TTF_RenderText_Solid(font, text, textColour);
 	textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
 	int width = textSurface->w;
 	int height = textSurface->h;
@@ -112,7 +132,7 @@ void Players::whiteHitOrMissOtherBall(WhiteBall& white)
 	}
 }
 
-void Players::resolvePottedBalls(std::vector<Ball>& pottedBalls)
+void Players::resolvePottedBalls(std::vector<Ball>& pottedBalls, std::vector<Ball*>& balls, WhiteBall& whiteBall)
 {
 	if (!pottedBalls.empty())
 	{
@@ -130,31 +150,67 @@ void Players::resolvePottedBalls(std::vector<Ball>& pottedBalls)
 			foulBall = true;
 		}
 
-		for (auto& b : pottedBalls)
+		for (size_t i = 0; i < pottedBalls.size(); i++)
 		{
-			if (b.getColour() == white)
+			if (pottedBalls[i].getColour() == white)
 			{
 				foulBall = true;
 			}
 
-			if (b.getColour() == black)
+			if (pottedBalls[i].getColour() == black)
 			{
-				// query all the balls on the table if no balls left are the current players colour they win else they lose.
-				// if the first ball you pot is the black ball and your colour is the black/freeball you will win the game
-				// check current players colour is black and they lose??
-				if (isPlayer1Turn)
-				{
-					foulBall = true;
-					std::cout << "player 1 loses" << std::endl;
-				}
-				else
-				{
-					foulBall = true;
-					std::cout << "player 2 loses" << std::endl;
-				}
+				resolveWinner(pottedBalls, balls, whiteBall, i);	
 			}
 		}
 	}
+}
+
+void Players::resolveWinner(std::vector<Ball>& pottedBalls, std::vector<Ball*>& balls, WhiteBall& whiteBall, int blackIndex)
+{
+	using namespace std; // DEGBUG REMOVE !!!
+
+	bool win = true;
+	gameOver = true;
+	SphereEntity::Colours playerColour = getCurrentPlayer().Colour;
+
+	if (playerColour == black) // this checks if they potted the black ball before they have a colour assosiated to them
+		win = false;
+
+	if (whiteBall.info.colourHitFirst == getOtherPlayer().Colour) // check player didnt hit opponants ball first before potting black
+		win = false;
+
+	for (auto& ball : balls) // checks if player has a ball left on the table
+	{
+		if (ball->getColour() == playerColour)
+		{
+			win = false;
+			break;
+		}
+	}
+
+	int lastColourIndex = -1;
+	for (size_t j = 0; j < pottedBalls.size(); j++)
+	{
+		if (pottedBalls[j].getColour() == white)
+		{
+			win = false;
+			break;
+		}
+
+		if (pottedBalls[j].getColour() == playerColour)
+			lastColourIndex = j;
+	}
+	if (lastColourIndex > blackIndex) // this checks if the player potted the black ball first before thier last colour ball.
+		win = false;
+
+	if (win)
+		isPlayer1Turn ? player1Won = true : player1Won = false;
+	else
+		!isPlayer1Turn ? player1Won = true : player1Won = false;
+
+	cout << "did player win: " << win << endl;
+	cout << "last colour index: " << lastColourIndex << endl;
+	cout << "black Index: " << blackIndex << endl;
 }
 
 void Players::setupColours(std::vector<Ball>& pottedBalls, SphereEntity::Colours & firstBallColour)
@@ -170,18 +226,13 @@ void Players::setupColours(std::vector<Ball>& pottedBalls, SphereEntity::Colours
 	}
 }
 
-void Players::resolveFoulBall()
-{
-	getOtherPlayer().ShotsLeft = 2;
-	isPlayer1Turn = !isPlayer1Turn;
-	foulBall = false;
-}
-
 void Players::resolvePlayerTurn()
 {
 	if (foulBall)
 	{
-		resolveFoulBall();
+		getOtherPlayer().ShotsLeft = 2;
+		foulBall = false;
+		isPlayer1Turn = !isPlayer1Turn;
 	}
 	else
 	{
@@ -192,6 +243,8 @@ void Players::resolvePlayerTurn()
 		}
 	}
 }
+
+
 
 
 Players::Player& Players::getCurrentPlayer()
@@ -247,4 +300,9 @@ void Players::setVariablesFromFile(saveVariables saveVar)
 	isPlayer1Turn = saveVar.isPlayer1Turn;
 	player1 = saveVar.player1;
 	player2 = saveVar.player2;
+}
+
+bool Players::getGameOver()
+{
+	return gameOver;
 }

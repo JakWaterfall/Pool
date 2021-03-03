@@ -35,5 +35,6 @@ public:
 	void droppingBall(SDL_Event* e);
 	void keepInDropBallArea();
 	void potted();
+	void resetInfo();
 };
 

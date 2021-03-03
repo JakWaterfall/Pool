@@ -199,3 +199,10 @@ void WhiteBall::potted()
 	isInteractable = false;
 }
 
+void WhiteBall::resetInfo()
+{
+	info.hit = false;
+	info.endTurn = false;
+	info.hitOtherBall = false;
+}
+

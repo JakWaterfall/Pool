@@ -27,7 +27,7 @@ GameEngine::GameEngine(bool resume) : whiteBall(0, 0, true)
 
 			running = true;
 			gameOver = false;
-			players = new Players();
+			players = new Players(); // change this to local if I init font from engine and pass it via parameter.
 
 			// Place Balls
 			if (resume)
@@ -86,7 +86,7 @@ void GameEngine::run()
 
 void GameEngine::quit()
 {
-	if (!gameOver)
+	if (!players->getGameOver())
 	{
 		saveGameDialog();
 	}
@@ -157,7 +157,7 @@ void GameEngine::update()
 		pocket.update(balls, pottedBalls);
 	}
 	
-	players->update(whiteBall, pottedBalls);
+	players->update(whiteBall, pottedBalls, balls);
 
 	// Delete Marked Balls
 	deleteBalls();
