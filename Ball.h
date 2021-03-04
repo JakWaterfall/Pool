@@ -23,7 +23,6 @@ public:
 
 public:
 	virtual void update(std::vector<Ball*> & balls);
-	virtual void eventHandler(SDL_Event* e);
 	virtual void potted();
 	bool getDeleteFlag();
 	bool getIsInteractable() { return isInteractable; }

@@ -16,12 +16,6 @@ void Ball::update(std::vector<Ball*> & balls)
 	ballCollision(balls);
 }
 
-// what do to with event handler??
-void Ball::eventHandler(SDL_Event* e)
-{
-
-}
-
 
 void Ball::applyFriction()
 {

@@ -55,7 +55,6 @@ GameEngine::GameEngine(bool resume) : whiteBall(0, 0, true), running(true), play
 				placeNewBalls();
 			}
 
-
 			// Pockets
 			pockets.push_back(Pocket(TABLE_X, TABLE_Y));
 			pockets.push_back(Pocket(TABLE_W, TABLE_Y));
@@ -152,10 +151,7 @@ void GameEngine::eventHandler()
 		if (e.type == SDL_QUIT) 
 			running = false;
 
-		for (auto& b : balls)
-		{
-			b->eventHandler(&e); // maybe change to only white ball
-		}
+		whiteBall.eventHandler(&e);
 	}
 }
 
