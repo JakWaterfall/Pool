@@ -1,5 +1,7 @@
 #include "Ball.h"
 
+Mix_Chunk* Ball::hitSoundEffect = NULL;
+
 Ball::Ball(float _x, float _y, SphereEntity::Colours colour, int radius)
 	: SphereEntity(_x, _y, colour, radius), velocity({ 0.0f, 0.0f })
 {
@@ -99,6 +101,16 @@ void Ball::ballCollision(std::vector<Ball*>& balls)
 		{
 			v_FromBallToBall.setMagnitude(ballCollisionStrenght); //!!!!!!!! impliment vs speed as well. so calc how fast it was going and use that(poistion - (poistion + velocity))= vector in dir its going then get the magnitude for speed value.
 			velocity += v_FromBallToBall; // apply vector to velocity to push ball away from colliding ball in the direction they got hit from.
+
+			// play hit sound
+			auto now = std::chrono::steady_clock::now();
+			delta = now - lastTime;
+			if (delta.count() > halfSecond)
+			{
+				Mix_PlayChannel(-1, hitSoundEffect, 0);
+				lastTime = std::chrono::steady_clock::now();
+			}
+
 		}
 	}
 	
@@ -119,4 +131,15 @@ bool Ball::getDeleteFlag()
 Vector& Ball::getVelocity()
 {
 	return velocity;
+}
+
+void Ball::setHitSoundEffect(Mix_Chunk* sound)
+{
+	hitSoundEffect = sound;
+}
+
+void Ball::destroyHitSoundEffect()
+{
+	Mix_FreeChunk(hitSoundEffect);
+	hitSoundEffect = NULL;
 }

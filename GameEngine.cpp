@@ -24,11 +24,15 @@ GameEngine::GameEngine(bool resume) : whiteBall(0, 0, true), running(true), play
 			{
 				std::cout << "Init TTF didnt work! " << TTF_GetError() << std::endl;
 			}
+			if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
+			{
+				std::cout << "Init SDL_mixer didnt work! " << Mix_GetError() << std::endl;
+			}
 
 			running = true;
 			players = new Players(); // change this to local if I init font from engine and pass it via parameter.
 
-			//Sphere Textures
+			// Load Sphere Textures
 			SphereEntity::setTextures(
 				loadTexture("Images/blackball.bmp"),
 				loadTexture("Images/whiteball.bmp"),
@@ -36,6 +40,9 @@ GameEngine::GameEngine(bool resume) : whiteBall(0, 0, true), running(true), play
 				loadTexture("Images/yellowball.bmp"),
 				loadTexture("Images/pocket.bmp")
 			);
+
+			// Load sound effects
+			Ball::setHitSoundEffect(Mix_LoadWAV("sounds/juskiddink__billiard-balls-single-hit-dry.wav"));
 
 			// Place Balls
 			whiteBall = WhiteBall(0, 0, true);
@@ -110,6 +117,7 @@ void GameEngine::quit()
 	delete players;
 
 	SphereEntity::DestroyTextures();
+	Ball::destroyHitSoundEffect();
 
 	SDL_DestroyRenderer(renderer);
 	renderer = NULL;
@@ -198,6 +206,8 @@ void GameEngine::render()
 // change variable names 
 void GameEngine::renderBackground()
 {
+
+	// CHANGE THIS !!
 	SDL_SetRenderDrawColor(renderer, 0xB0, 0xB0, 0xB0, 0xFF);
 	SDL_Rect background = { 0, 0, SCREEN_WIDTH,  SCREEN_HEIGHT};
 	SDL_RenderFillRect(renderer, &background);
