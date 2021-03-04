@@ -1,6 +1,6 @@
 #include "GameEngine.h"
 
-GameEngine::GameEngine(bool resume) : whiteBall(0, 0, true)
+GameEngine::GameEngine(bool resume) : whiteBall(0, 0, true), running(true), players(NULL)
 {
 	if (SDL_Init(SDL_INIT_VIDEO) < 0)
 	{
@@ -8,7 +8,7 @@ GameEngine::GameEngine(bool resume) : whiteBall(0, 0, true)
 	}
 	else
 	{
-		win = SDL_CreateWindow("Billiards!", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+		win = SDL_CreateWindow("Jak Waterfall's Billiards!", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
 		if (!win)
 		{
 			std::cout << "Creating window didnt work! " << SDL_GetError() << std::endl;
@@ -26,10 +26,19 @@ GameEngine::GameEngine(bool resume) : whiteBall(0, 0, true)
 			}
 
 			running = true;
-			gameOver = false;
 			players = new Players(); // change this to local if I init font from engine and pass it via parameter.
 
+			//Sphere Textures
+			SphereEntity::setTextures(
+				loadTexture("Images/blackball.bmp"),
+				loadTexture("Images/whiteball.bmp"),
+				loadTexture("Images/redball.bmp"),
+				loadTexture("Images/yellowball.bmp"),
+				loadTexture("Images/pocket.bmp")
+			);
+
 			// Place Balls
+			whiteBall = WhiteBall(0, 0, true);
 			if (resume)
 			{
 				setupBallsAndPlayersFromFile();
@@ -39,6 +48,7 @@ GameEngine::GameEngine(bool resume) : whiteBall(0, 0, true)
 				placeNewBalls();
 			}
 
+
 			// Pockets
 			pockets.push_back(Pocket(TABLE_X, TABLE_Y));
 			pockets.push_back(Pocket(TABLE_W, TABLE_Y));
@@ -47,7 +57,6 @@ GameEngine::GameEngine(bool resume) : whiteBall(0, 0, true)
 			pockets.push_back(Pocket(TABLE_W / 2 + TABLE_X / 2, TABLE_Y - 10));
 			pockets.push_back(Pocket(TABLE_W / 2 + TABLE_X / 2, TABLE_H + 10));
 
-			wb = loadTexture("Images/blackball.bmp"); // remove texture
 
 			run();
 		}
@@ -79,8 +88,7 @@ void GameEngine::run()
 
 		render();
 	}
-	// maybe put a end game screen here or have the end game screen be in the console window 
-	// End Game
+
 	quit();
 }
 
@@ -101,8 +109,7 @@ void GameEngine::quit()
 
 	delete players;
 
-	SDL_DestroyTexture(wb);
-	wb = NULL;
+	SphereEntity::DestroyTextures();
 
 	SDL_DestroyRenderer(renderer);
 	renderer = NULL;
@@ -184,9 +191,6 @@ void GameEngine::render()
 	}
 	players->render(renderer);
 
-	//SDL_Rect ball = { 0, 0, 20, 20 };
-	//SDL_RenderCopy(renderer, wb, NULL, &ball); // thid is test for texture 
-
 	//Update screen
 	SDL_RenderPresent(renderer);
 }
@@ -194,14 +198,18 @@ void GameEngine::render()
 // change variable names 
 void GameEngine::renderBackground()
 {
-	SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+	SDL_SetRenderDrawColor(renderer, 0xB0, 0xB0, 0xB0, 0xFF);
+	SDL_Rect background = { 0, 0, SCREEN_WIDTH,  SCREEN_HEIGHT};
+	SDL_RenderFillRect(renderer, &background);
+
+	SDL_SetRenderDrawColor(renderer, 0x00, 0xD2, 0x00, 0xFF);
 	SDL_Rect side = { TABLE_X, TABLE_Y, TABLE_LINE_FROM_X, TABLE_HEIGHT };
 	SDL_RenderFillRect(renderer, &side);
 
-	Ball dec = Ball(TABLE_X + TABLE_LINE_FROM_X, TABLE_H / 2 + TABLE_Y / 2, SphereEntity::Colours::black, 75);
-	dec.render(renderer);
+	Ball dec = Ball(TABLE_X + TABLE_LINE_FROM_X, TABLE_H / 2 + TABLE_Y / 2, SphereEntity::Colours::pocket, 75);
+	dec.renderWireframe(renderer);
 
-	SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+	SDL_SetRenderDrawColor(renderer, 0x00, 0xD2, 0x00, 0xFF);
 	SDL_Rect cover = { TABLE_X + TABLE_LINE_FROM_X, TABLE_Y, TABLE_WIDTH - TABLE_LINE_FROM_X, TABLE_HEIGHT };
 	SDL_RenderFillRect(renderer, &cover);
 
@@ -213,10 +221,33 @@ void GameEngine::renderBackground()
 	dec.render(renderer);
 	SDL_RenderDrawPoint(renderer, TABLE_W / 2 + TABLE_X / 2, TABLE_H / 2 + TABLE_Y / 2);
 
-
 	SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF);
 	SDL_Rect tableOutline = { TABLE_X, TABLE_Y, TABLE_WIDTH, TABLE_HEIGHT };
 	SDL_RenderDrawRect(renderer, &tableOutline);
+
+
+
+	int sideWidth = 40;
+
+	SDL_SetRenderDrawColor(renderer, 0x70, 0x51, 0x2E, 0xFF);
+	SDL_Rect tableLeft = { TABLE_X- sideWidth, TABLE_Y- sideWidth, sideWidth, TABLE_HEIGHT+ sideWidth*2 };
+	SDL_RenderFillRect(renderer, &tableLeft);
+
+	SDL_SetRenderDrawColor(renderer, 0x70, 0x51, 0x2E, 0xFF);
+	SDL_Rect tableTop = { TABLE_X - sideWidth, TABLE_Y - sideWidth, TABLE_WIDTH+ sideWidth*2, sideWidth };
+	SDL_RenderFillRect(renderer, &tableTop);
+
+	SDL_SetRenderDrawColor(renderer, 0x70, 0x51, 0x2E, 0xFF);
+	SDL_Rect tableRight = { TABLE_X + TABLE_WIDTH, TABLE_Y - sideWidth, sideWidth, TABLE_HEIGHT + sideWidth*2 };
+	SDL_RenderFillRect(renderer, &tableRight);
+
+	SDL_SetRenderDrawColor(renderer, 0x70, 0x51, 0x2E, 0xFF);
+	SDL_Rect tableBottom = { TABLE_X - sideWidth, TABLE_Y + TABLE_HEIGHT, TABLE_WIDTH + sideWidth * 2, sideWidth };
+	SDL_RenderFillRect(renderer, &tableBottom);
+
+	SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF);
+	SDL_Rect sideOutline = { TABLE_X - sideWidth, TABLE_Y - sideWidth, TABLE_WIDTH + sideWidth * 2, TABLE_HEIGHT + sideWidth * 2 };
+	SDL_RenderDrawRect(renderer, &sideOutline);
 }
 
 void GameEngine::placeNewBalls()

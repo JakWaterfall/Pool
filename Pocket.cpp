@@ -1,6 +1,6 @@
 #include "Pocket.h"
 
-Pocket::Pocket(float _x, float _y): SphereEntity(_x, _y, SphereEntity::Colours::black, RADIUS)
+Pocket::Pocket(float _x, float _y): SphereEntity(_x, _y, SphereEntity::Colours::pocket, RADIUS)
 {
 }
 

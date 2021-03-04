@@ -33,7 +33,7 @@ void WhiteBall::render(SDL_Renderer* renderer)
 	if (!ballMoving() && !dropBall)
 		SDL_RenderDrawLine(renderer, (int)position.getX(), (int)position.getY(), (int)aimer.getX(), (int)aimer.getY());
 
-	drawCirle(renderer, position, radius);
+	SphereEntity::render(renderer);
 }
 
 void WhiteBall::eventHandler(SDL_Event* e)

@@ -20,7 +20,6 @@ class GameEngine
 	SDL_Event e;
 
 	bool running;
-	bool gameOver; // impliment game over on black ball potted!
 
 	WhiteBall whiteBall;
 	std::vector<Ball*> balls;
@@ -28,8 +27,6 @@ class GameEngine
 	std::vector<Ball> pottedBalls;
 
 	Players* players;
-
-	SDL_Texture* wb = NULL;
 
 public:
 	//Constuctors
