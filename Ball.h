@@ -9,6 +9,7 @@ class Ball : public SphereEntity
 	std::chrono::steady_clock::time_point lastTime = std::chrono::steady_clock::now();
 	float halfSecond = 0.5f;
 	static Mix_Chunk* hitSoundEffect;
+	static Mix_Chunk* hitWallSoundEffect;
 
 
 	float frictionStrength = 0.03f; // impliment super slippery mode??
@@ -27,8 +28,8 @@ public:
 	bool getDeleteFlag();
 	bool getIsInteractable() { return isInteractable; }
 	Vector& getVelocity();
-	static void setHitSoundEffect(Mix_Chunk* sound);
-	static void destroyHitSoundEffect();
+	static void setSoundEffects(Mix_Chunk* hitBall, Mix_Chunk* hitWall);
+	static void destroySoundEffects();
 
 protected:
 	void applyFriction();

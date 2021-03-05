@@ -1,6 +1,7 @@
 #include "Ball.h"
 
 Mix_Chunk* Ball::hitSoundEffect = NULL;
+Mix_Chunk* Ball::hitWallSoundEffect = NULL;
 
 Ball::Ball(float _x, float _y, SphereEntity::Colours colour, int radius)
 	: SphereEntity(_x, _y, colour, radius), velocity({ 0.0f, 0.0f })
@@ -46,21 +47,25 @@ void Ball::wallCollision()
 	{
 		velocity.setX(-velocity.getX());
 		position.setX((float)TABLE_X+radius);
+		Mix_PlayChannel(-1, hitWallSoundEffect, 0);
 	}
 	if (x + radius > TABLE_W)
 	{
 		velocity.setX(-velocity.getX());
 		position.setX((float)TABLE_W - radius);
+		Mix_PlayChannel(-1, hitWallSoundEffect, 0);
 	}
 	if (y - radius < TABLE_Y)
 	{
 		velocity.setY(-velocity.getY());
 		position.setY((float)TABLE_Y+radius);
+		Mix_PlayChannel(-1, hitWallSoundEffect, 0);
 	}
 	if (y + radius > TABLE_H)
 	{
 		velocity.setY(-velocity.getY());
 		position.setY((float)TABLE_H - radius);
+		Mix_PlayChannel(-1, hitWallSoundEffect, 0);
 	}
 }
 
@@ -127,13 +132,16 @@ Vector& Ball::getVelocity()
 	return velocity;
 }
 
-void Ball::setHitSoundEffect(Mix_Chunk* sound)
+void Ball::setSoundEffects(Mix_Chunk* hitBall, Mix_Chunk* hitWall)
 {
-	hitSoundEffect = sound;
+	hitSoundEffect = hitBall;
+	hitWallSoundEffect = hitWall;
 }
 
-void Ball::destroyHitSoundEffect()
+void Ball::destroySoundEffects()
 {
 	Mix_FreeChunk(hitSoundEffect);
 	hitSoundEffect = NULL;
+	Mix_FreeChunk(hitWallSoundEffect);
+	hitWallSoundEffect = NULL;
 }

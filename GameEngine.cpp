@@ -42,7 +42,11 @@ GameEngine::GameEngine(bool resume) : whiteBall(0, 0, true), running(true), play
 			);
 
 			// Load sound effects
-			Ball::setHitSoundEffect(Mix_LoadWAV("sounds/juskiddink__billiard-balls-single-hit-dry.wav"));
+			Ball::setSoundEffects(
+				Mix_LoadWAV("sounds/HitBallSound2.wav"),
+				Mix_LoadWAV("sounds/HitWallSound2.wav")
+			);
+			Pocket::setSoundEffects(Mix_LoadWAV("sounds/PottingSound.wav"));
 
 			// Place Balls
 			whiteBall = WhiteBall(0, 0, true);
@@ -116,7 +120,8 @@ void GameEngine::quit()
 	delete players;
 
 	SphereEntity::DestroyTextures();
-	Ball::destroyHitSoundEffect();
+	Ball::destroySoundEffects();
+	Pocket::destroySoundEffects();
 
 	SDL_DestroyRenderer(renderer);
 	renderer = NULL;

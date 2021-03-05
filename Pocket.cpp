@@ -1,5 +1,7 @@
 #include "Pocket.h"
 
+Mix_Chunk* Pocket::pocketSoundEffect = NULL;
+
 Pocket::Pocket(float _x, float _y): SphereEntity(_x, _y, SphereEntity::Colours::pocket, RADIUS)
 {
 }
@@ -7,6 +9,17 @@ Pocket::Pocket(float _x, float _y): SphereEntity(_x, _y, SphereEntity::Colours::
 void Pocket::update(std::vector<Ball*>& balls, std::vector<Ball>& pottedBalls)
 {
 	objectCollision(balls, pottedBalls);
+}
+
+void Pocket::setSoundEffects(Mix_Chunk* pocketed)
+{
+	pocketSoundEffect = pocketed;
+}
+
+void Pocket::destroySoundEffects()
+{
+	Mix_FreeChunk(pocketSoundEffect);
+	pocketSoundEffect = NULL;
 }
 
 
@@ -20,6 +33,7 @@ void Pocket::objectCollision(std::vector<Ball*>& balls, std::vector<Ball>& potte
 		{
 			pottedBalls.push_back(*b);
 			b->potted();
+			Mix_PlayChannel(-1, pocketSoundEffect, 0);
 
 			//debug
 			std::string colour;
