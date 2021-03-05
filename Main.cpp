@@ -1,13 +1,16 @@
 #include "GameEngine.h"
 
 bool checkResumingGame();
+int getPocketSize();
 
 int main(int argc, char* args[])
 {
 	bool resume = checkResumingGame();
+	int pocketSize = getPocketSize();
 
 	// Starts Game Engine
-	GameEngine game(resume);
+	GameEngine game(resume, pocketSize);
+
 	return 0;
 }
 
@@ -41,4 +44,30 @@ bool checkResumingGame()
 	ballFile.close();
 	playersFile.close();
 	return false;
+}
+
+int getPocketSize()
+{
+	while (true)
+	{
+		char answer;
+		std::cout << "Choose Pocket Size:" << std::endl;
+		std::cout << "1 = Small | 2 = Medium | 3 = Large " << std::endl;
+		std::cin >> answer;
+		switch (answer)
+		{
+		case '1':
+			return 20;
+			break;
+		case '2':
+			return 25;
+			break;
+		case '3':
+			return 30;
+			break;
+		default:
+			std::cout << "\nIncorrect answer chosen.\n" << std::endl;
+			break;
+		}
+	}
 }

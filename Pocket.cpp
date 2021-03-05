@@ -2,7 +2,7 @@
 
 Mix_Chunk* Pocket::pocketSoundEffect = NULL;
 
-Pocket::Pocket(float _x, float _y): SphereEntity(_x, _y, SphereEntity::Colours::pocket, RADIUS)
+Pocket::Pocket(float _x, float _y, int radius): SphereEntity(_x, _y, SphereEntity::Colours::pocket, radius)
 {
 }
 

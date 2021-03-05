@@ -31,7 +31,7 @@ class GameEngine
 
 public:
 	//Constuctors
-	GameEngine(bool resume);
+	GameEngine(bool resume, int pocketSize);
 
 private:
 	// Functions

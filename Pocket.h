@@ -5,11 +5,10 @@
 
 class Pocket : public SphereEntity
 {
-	static constexpr int RADIUS = 20;
 	static Mix_Chunk* pocketSoundEffect;
 
 public:
-	Pocket(float _x, float _y);
+	Pocket(float _x, float _y, int radius);
 
 	void update(std::vector<Ball*>& balls, std::vector<Ball>& pottedBalls);
 	static void setSoundEffects(Mix_Chunk* pocketed);

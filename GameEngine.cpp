@@ -1,6 +1,6 @@
 #include "GameEngine.h"
 
-GameEngine::GameEngine(bool resume) : whiteBall(0, 0, true), running(true), players(NULL)
+GameEngine::GameEngine(bool resume, int pocketSize) : whiteBall(0, 0, true), running(true), players(NULL)
 {
 	if (SDL_Init(SDL_INIT_VIDEO) < 0)
 	{
@@ -35,10 +35,10 @@ GameEngine::GameEngine(bool resume) : whiteBall(0, 0, true), running(true), play
 			// Load Sphere Textures
 			SphereEntity::setTextures(
 				loadTexture("Images/blackball.bmp"),
-				loadTexture("Images/whiteball.bmp"),
+				loadTexture("Images/whiteball40.bmp"),
 				loadTexture("Images/redball.bmp"),
 				loadTexture("Images/yellowball.bmp"),
-				loadTexture("Images/pocket.bmp")
+				loadTexture("Images/pocket100.bmp")
 			);
 
 			// Load sound effects
@@ -60,12 +60,12 @@ GameEngine::GameEngine(bool resume) : whiteBall(0, 0, true), running(true), play
 			}
 
 			// Pockets
-			pockets.push_back(Pocket(TABLE_X, TABLE_Y));
-			pockets.push_back(Pocket(TABLE_W, TABLE_Y));
-			pockets.push_back(Pocket(TABLE_X, TABLE_H));
-			pockets.push_back(Pocket(TABLE_W, TABLE_H));
-			pockets.push_back(Pocket(TABLE_W / 2 + TABLE_X / 2, TABLE_Y - 10));
-			pockets.push_back(Pocket(TABLE_W / 2 + TABLE_X / 2, TABLE_H + 10));
+			pockets.push_back(Pocket(TABLE_X, TABLE_Y, pocketSize));
+			pockets.push_back(Pocket(TABLE_W, TABLE_Y, pocketSize));
+			pockets.push_back(Pocket(TABLE_X, TABLE_H, pocketSize));
+			pockets.push_back(Pocket(TABLE_W, TABLE_H, pocketSize));
+			pockets.push_back(Pocket(TABLE_W / 2 + TABLE_X / 2, TABLE_Y - 10, pocketSize));
+			pockets.push_back(Pocket(TABLE_W / 2 + TABLE_X / 2, TABLE_H + 10, pocketSize));
 
 
 			run();
