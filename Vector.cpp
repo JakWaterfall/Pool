@@ -22,43 +22,6 @@ void Vector::setMagnitude(float scaler)
     *this *= scaler;
 }
 
-// NOT USED?? REMOVE?
-void Vector::limit(float _limiter)
-{
-    if (!b_limit)
-    {
-        b_limit = true;
-        limiter = _limiter;
-    }
-    if (limiter == 0)
-    {
-        x = 0;
-        y = 0;
-    }
-    if (limiter > 0)
-    {
-        if (x > limiter)
-        {
-            x = limiter;
-        }
-        if (y > limiter)
-        {
-            y = limiter;
-        }
-    }
-    if (limiter < 0)
-    {
-        if (x < limiter)
-        {
-            x = limiter;
-        }
-        if (y < limiter)
-        {
-            y = limiter;
-        }
-    }
-    
-}
 
 Vector Vector::operator=(Vector rhs)
 {

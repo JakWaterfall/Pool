@@ -4,8 +4,7 @@
 class Vector
 {
 	float x, y;
-	bool b_limit = false;
-	float limiter = 0;
+
 public:
 	Vector(float x = 0, float y = 0);
 
@@ -16,7 +15,6 @@ public:
 	float magnitude();
 	void normalise();
 	void setMagnitude(float scaler);
-	void limit(float limiter = 0);
 
 	Vector operator = (Vector rhs);
 	Vector operator + (Vector rhs) const;
