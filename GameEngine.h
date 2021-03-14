@@ -29,6 +29,9 @@ class GameEngine
 
 	Players* players;
 
+	// Decorations
+
+
 public:
 	//Constuctors
 	GameEngine(bool resume, int pocketSize);

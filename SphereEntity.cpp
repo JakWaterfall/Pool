@@ -5,6 +5,7 @@ SDL_Texture* SphereEntity::whiteTexture = NULL;
 SDL_Texture* SphereEntity::redTexture = NULL;
 SDL_Texture* SphereEntity::yellowTexture = NULL;
 SDL_Texture* SphereEntity::pocketTexture = NULL;
+SDL_Texture* SphereEntity::decorTexture = NULL;
 
 SphereEntity::SphereEntity(float _x, float _y, Colours colour, int _radius)
 	: position({ _x, _y }), radius(_radius), colour(colour)
@@ -31,6 +32,10 @@ SphereEntity::SphereEntity(float _x, float _y, Colours colour, int _radius)
 	case SphereEntity::Colours::pocket:
 		r = 0x00; g = 0x00, b = 0x00;
 		texture = SphereEntity::pocketTexture;
+		break;
+	case SphereEntity::Colours::decor:
+		r = 0x00; g = 0x00, b = 0x00;
+		texture = SphereEntity::decorTexture;
 		break;
 	default:
 		r = 0x00; g = 0xFF, b = 0x00; // debug green so i know something went wrong
@@ -69,13 +74,14 @@ SphereEntity::Colours SphereEntity::getColour()
 	return colour;
 }
 
-void SphereEntity::setTextures(SDL_Texture* black, SDL_Texture* white, SDL_Texture* red, SDL_Texture* yellow, SDL_Texture* pocket)
+void SphereEntity::setTextures(SDL_Texture* black, SDL_Texture* white, SDL_Texture* red, SDL_Texture* yellow, SDL_Texture* pocket, SDL_Texture* decor)
 {
 	blackTexture = black;
 	whiteTexture = white;
 	redTexture = red;
 	yellowTexture = yellow;
 	pocketTexture = pocket;
+	decorTexture = decor;
 }
 
 void SphereEntity::drawCirle(SDL_Renderer* renderer, Vector position, int radius)
@@ -138,5 +144,10 @@ void SphereEntity::DestroyTextures()
 	{
 		SDL_DestroyTexture(pocketTexture);
 		pocketTexture = NULL;
+	}
+	if (decorTexture)
+	{
+		SDL_DestroyTexture(decorTexture);
+		decorTexture = NULL;
 	}
 }

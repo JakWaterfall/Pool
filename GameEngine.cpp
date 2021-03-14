@@ -38,7 +38,8 @@ GameEngine::GameEngine(bool resume, int pocketSize) : whiteBall(0, 0, true), run
 				loadTexture("Images/whiteball40.bmp"),
 				loadTexture("Images/redball.bmp"),
 				loadTexture("Images/yellowball.bmp"),
-				loadTexture("Images/pocket100.bmp")
+				loadTexture("Images/pocket100.bmp"),
+				loadTexture("Images/dec2.bmp")
 			);
 
 			// Load sound effects
@@ -208,7 +209,7 @@ void GameEngine::render()
 void GameEngine::renderBackground()
 {
 
-	// CHANGE THIS !!
+	// CHANGE THIS !! to all local variables ?? instead of creating objects over and over? maybe ask alicia?
 	SDL_SetRenderDrawColor(renderer, 0xB0, 0xB0, 0xB0, 0xFF);
 	SDL_Rect background = { 0, 0, SCREEN_WIDTH,  SCREEN_HEIGHT};
 	SDL_RenderFillRect(renderer, &background);
@@ -217,8 +218,8 @@ void GameEngine::renderBackground()
 	SDL_Rect side = { TABLE_X, TABLE_Y, TABLE_LINE_FROM_X, TABLE_HEIGHT };
 	SDL_RenderFillRect(renderer, &side);
 
-	Ball dec = Ball(TABLE_X + TABLE_LINE_FROM_X, TABLE_H / 2 + TABLE_Y / 2, SphereEntity::Colours::pocket, 75);
-	dec.renderWireframe(renderer);
+	Ball dec = Ball(TABLE_X + TABLE_LINE_FROM_X, TABLE_Y + TABLE_HEIGHT / 2, SphereEntity::Colours::decor, 75);
+	dec.render(renderer);
 
 	SDL_SetRenderDrawColor(renderer, 0x00, 0xD2, 0x00, 0xFF);
 	SDL_Rect cover = { TABLE_X + TABLE_LINE_FROM_X, TABLE_Y, TABLE_WIDTH - TABLE_LINE_FROM_X, TABLE_HEIGHT };
