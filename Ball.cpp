@@ -49,10 +49,10 @@ void Ball::wallCollision()
 		position.setX((float)TABLE_X+radius);
 		Mix_PlayChannel(-1, hitWallSoundEffect, 0);
 	}
-	if (x + radius > TABLE_W)
+	if (x + radius > TABLE_X2)
 	{
 		velocity.setX(-velocity.getX());
-		position.setX((float)TABLE_W - radius);
+		position.setX((float)TABLE_X2 - radius);
 		Mix_PlayChannel(-1, hitWallSoundEffect, 0);
 	}
 	if (y - radius < TABLE_Y)
@@ -61,10 +61,10 @@ void Ball::wallCollision()
 		position.setY((float)TABLE_Y+radius);
 		Mix_PlayChannel(-1, hitWallSoundEffect, 0);
 	}
-	if (y + radius > TABLE_H)
+	if (y + radius > TABLE_Y2)
 	{
 		velocity.setY(-velocity.getY());
-		position.setY((float)TABLE_H - radius);
+		position.setY((float)TABLE_Y2 - radius);
 		Mix_PlayChannel(-1, hitWallSoundEffect, 0);
 	}
 }

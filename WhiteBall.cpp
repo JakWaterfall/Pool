@@ -148,7 +148,7 @@ bool WhiteBall::mouseWithinDropBallArea()
 {
 	return	mouse.getX() < TABLE_X + TABLE_LINE_FROM_X &&
 			mouse.getX() > TABLE_X &&
-			mouse.getY() < TABLE_H &&
+			mouse.getY() < TABLE_Y2 &&
 			mouse.getY() > TABLE_Y;
 }
 
@@ -183,9 +183,9 @@ void WhiteBall::keepInDropBallArea()
 	{
 		position.setY((float)TABLE_Y + radius);
 	}
-	if (y + radius > TABLE_H)
+	if (y + radius > TABLE_Y2)
 	{
-		position.setY((float)TABLE_H - radius);
+		position.setY((float)TABLE_Y2 - radius);
 	}
 }
 

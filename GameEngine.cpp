@@ -62,11 +62,11 @@ GameEngine::GameEngine(bool resume, int pocketSize) : whiteBall(0, 0, true), run
 
 			// Pockets
 			pockets.push_back(Pocket(TABLE_X, TABLE_Y, pocketSize));
-			pockets.push_back(Pocket(TABLE_W, TABLE_Y, pocketSize));
-			pockets.push_back(Pocket(TABLE_X, TABLE_H, pocketSize));
-			pockets.push_back(Pocket(TABLE_W, TABLE_H, pocketSize));
-			pockets.push_back(Pocket(TABLE_W / 2 + TABLE_X / 2, TABLE_Y - 10, pocketSize));
-			pockets.push_back(Pocket(TABLE_W / 2 + TABLE_X / 2, TABLE_H + 10, pocketSize));
+			pockets.push_back(Pocket(TABLE_X2, TABLE_Y, pocketSize));
+			pockets.push_back(Pocket(TABLE_X, TABLE_Y2, pocketSize));
+			pockets.push_back(Pocket(TABLE_X2, TABLE_Y2, pocketSize));
+			pockets.push_back(Pocket(TABLE_X2 / 2 + TABLE_X / 2, TABLE_Y - 10, pocketSize));
+			pockets.push_back(Pocket(TABLE_X2 / 2 + TABLE_X / 2, TABLE_Y2 + 10, pocketSize));
 
 			// init Decoration Rect's
 			grayBackground = { 0, 0, SCREEN_WIDTH,  SCREEN_HEIGHT };
@@ -193,7 +193,7 @@ void GameEngine::update()
 void GameEngine::render()
 {
 	//Clear screen
-	SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+	SDL_SetRenderDrawColor(renderer, 0xB0, 0xB0, 0xB0, 0xFF); // Set colour gray
 	SDL_RenderClear(renderer);
 
 	// draw table
@@ -220,9 +220,6 @@ void GameEngine::render()
 /// </summary>
 void GameEngine::renderBackground()
 {
-	SDL_SetRenderDrawColor(renderer, 0xB0, 0xB0, 0xB0, 0xFF); // Set colour gray
-	SDL_RenderFillRect(renderer, &grayBackground);
-
 	SDL_SetRenderDrawColor(renderer, 0x00, 0xD2, 0x00, 0xFF); // Set colour green
 	SDL_RenderFillRect(renderer, &dropBallAreaFelt);
 	
@@ -232,7 +229,7 @@ void GameEngine::renderBackground()
 	SDL_RenderFillRect(renderer, &tableFelt);
 	
 	SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF); // Set colour black
-	SDL_RenderDrawLine(renderer, TABLE_X + TABLE_LINE_FROM_X, TABLE_Y, TABLE_X + TABLE_LINE_FROM_X, TABLE_H);
+	SDL_RenderDrawLine(renderer, TABLE_X + TABLE_LINE_FROM_X, TABLE_Y, TABLE_X + TABLE_LINE_FROM_X, TABLE_Y2);
 	
 	Ball dot = Ball(BLACK_POINT_X, BLACK_POINT_Y, SphereEntity::Colours::black, 2);
 	dot.render(renderer);
@@ -375,7 +372,6 @@ void GameEngine::saveGameDialog()
 	}
 }
 
-// MAYBE USE THIS FOR BALL IMGS 
 SDL_Surface* GameEngine::loadImage(const char* filePath)
 {
 	SDL_Surface* surface = SDL_LoadBMP(filePath);

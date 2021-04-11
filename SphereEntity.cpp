@@ -10,7 +10,7 @@ SDL_Texture* SphereEntity::decorTexture = NULL;
 SphereEntity::SphereEntity(float _x, float _y, Colours colour, int _radius)
 	: position({ _x, _y }), radius(_radius), colour(colour)
 {
-
+	//remove rgb
 	switch (colour)
 	{
 	case SphereEntity::Colours::white:
@@ -43,13 +43,13 @@ SphereEntity::SphereEntity(float _x, float _y, Colours colour, int _radius)
 	}
 }
 
-// maybe change parameter for no. of repetitions 
 void SphereEntity::render(SDL_Renderer* renderer)
 {
 	SDL_Rect ball = { (int)position.getX()-radius, (int)position.getY() - radius, (int)radius*2, (int)radius*2 };
 	SDL_RenderCopy(renderer, texture, NULL, &ball);
 }
 
+//remove fuction
 void SphereEntity::renderWireframe(SDL_Renderer* renderer)
 {
 	SDL_SetRenderDrawColor(renderer, r, g, b, 0xFF);
@@ -84,6 +84,7 @@ void SphereEntity::setTextures(SDL_Texture* black, SDL_Texture* white, SDL_Textu
 	decorTexture = decor;
 }
 
+//remove function
 void SphereEntity::drawCirle(SDL_Renderer* renderer, Vector position, int radius)
 {
 	// https://www.thecrazyprogrammer.com/2016/12/bresenhams-midpoint-circle-algorithm-c-c.html
