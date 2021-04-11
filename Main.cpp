@@ -21,10 +21,10 @@ bool checkResumingGame()
 
 	while (ballFile.good() && playersFile.good())
 	{
-		char answer;
+		std::string answer;
 		std::cout << "Do You Wish To Resume Your Last Game? y or n" << std::endl;
 		std::cin >> answer;
-		switch (answer)
+		switch (answer[0])
 		{
 		case 'y':
 			ballFile.close();
@@ -50,11 +50,11 @@ int getPocketSize()
 {
 	while (true)
 	{
-		char answer;
+		std::string answer;
 		std::cout << "Choose Pocket Size:" << std::endl;
 		std::cout << "1 = Small | 2 = Medium | 3 = Large " << std::endl;
 		std::cin >> answer;
-		switch (answer)
+		switch (answer[0])
 		{
 		case '1':
 			return 20;

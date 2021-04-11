@@ -120,7 +120,7 @@ void GameEngine::quit()
 
 	delete players;
 
-	SphereEntity::DestroyTextures();
+	SphereEntity::DestroyTextures(); // change the static function to camel case
 	Ball::destroySoundEffects();
 	Pocket::destroySoundEffects();
 
@@ -371,10 +371,10 @@ void GameEngine::saveGameDialog()
 
 	while (true)
 	{
-		char answer;
+		std::string answer;
 		std::cout << "Do You Wish To Save The Game? y or n" << std::endl;
 		std::cin >> answer;
-		switch (answer)
+		switch (answer[0])
 		{
 		case 'y':
 			saveStateOfTable();
