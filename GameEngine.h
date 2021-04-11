@@ -30,6 +30,16 @@ class GameEngine
 	Players* players;
 
 	// Decorations
+	SDL_Rect grayBackground;
+	SDL_Rect dropBallAreaFelt;
+	SDL_Rect tableFelt;
+	SDL_Rect tableOutline;
+	SDL_Rect tableWallLeft;
+	SDL_Rect tableWallTop;
+	SDL_Rect tableWallRight;
+	SDL_Rect tableWallBottom;
+	SDL_Rect tableWallOutline;
+
 
 
 public:

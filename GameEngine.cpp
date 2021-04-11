@@ -68,12 +68,22 @@ GameEngine::GameEngine(bool resume, int pocketSize) : whiteBall(0, 0, true), run
 			pockets.push_back(Pocket(TABLE_W / 2 + TABLE_X / 2, TABLE_Y - 10, pocketSize));
 			pockets.push_back(Pocket(TABLE_W / 2 + TABLE_X / 2, TABLE_H + 10, pocketSize));
 
+			// init Decoration Rect's
+			grayBackground = { 0, 0, SCREEN_WIDTH,  SCREEN_HEIGHT };
+			dropBallAreaFelt = { TABLE_X, TABLE_Y, TABLE_LINE_FROM_X, TABLE_HEIGHT };
+			tableFelt = { TABLE_X + TABLE_LINE_FROM_X, TABLE_Y, TABLE_WIDTH - TABLE_LINE_FROM_X, TABLE_HEIGHT };
+			tableOutline = { TABLE_X, TABLE_Y, TABLE_WIDTH, TABLE_HEIGHT };
+			constexpr int sideWidth = 40;
+			tableWallLeft = { TABLE_X - sideWidth, TABLE_Y - sideWidth, sideWidth, TABLE_HEIGHT + sideWidth * 2 };
+			tableWallTop = { TABLE_X - sideWidth, TABLE_Y - sideWidth, TABLE_WIDTH + sideWidth * 2, sideWidth };
+			tableWallRight = { TABLE_X + TABLE_WIDTH, TABLE_Y - sideWidth, sideWidth, TABLE_HEIGHT + sideWidth * 2 };
+			tableWallBottom = { TABLE_X - sideWidth, TABLE_Y + TABLE_HEIGHT, TABLE_WIDTH + sideWidth * 2, sideWidth };
+			tableWallOutline = { TABLE_X - sideWidth, TABLE_Y - sideWidth, TABLE_WIDTH + sideWidth * 2, TABLE_HEIGHT + sideWidth * 2 };
 
 			run();
 		}
 	}
 }
-
 
 void GameEngine::run()
 {
@@ -120,7 +130,7 @@ void GameEngine::quit()
 
 	delete players;
 
-	SphereEntity::DestroyTextures(); // change the static function to camel case
+	SphereEntity::destroyTextures();
 	Ball::destroySoundEffects();
 	Pocket::destroySoundEffects();
 
@@ -205,61 +215,38 @@ void GameEngine::render()
 	SDL_RenderPresent(renderer);
 }
 
-// change variable names 
+/// <summary>
+/// Renders the background and table.
+/// </summary>
 void GameEngine::renderBackground()
 {
+	SDL_SetRenderDrawColor(renderer, 0xB0, 0xB0, 0xB0, 0xFF); // Set colour gray
+	SDL_RenderFillRect(renderer, &grayBackground);
 
-	// CHANGE THIS !! to all local variables ?? instead of creating objects over and over? maybe ask alicia?
-	SDL_SetRenderDrawColor(renderer, 0xB0, 0xB0, 0xB0, 0xFF);
-	SDL_Rect background = { 0, 0, SCREEN_WIDTH,  SCREEN_HEIGHT};
-	SDL_RenderFillRect(renderer, &background);
-
-	SDL_SetRenderDrawColor(renderer, 0x00, 0xD2, 0x00, 0xFF);
-	SDL_Rect side = { TABLE_X, TABLE_Y, TABLE_LINE_FROM_X, TABLE_HEIGHT };
-	SDL_RenderFillRect(renderer, &side);
-
-	Ball dec = Ball(TABLE_X + TABLE_LINE_FROM_X, TABLE_Y + TABLE_HEIGHT / 2, SphereEntity::Colours::decor, 75);
-	dec.render(renderer);
-
-	SDL_SetRenderDrawColor(renderer, 0x00, 0xD2, 0x00, 0xFF);
-	SDL_Rect cover = { TABLE_X + TABLE_LINE_FROM_X, TABLE_Y, TABLE_WIDTH - TABLE_LINE_FROM_X, TABLE_HEIGHT };
-	SDL_RenderFillRect(renderer, &cover);
-
-	SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF);
-	SDL_RenderDrawLine(renderer, TABLE_X + TABLE_LINE_FROM_X, TABLE_Y, TABLE_X + TABLE_LINE_FROM_X, TABLE_H);
-
+	SDL_SetRenderDrawColor(renderer, 0x00, 0xD2, 0x00, 0xFF); // Set colour green
+	SDL_RenderFillRect(renderer, &dropBallAreaFelt);
 	
-	dec = Ball(BLACK_POINT_X, BLACK_POINT_Y, SphereEntity::Colours::black, 2);
-	dec.render(renderer);
-	SDL_RenderDrawPoint(renderer, TABLE_W / 2 + TABLE_X / 2, TABLE_H / 2 + TABLE_Y / 2);
+	Ball halfCircle = Ball(TABLE_X + TABLE_LINE_FROM_X, TABLE_Y + TABLE_HEIGHT / 2, SphereEntity::Colours::decor, 75);
+	halfCircle.render(renderer);
+	
+	SDL_RenderFillRect(renderer, &tableFelt);
+	
+	SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF); // Set colour black
+	SDL_RenderDrawLine(renderer, TABLE_X + TABLE_LINE_FROM_X, TABLE_Y, TABLE_X + TABLE_LINE_FROM_X, TABLE_H);
+	
+	Ball dot = Ball(BLACK_POINT_X, BLACK_POINT_Y, SphereEntity::Colours::black, 2);
+	dot.render(renderer);
 
-	SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF);
-	SDL_Rect tableOutline = { TABLE_X, TABLE_Y, TABLE_WIDTH, TABLE_HEIGHT };
 	SDL_RenderDrawRect(renderer, &tableOutline);
 
+	SDL_SetRenderDrawColor(renderer, 0x70, 0x51, 0x2E, 0xFF); // Set colour brown
+	SDL_RenderFillRect(renderer, &tableWallLeft);
+	SDL_RenderFillRect(renderer, &tableWallTop);
+	SDL_RenderFillRect(renderer, &tableWallRight);
+	SDL_RenderFillRect(renderer, &tableWallBottom);
 
-
-	int sideWidth = 40;
-
-	SDL_SetRenderDrawColor(renderer, 0x70, 0x51, 0x2E, 0xFF);
-	SDL_Rect tableLeft = { TABLE_X- sideWidth, TABLE_Y- sideWidth, sideWidth, TABLE_HEIGHT+ sideWidth*2 };
-	SDL_RenderFillRect(renderer, &tableLeft);
-
-	SDL_SetRenderDrawColor(renderer, 0x70, 0x51, 0x2E, 0xFF);
-	SDL_Rect tableTop = { TABLE_X - sideWidth, TABLE_Y - sideWidth, TABLE_WIDTH+ sideWidth*2, sideWidth };
-	SDL_RenderFillRect(renderer, &tableTop);
-
-	SDL_SetRenderDrawColor(renderer, 0x70, 0x51, 0x2E, 0xFF);
-	SDL_Rect tableRight = { TABLE_X + TABLE_WIDTH, TABLE_Y - sideWidth, sideWidth, TABLE_HEIGHT + sideWidth*2 };
-	SDL_RenderFillRect(renderer, &tableRight);
-
-	SDL_SetRenderDrawColor(renderer, 0x70, 0x51, 0x2E, 0xFF);
-	SDL_Rect tableBottom = { TABLE_X - sideWidth, TABLE_Y + TABLE_HEIGHT, TABLE_WIDTH + sideWidth * 2, sideWidth };
-	SDL_RenderFillRect(renderer, &tableBottom);
-
-	SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF);
-	SDL_Rect sideOutline = { TABLE_X - sideWidth, TABLE_Y - sideWidth, TABLE_WIDTH + sideWidth * 2, TABLE_HEIGHT + sideWidth * 2 };
-	SDL_RenderDrawRect(renderer, &sideOutline);
+	SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF); // Set colour black
+	SDL_RenderDrawRect(renderer, &tableWallOutline);
 }
 
 void GameEngine::placeNewBalls()

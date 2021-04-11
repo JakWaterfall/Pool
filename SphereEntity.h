@@ -41,7 +41,7 @@ public:
 	Colours getColour();
 	static void setTextures(SDL_Texture* blackTexture, SDL_Texture* whiteTexture, SDL_Texture* redTexture, 
 							SDL_Texture* yellowTexture, SDL_Texture* pocket, SDL_Texture* decor);
-	static void DestroyTextures();
+	static void destroyTextures();
 
 protected:
 	void drawCirle(SDL_Renderer* renderer, Vector position, int radius);

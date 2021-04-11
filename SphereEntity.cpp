@@ -118,7 +118,7 @@ void SphereEntity::drawCirle(SDL_Renderer* renderer, Vector position, int radius
 	}
 }
 
-void SphereEntity::DestroyTextures()
+void SphereEntity::destroyTextures()
 {
 	if (whiteTexture)
 	{
