@@ -61,12 +61,16 @@ GameEngine::GameEngine(bool resume, int pocketSize) : whiteBall(0, 0, true), run
 			}
 
 			// Pockets
-			pockets.push_back(Pocket(TABLE_X, TABLE_Y, pocketSize));
 			pockets.push_back(Pocket(TABLE_X2, TABLE_Y, pocketSize));
+			pockets.push_back(Pocket(TABLE_X, TABLE_Y, pocketSize));
 			pockets.push_back(Pocket(TABLE_X, TABLE_Y2, pocketSize));
 			pockets.push_back(Pocket(TABLE_X2, TABLE_Y2, pocketSize));
 			pockets.push_back(Pocket(TABLE_X2 / 2 + TABLE_X / 2, TABLE_Y - 10, pocketSize));
 			pockets.push_back(Pocket(TABLE_X2 / 2 + TABLE_X / 2, TABLE_Y2 + 10, pocketSize));
+
+			// left side pockets for white ball to interacted with when dropping ball
+			leftSidePockets[0] = &pockets[2];
+			leftSidePockets[1] = &pockets[1];
 
 			// init Decoration Rect's
 			grayBackground = { 0, 0, SCREEN_WIDTH,  SCREEN_HEIGHT };
@@ -176,7 +180,7 @@ void GameEngine::update()
 
 	for (auto& b : balls)
 	{
-		b->update(balls);
+		b->update(balls, leftSidePockets);
 	}
 
 	for (auto& pocket : pockets)

@@ -9,7 +9,7 @@ Ball::Ball(float _x, float _y, SphereEntity::Colours colour, int radius)
 }
 
 
-void Ball::update(std::vector<Ball*> & balls)
+void Ball::update(std::vector<Ball*> & balls, SphereEntity* leftSidePockets[])
 {
 	position += velocity;
 	applyFriction();

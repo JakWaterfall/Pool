@@ -1,8 +1,8 @@
 #pragma once
 #include <SDL.h>
-#include<iostream>
+#include<iostream> // possible remove
 #include <vector>
-#include <cstdint>
+#include <cstdint> // possible remove with rgb
 #include "Constants.h"
 #include "Vector.h"
 

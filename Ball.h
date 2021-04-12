@@ -23,7 +23,7 @@ public:
 	Ball(float _x, float _y, SphereEntity::Colours colour, int radius = 10);
 
 public:
-	virtual void update(std::vector<Ball*> & balls);
+	virtual void update(std::vector<Ball*> & balls, SphereEntity* leftSidePockets[]);
 	virtual void potted();
 	bool getDeleteFlag();
 	bool getIsInteractable() { return isInteractable; }

@@ -25,7 +25,9 @@ class GameEngine
 	WhiteBall whiteBall;
 	std::vector<Ball*> balls;
 	std::vector<Pocket> pockets;
+	SphereEntity* leftSidePockets[NUM_OF_LEFT_SIDE_POCKETS];
 	std::vector<Ball> pottedBalls;
+
 
 	Players* players;
 

@@ -5,7 +5,7 @@ WhiteBall::WhiteBall(float _x, float _y, bool dropBall, SphereEntity::Colours co
 {
 }
 
-void WhiteBall::update(std::vector<Ball*>& balls)
+void WhiteBall::update(std::vector<Ball*>& balls, SphereEntity* leftSidePockets[])
 {
 	anyBallsMoving = checkIfballsMoving(balls);
 	if (dropBall)
@@ -13,11 +13,11 @@ void WhiteBall::update(std::vector<Ball*>& balls)
 		radius = 15; // maybe remove this and put in potted
 		isInteractable = false; // maybe remove this and put in potted
 		collideWithBall = willCollideWithBall(balls);
-		//collideWithPocket = willCollideWithPocket(balls);
+		collideWithPocket = willCollideWithPocket(leftSidePockets);
 		keepInDropBallArea();
 		return;
 	}
-	Ball::update(balls);
+	Ball::update(balls, leftSidePockets);
 }
 
 
@@ -133,7 +133,7 @@ void WhiteBall::droppingBall(SDL_Event* e)
 	if (mouseWithinDropBallArea())
 	{
 		position = mouse;
-		if (!collideWithBall && !anyBallsMoving)
+		if (!collideWithBall && !collideWithPocket && !anyBallsMoving)
 		{
 			if (e->type == SDL_MOUSEBUTTONDOWN)
 			{
@@ -165,6 +165,22 @@ bool WhiteBall::willCollideWithBall(std::vector<Ball*>& balls)
 			return true;
 	}
 	return false;
+}
+
+bool WhiteBall::willCollideWithPocket(SphereEntity* leftSidePockets[])
+{
+	for (auto i = 0; i < NUM_OF_LEFT_SIDE_POCKETS; i++)
+	{
+		Vector v_FromBallToBall = position - leftSidePockets[i]->getPosition();	// Create a vector which points from the whiteball to the pocket
+		float dist = v_FromBallToBall.magnitude();			// return the magnitude of that vector to work out the distance between them.
+
+		// Test to see if the distance between the white ball and pocket is greater then thier radii, which would indicate the balls were colliding.
+		if (dist < radius + leftSidePockets[i]->getRadius())
+		{
+			return true;
+		}
+	}
+		return false;
 }
 
 void WhiteBall::keepInDropBallArea()

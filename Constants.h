@@ -21,3 +21,5 @@ constexpr int TABLE_LINE_FROM_X = TABLE_WIDTH / 4;
 
 constexpr int BLACK_POINT_X = TABLE_X + (int)(TABLE_WIDTH * 0.75);
 constexpr int BLACK_POINT_Y = TABLE_Y + TABLE_HEIGHT / 2;
+
+constexpr int NUM_OF_LEFT_SIDE_POCKETS = 2;
