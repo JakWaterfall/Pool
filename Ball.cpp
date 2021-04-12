@@ -75,17 +75,17 @@ bool Ball::ballMoving() const
 }
 
 
-bool Ball::testCollision(Vector & v_FromBallToBall, Ball & b)
+bool Ball::testCollision(Vector & v_FromBallToBall, SphereEntity& object)
 {
-	v_FromBallToBall = position - b.position;	// Create a vector which points from one ball to another.
+	v_FromBallToBall = position - object.getPosition();	// Create a vector which points from one object to another.
 	float dist = v_FromBallToBall.magnitude();			// return the magnitude of that vector to work out the distance between them.
 
-	// Test to see if the distance between the 2 balls is greater then thier radii, which would indicate the balls were colliding.
-	if (dist < radius + b.radius && b.isInteractable) // isInteractable so when the white ball is being dropped it dosent hit the other balls
+	// Test to see if the distance between the 2 objects is greater then thier radii, which would indicate the objects were colliding.
+	if (dist < radius + object.getRadius() && object.getIsInteractable()) // isInteractable so when the white ball is being dropped it dosent hit the other balls
 	{
 		return true;
 	}
-	return false;
+	return false; 
 }
 
 void Ball::ballCollision(std::vector<Ball*>& balls)

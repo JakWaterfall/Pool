@@ -171,16 +171,11 @@ bool WhiteBall::willCollideWithPocket()
 {
 	for (auto& pocket : pockets)
 	{
-		Vector v_FromBallToBall = position - pocket.getPosition();	// Create a vector which points from the whiteball to the pocket
-		float dist = v_FromBallToBall.magnitude();			// return the magnitude of that vector to work out the distance between them.
-
-		// Test to see if the distance between the whiteball and the pocket is greater then thier radii, which would indicate the objects were colliding.
-		if (dist < radius + pocket.getRadius())
-		{
+		Vector v_FromBallToBall;
+		if (Ball::testCollision(v_FromBallToBall, pocket))
 			return true;
-		}
 	}
-		return false;
+	return false;
 }
 
 void WhiteBall::keepInDropBallArea()

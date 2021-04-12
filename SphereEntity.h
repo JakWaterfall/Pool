@@ -20,6 +20,7 @@ protected:
 	Colours colour;
 	int radius;
 	Vector position;
+	bool isInteractable = true;
 
 	SDL_Texture* texture = NULL;
 
@@ -39,6 +40,7 @@ public:
 	Vector& getPosition();
 	int getRadius();
 	Colours getColour();
+	bool getIsInteractable() { return isInteractable; }
 	static void setTextures(SDL_Texture* blackTexture, SDL_Texture* whiteTexture, SDL_Texture* redTexture, 
 							SDL_Texture* yellowTexture, SDL_Texture* pocket, SDL_Texture* decor);
 	static void destroyTextures();

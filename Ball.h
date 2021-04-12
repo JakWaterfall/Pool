@@ -16,7 +16,6 @@ class Ball : public SphereEntity
 protected:
 	float ballCollisionStrenght = 2.0f;
 	Vector velocity;
-	bool isInteractable = true;
 	bool deleteFlag = false;
 
 public:
@@ -26,7 +25,6 @@ public:
 	virtual void update(std::vector<Ball*> & balls);
 	virtual void potted();
 	bool getDeleteFlag();
-	bool getIsInteractable() { return isInteractable; }
 	bool ballMoving() const;
 	Vector& getVelocity();
 	static void setSoundEffects(Mix_Chunk* hitBall, Mix_Chunk* hitWall);
@@ -36,7 +34,5 @@ protected:
 	void applyFriction();
 	void wallCollision();
 	virtual void ballCollision(std::vector<Ball*> & balls);
-	bool testCollision(Vector& v_FromBallToBall, Ball& b);
-
+	bool testCollision(Vector& v_FromBallToBall, SphereEntity& object);
 };
-
