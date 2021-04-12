@@ -52,7 +52,7 @@ public:
 	bool getGameOver();
 
 private:
-	void whiteHitOrMissOtherBall(WhiteBall& white);
+	void whiteHitOrMissOtherBall(WhiteBall& white, std::vector<Ball*>& balls);
 	void resolvePottedBalls(std::vector<Ball>& pottedBalls, std::vector<Ball*>& balls, WhiteBall& whiteBall);
 	void setupColours(std::vector<Ball>& pottedBalls, SphereEntity::Colours & firstBallColour);
 	void resolvePlayerTurn();

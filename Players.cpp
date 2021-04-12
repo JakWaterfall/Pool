@@ -35,7 +35,7 @@ void Players::update(WhiteBall& white, std::vector<Ball>& pottedBalls, std::vect
 	
 	if (white.info.endTurn)
 	{
-		whiteHitOrMissOtherBall(white);
+		whiteHitOrMissOtherBall(white, balls);
 		resolvePottedBalls(pottedBalls, balls, white);
 		resolvePlayerTurn();
 		
@@ -100,7 +100,7 @@ void Players::renderText(SDL_Renderer* renderer, const char* text, int x, int y,
 	textTexture = NULL;
 }
 
-void Players::whiteHitOrMissOtherBall(WhiteBall& white)
+void Players::whiteHitOrMissOtherBall(WhiteBall& white, std::vector<Ball*>& balls)
 {
 	if (!white.info.hitOtherBall)
 	{
@@ -111,19 +111,26 @@ void Players::whiteHitOrMissOtherBall(WhiteBall& white)
 		switch (white.info.colourHitFirst)
 		{
 		case SphereEntity::Colours::red:
-			if (getCurrentPlayer().Colour == yellow) //(isPlayer1Turn && player1Colour == yellow || !isPlayer1Turn && player2Colour == yellow)
+			if (getCurrentPlayer().Colour == yellow) 
 			{
 				foulBall = true;
 			}
 			break;
 		case SphereEntity::Colours::yellow:
-			if (getCurrentPlayer().Colour == red) // (isPlayer1Turn && player1Colour == red || !isPlayer1Turn && player2Colour == red)
+			if (getCurrentPlayer().Colour == red)
 			{
 				foulBall = true;
 			}
 			break;
 		case SphereEntity::Colours::black: // impliment if u hit black and it your last ball you dont foul.
-				foulBall = true;
+			for (auto& ball : balls) // checks if player has a ball left on the table
+			{
+				if (ball->getColour() == getCurrentPlayer().Colour)
+				{
+					foulBall = true;
+					break;
+				}
+			}
 				break;
 		default:
 			std::cout << "something went wrong with hiting other ball flag" << std::endl;
