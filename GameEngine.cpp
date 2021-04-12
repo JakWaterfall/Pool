@@ -1,6 +1,6 @@
 #include "GameEngine.h"
 
-GameEngine::GameEngine(bool resume, int pocketSize) : whiteBall(0, 0, true), running(true), players(NULL)
+GameEngine::GameEngine(bool resume, int pocketSize) : whiteBall(0, 0, true, pockets), running(true), players(NULL)
 {
 	if (SDL_Init(SDL_INIT_VIDEO) < 0)
 	{
@@ -49,8 +49,16 @@ GameEngine::GameEngine(bool resume, int pocketSize) : whiteBall(0, 0, true), run
 			);
 			Pocket::setSoundEffects(Mix_LoadWAV("sounds/PottingSound.wav"));
 
+			// Pockets
+			pockets.push_back(Pocket(TABLE_X, TABLE_Y, pocketSize));
+			pockets.push_back(Pocket(TABLE_X2, TABLE_Y, pocketSize));
+			pockets.push_back(Pocket(TABLE_X, TABLE_Y2, pocketSize));
+			pockets.push_back(Pocket(TABLE_X2, TABLE_Y2, pocketSize));
+			pockets.push_back(Pocket(TABLE_X2 / 2 + TABLE_X / 2, TABLE_Y - 10, pocketSize));
+			pockets.push_back(Pocket(TABLE_X2 / 2 + TABLE_X / 2, TABLE_Y2 + 10, pocketSize));
+			
 			// Place Balls
-			whiteBall = WhiteBall(0, 0, true);
+			whiteBall = WhiteBall(0, 0, true, pockets);
 			if (resume)
 			{
 				setupBallsAndPlayersFromFile();
@@ -59,14 +67,6 @@ GameEngine::GameEngine(bool resume, int pocketSize) : whiteBall(0, 0, true), run
 			{
 				placeNewBalls();
 			}
-
-			// Pockets
-			pockets.push_back(Pocket(TABLE_X, TABLE_Y, pocketSize));
-			pockets.push_back(Pocket(TABLE_X2, TABLE_Y, pocketSize));
-			pockets.push_back(Pocket(TABLE_X, TABLE_Y2, pocketSize));
-			pockets.push_back(Pocket(TABLE_X2, TABLE_Y2, pocketSize));
-			pockets.push_back(Pocket(TABLE_X2 / 2 + TABLE_X / 2, TABLE_Y - 10, pocketSize));
-			pockets.push_back(Pocket(TABLE_X2 / 2 + TABLE_X / 2, TABLE_Y2 + 10, pocketSize));
 
 			// init Decoration Rect's
 			grayBackground = { 0, 0, SCREEN_WIDTH,  SCREEN_HEIGHT };
@@ -319,7 +319,7 @@ void GameEngine::setupBallsAndPlayersFromFile()
 		if (ballFile.eof()) break;
 		if ((SphereEntity::Colours)colour == SphereEntity::Colours::white)
 		{
-			whiteBall = WhiteBall(x, y, false);
+			whiteBall = WhiteBall(x, y, false, pockets);
 			balls.push_back(&whiteBall);
 		}
 		else
