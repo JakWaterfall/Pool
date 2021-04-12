@@ -13,6 +13,7 @@ void WhiteBall::update(std::vector<Ball*>& balls)
 		radius = 15; // maybe remove this and put in potted
 		isInteractable = false; // maybe remove this and put in potted
 		collideWithBall = willCollideWithBall(balls);
+		//collideWithPocket = willCollideWithPocket(balls);
 		keepInDropBallArea();
 		return;
 	}
@@ -119,7 +120,7 @@ bool WhiteBall::checkIfballsMoving(std::vector<Ball*>& balls)
 {
 	for (auto& b : balls)
 	{
-		if (b->getVelocity().getX() != 0 || b->getVelocity().getY() != 0)
+		if (b->ballMoving())
 			return true;
 	}
 	if (info.hit)
@@ -196,7 +197,7 @@ void WhiteBall::potted()
 	dropBall = true;
 	anyBallsMoving = false; // dont think this needs to be here? 
 
-	isInteractable = false;
+	isInteractable = false; // this up update one needs removing?
 }
 
 void WhiteBall::resetInfo()

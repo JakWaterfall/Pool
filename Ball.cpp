@@ -69,7 +69,7 @@ void Ball::wallCollision()
 	}
 }
 
-bool Ball::ballMoving()
+bool Ball::ballMoving() const
 {
 	return velocity.getX() != 0.0f || velocity.getY() != 0.0f;
 }

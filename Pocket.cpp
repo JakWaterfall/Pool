@@ -23,13 +23,13 @@ void Pocket::destroySoundEffects()
 }
 
 
-void Pocket::objectCollision(std::vector<Ball*>& balls, std::vector<Ball>& pottedBalls)
+void Pocket::objectCollision(std::vector<Ball*>& balls, std::vector<Ball>& pottedBalls) // change name from onject collision
 {
 	for (auto& b : balls)
 	{
 		Vector test = position - b->getPosition();
 		float dist = test.magnitude();
-		if (dist < radius + b->getRadius() && b->getIsInteractable())  // this is so when the white ball is being dropped it dosent hit the other balls
+		if (dist < radius + b->getRadius() && b->getIsInteractable())  // this is so when the white ball is being dropped it dosent fall down the pocket
 		{
 			pottedBalls.push_back(*b);
 			b->potted();

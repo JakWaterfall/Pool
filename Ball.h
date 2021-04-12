@@ -27,6 +27,7 @@ public:
 	virtual void potted();
 	bool getDeleteFlag();
 	bool getIsInteractable() { return isInteractable; }
+	bool ballMoving() const;
 	Vector& getVelocity();
 	static void setSoundEffects(Mix_Chunk* hitBall, Mix_Chunk* hitWall);
 	static void destroySoundEffects();
@@ -34,9 +35,8 @@ public:
 protected:
 	void applyFriction();
 	void wallCollision();
-	bool ballMoving();
 	virtual void ballCollision(std::vector<Ball*> & balls);
-	virtual bool testCollision(Vector& v_FromBallToBall, Ball& b);
+	bool testCollision(Vector& v_FromBallToBall, Ball& b);
 
 };
 
