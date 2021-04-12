@@ -32,16 +32,20 @@ Players::~Players()
 
 void Players::update(WhiteBall& white, std::vector<Ball>& pottedBalls, std::vector<Ball*>& balls)
 {
-	
 	if (white.info.endTurn)
 	{
 		whiteHitOrMissOtherBall(white, balls);
 		resolvePottedBalls(pottedBalls, balls, white);
 		resolvePlayerTurn();
 		
+		for (auto& b : pottedBalls)
+		{
+			if(b.getColour() != SphereEntity::Colours::white)
+				displayBalls.push_back(b);
+		}
 		// reset white ball info
-		white.resetInfo();
 		pottedBalls.clear();
+		white.resetInfo();
 
 		debugConsoleLogInfo(); // debug
 	}
@@ -49,6 +53,7 @@ void Players::update(WhiteBall& white, std::vector<Ball>& pottedBalls, std::vect
 
 void Players::render(SDL_Renderer* renderer)
 {
+	renderDisplayBalls(renderer);
 	std::string newScring;
 	if (!gameOver)
 	{
@@ -98,6 +103,17 @@ void Players::renderText(SDL_Renderer* renderer, const char* text, int x, int y,
 	textSurface = NULL;
 	SDL_DestroyTexture(textTexture);
 	textTexture = NULL;
+}
+
+void Players::renderDisplayBalls(SDL_Renderer* renderer)
+{
+	int i = 0;
+	for (auto& ball : displayBalls)
+	{
+		SDL_Rect frame = { 250 + i, 50, (int)ball.getRadius() * 2, (int)ball.getRadius() * 2 };
+		SDL_RenderCopy(renderer, ball.getTexture(), NULL, &frame);
+		i = i + (int)ball.getRadius() * 2;
+	}
 }
 
 void Players::whiteHitOrMissOtherBall(WhiteBall& white, std::vector<Ball*>& balls)

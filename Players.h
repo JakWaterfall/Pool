@@ -30,6 +30,8 @@ class Players
 	SDL_Surface* textSurface = NULL;
 	SDL_Texture* textTexture = NULL;
 
+	std::vector<Ball> displayBalls;
+
 public:
 	struct saveVariables
 	{
@@ -58,6 +60,7 @@ private:
 	void resolvePlayerTurn();
 	void resolveWinner(std::vector<Ball>& pottedBalls, std::vector<Ball*>& balls, WhiteBall& whiteBall, int blackIndex);
 	void renderText(SDL_Renderer* renderer, const char* text, int x, int y, SDL_Color textColour = { 0, 0, 0 });
+	void renderDisplayBalls(SDL_Renderer* renderer);
 
 	Player& getCurrentPlayer();
 	Player& getOtherPlayer();

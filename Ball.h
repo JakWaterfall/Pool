@@ -25,7 +25,7 @@ public:
 	virtual void update(std::vector<Ball*> & balls);
 	virtual void potted();
 	bool getDeleteFlag();
-	bool ballMoving() const;
+	bool ballMoving();
 	Vector& getVelocity();
 	static void setSoundEffects(Mix_Chunk* hitBall, Mix_Chunk* hitWall);
 	static void destroySoundEffects();

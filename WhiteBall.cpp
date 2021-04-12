@@ -30,7 +30,6 @@ void WhiteBall::render(SDL_Renderer* renderer)
 	
 	Vector aimer = position + target; // adds the vector to the white balls position; transforming the tail of the vector from the mouse to the white ball.
 
-	SDL_SetRenderDrawColor(renderer, r, g, b, 0xFF);
 	if (!ballMoving() && !dropBall)
 		SDL_RenderDrawLine(renderer, (int)position.getX(), (int)position.getY(), (int)aimer.getX(), (int)aimer.getY());
 
@@ -153,7 +152,7 @@ bool WhiteBall::mouseWithinDropBallArea()
 			mouse.getY() > TABLE_Y;
 }
 
-bool WhiteBall::willCollideWithBall(std::vector<Ball*>& balls)
+bool WhiteBall::willCollideWithBall(const std::vector<Ball*>& balls)
 {
 	for (auto& b : balls)
 	{

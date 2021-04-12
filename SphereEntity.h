@@ -13,16 +13,14 @@ public:
 	{
 		white = 0, black = 1, red = 2, yellow = 3, pocket = 4, decor = 5
 	};
+
 protected:
-	Uint8 r;
-	Uint8 g;
-	Uint8 b;
 	Colours colour;
 	int radius;
 	Vector position;
-	bool isInteractable = true;
+	bool isInteractable;
 
-	SDL_Texture* texture = NULL;
+	SDL_Texture* texture;
 
 	static SDL_Texture* blackTexture;
 	static SDL_Texture* whiteTexture;
@@ -36,16 +34,13 @@ protected:
 
 public:
 	virtual void render(SDL_Renderer* renderer);
-	virtual void renderWireframe(SDL_Renderer* renderer);
 	Vector& getPosition();
 	int getRadius();
 	Colours getColour();
-	bool getIsInteractable() { return isInteractable; }
+	bool getIsInteractable();
+	SDL_Texture* getTexture();
 	static void setTextures(SDL_Texture* blackTexture, SDL_Texture* whiteTexture, SDL_Texture* redTexture, 
 							SDL_Texture* yellowTexture, SDL_Texture* pocket, SDL_Texture* decor);
 	static void destroyTextures();
-
-protected:
-	void drawCirle(SDL_Renderer* renderer, Vector position, int radius);
 };
 

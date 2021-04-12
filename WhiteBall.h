@@ -24,7 +24,7 @@ public:
 	Info info;
 
 private:
-	bool willCollideWithBall(std::vector<Ball*>& balls);
+	bool willCollideWithBall(const std::vector<Ball*>& balls);
 	bool willCollideWithPocket();
 	bool mouseWithinDropBallArea();
 	bool checkIfballsMoving(std::vector<Ball*>& balls);
