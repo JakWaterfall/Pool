@@ -3,7 +3,6 @@
 #include <SDL_ttf.h>
 #include <string>
 
-
 class Players
 {
 	struct Player
@@ -39,6 +38,7 @@ public:
 		bool isPlayer1Turn;
 		Player player1;
 		Player player2;
+		std::vector<Ball> displayBalls;
 	};
 
 public:
@@ -56,7 +56,7 @@ public:
 private:
 	void whiteHitOrMissOtherBall(WhiteBall& white, std::vector<Ball*>& balls);
 	void resolvePottedBalls(std::vector<Ball>& pottedBalls, std::vector<Ball*>& balls, WhiteBall& whiteBall);
-	void setupColours(std::vector<Ball>& pottedBalls, SphereEntity::Colours & firstBallColour);
+	void setupColours(std::vector<Ball>& pottedBalls, SphereEntity::Colours& firstBallColour);
 	void resolvePlayerTurn();
 	void resolveWinner(std::vector<Ball>& pottedBalls, std::vector<Ball*>& balls, WhiteBall& whiteBall, int blackIndex);
 	void renderText(SDL_Renderer* renderer, const char* text, int x, int y, SDL_Color textColour = { 0, 0, 0 });

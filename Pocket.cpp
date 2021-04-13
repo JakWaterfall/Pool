@@ -2,7 +2,7 @@
 
 Mix_Chunk* Pocket::pocketSoundEffect = NULL;
 
-Pocket::Pocket(float _x, float _y, int radius): SphereEntity(_x, _y, SphereEntity::Colours::pocket, radius)
+Pocket::Pocket(float _x, float _y, int radius) : SphereEntity(_x, _y, SphereEntity::Colours::pocket, radius)
 {
 }
 
@@ -22,8 +22,7 @@ void Pocket::destroySoundEffects()
 	pocketSoundEffect = NULL;
 }
 
-
-void Pocket::objectCollision(std::vector<Ball*>& balls, std::vector<Ball>& pottedBalls) // change name from onject collision
+void Pocket::objectCollision(std::vector<Ball*>& balls, std::vector<Ball>& pottedBalls) // change name from object collision
 {
 	for (auto& b : balls)
 	{

@@ -8,7 +8,7 @@ SDL_Texture* SphereEntity::pocketTexture = NULL;
 SDL_Texture* SphereEntity::decorTexture = NULL;
 
 SphereEntity::SphereEntity(float _x, float _y, Colours colour, int _radius)
-	: position({ _x, _y }), radius(_radius), colour(colour), isInteractable(true), texture(NULL)
+	: position({ _x, _y }), radius(_radius), colour(colour)
 {
 	switch (colour)
 	{

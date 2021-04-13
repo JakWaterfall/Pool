@@ -1,21 +1,22 @@
 #pragma once
-#include <SDL.h>
-#include <SDL_ttf.h>
-#include <SDL_mixer.h>
-#include <iostream>
 #include <chrono>
 #include <fstream>
+#include <iostream>
+#include <SDL.h>
+#include <SDL_mixer.h>
+#include <SDL_ttf.h>
 #include <windows.h>
 
-#include "Constants.h"
-#include "SphereEntity.h"
 #include "Ball.h"
-#include "Pocket.h"
-#include "WhiteBall.h"
+#include "Constants.h"
 #include "Players.h"
+#include "Pocket.h"
+#include "SphereEntity.h"
+#include "WhiteBall.h"
 
 class GameEngine
 {
+private:
 	SDL_Window* win = NULL;
 	SDL_Renderer* renderer = NULL;
 	SDL_Event e;
@@ -40,30 +41,24 @@ class GameEngine
 	SDL_Rect tableWallBottom;
 	SDL_Rect tableWallOutline;
 
-
-
 public:
-	//Constuctors
+	//Constructor
 	GameEngine(bool resume, int pocketSize);
 
 private:
 	// Functions
-	void run();
+	void deleteBalls();
+	void eventHandler();
+	void placeNewBalls();
+	void quit();
 	void render();
 	void renderBackground();
-	void update();
-	void eventHandler();
-	void quit();
-	void deleteBalls();
-
-	void placeNewBalls();
+	void run();
+	void saveGameDialog();
 	void saveStateOfTable();
 	void setupBallsAndPlayersFromFile();
-	void saveGameDialog();
+	void update();
 
 	SDL_Surface* loadImage(const char* filePath);
 	SDL_Texture* loadTexture(const char* filePath);
-
-
 };
-

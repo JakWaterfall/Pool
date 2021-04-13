@@ -18,9 +18,9 @@ protected:
 	Colours colour;
 	int radius;
 	Vector position;
-	bool isInteractable;
+	bool isInteractable = true;
 
-	SDL_Texture* texture;
+	SDL_Texture* texture = NULL;
 
 	static SDL_Texture* blackTexture;
 	static SDL_Texture* whiteTexture;

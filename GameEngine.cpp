@@ -2,35 +2,37 @@
 
 GameEngine::GameEngine(bool resume, int pocketSize) : whiteBall(0, 0, true, pockets), running(true), players(NULL)
 {
-	if (SDL_Init(SDL_INIT_VIDEO) < 0)
+	if (SDL_Init(SDL_INIT_VIDEO) < 0) // Initialise SDL.
 	{
-		std::cout << "Init didnt work! " << SDL_GetError() << std::endl;
+		std::cout << "Init didn't work! " << SDL_GetError() << std::endl;
 	}
 	else
 	{
+		// Create SDL Window object.
 		win = SDL_CreateWindow("Jak Waterfall's Billiards!", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
 		if (!win)
 		{
-			std::cout << "Creating window didnt work! " << SDL_GetError() << std::endl;
+			std::cout << "Creating window didn't work! " << SDL_GetError() << std::endl;
 		}
 		else
 		{
+			// Create SDL Renderer object for drawing to the screen.
 			renderer = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED);
 			if (!renderer)
 			{
-				std::cout << "Creating renderer didnt work! " << SDL_GetError() << std::endl;
+				std::cout << "Creating renderer didn't work! " << SDL_GetError() << std::endl;
 			}
-			if (TTF_Init() == -1)
+			if (TTF_Init() == -1) // Initialise SDL Text Fonts for drawing test to screen.
 			{
-				std::cout << "Init TTF didnt work! " << TTF_GetError() << std::endl;
+				std::cout << "Init TTF didn't work! " << TTF_GetError() << std::endl;
 			}
-			if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
+			if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0) // Initialise SDL Mixer for playing sound.
 			{
-				std::cout << "Init SDL_mixer didnt work! " << Mix_GetError() << std::endl;
+				std::cout << "Init SDL_mixer didn't work! " << Mix_GetError() << std::endl;
 			}
 
-			running = true;
-			players = new Players(); // change this to local if I init font from engine and pass it via parameter.
+			// Players
+			players = new Players();
 
 			// Load Sphere Textures
 			SphereEntity::setTextures(
@@ -56,8 +58,8 @@ GameEngine::GameEngine(bool resume, int pocketSize) : whiteBall(0, 0, true, pock
 			pockets.push_back(Pocket(TABLE_X2, TABLE_Y2, pocketSize));
 			pockets.push_back(Pocket(TABLE_X2 / 2 + TABLE_X / 2, TABLE_Y - 10, pocketSize));
 			pockets.push_back(Pocket(TABLE_X2 / 2 + TABLE_X / 2, TABLE_Y2 + 10, pocketSize));
-			
-			// Place Balls
+
+			// Place Balls. If the user choose to resume game the balls are placed from file.
 			whiteBall = WhiteBall(0, 0, true, pockets);
 			if (resume)
 			{
@@ -68,7 +70,7 @@ GameEngine::GameEngine(bool resume, int pocketSize) : whiteBall(0, 0, true, pock
 				placeNewBalls();
 			}
 
-			// init Decoration Rect's
+			// Init Decoration Rect's for drawing the table and background.
 			grayBackground = { 0, 0, SCREEN_WIDTH,  SCREEN_HEIGHT };
 			dropBallAreaFelt = { TABLE_X, TABLE_Y, TABLE_LINE_FROM_X, TABLE_HEIGHT };
 			tableFelt = { TABLE_X + TABLE_LINE_FROM_X, TABLE_Y, TABLE_WIDTH - TABLE_LINE_FROM_X, TABLE_HEIGHT };
@@ -80,50 +82,62 @@ GameEngine::GameEngine(bool resume, int pocketSize) : whiteBall(0, 0, true, pock
 			tableWallBottom = { TABLE_X - sideWidth, TABLE_Y + TABLE_HEIGHT, TABLE_WIDTH + sideWidth * 2, sideWidth };
 			tableWallOutline = { TABLE_X - sideWidth, TABLE_Y - sideWidth, TABLE_WIDTH + sideWidth * 2, TABLE_HEIGHT + sideWidth * 2 };
 
-			run();
+			run(); // Run the Game Loop.
 		}
 	}
 }
 
+/// <summary>
+/// Runs the game loop. Game loop consists of 3 phases
+/// 1st it handles all the events (such as mouse and keyboard events)
+/// 2nd it updates all the objects (such as ball positions and collisions)
+/// 3rd it renders all the objects to the screen.
+///
+/// To keep simulation speed equal on all machines the update cycle is based on time.
+/// The update function is triggered around 60 times a second.
+/// </summary>
 void GameEngine::run()
 {
-	// 60 Ticks per second by calling update function every 0.01633 seconds
+	// 60 Updates per second by calling update function every 0.01633 seconds.
 	std::chrono::duration<float> delta;
-
 	auto lastTime = std::chrono::steady_clock::now();
-	float sixtyFramesPerSecond = 0.01633f;
+	float sixtiethOfASecond = 0.01633f;
 
-	while (running)
+	while (running) // Game Loop.
 	{
 		// Event Queue
 		eventHandler();
 
 		auto now = std::chrono::steady_clock::now();
 		delta = now - lastTime;
-		while (delta.count() > sixtyFramesPerSecond)
+		while (delta.count() > sixtiethOfASecond) // update function is called if the time between last it was called and now (the delta) is greater than 1/60 of a second
 		{
-		update();
-		lastTime = std::chrono::steady_clock::now();
-		delta = now - lastTime;
+			update(); // updates all the objects
+			lastTime = std::chrono::steady_clock::now(); // update lastTime variable to be straight after function call
+			delta = now - lastTime; // compute new delta (difference between now and last time)
 		}
-
-		render();
+		render(); // renders all the objects to screen
 	}
 
-	quit();
+	quit(); // Quits the game on exit
 }
 
+/// <summary>
+/// Quits the game after the game loop has finished.
+/// If the game is not over it allows the player to save to game to file.
+/// Deletes all the objects and pointers.
+/// </summary>
 void GameEngine::quit()
 {
-	if (!players->getGameOver())
+	if (!players->getGameOver()) // If game is not over present save game option.
 	{
 		saveGameDialog();
 	}
 
-	// DELETE ALL BALL OBJECTS!!!!!!
+	// Delete all the ball, player, texture and sound pointers
 	for (auto& b : balls)
 	{
-		if (b != &whiteBall) // because white ball is a local object that does not need deleteing 
+		if (b != &whiteBall) // because white ball is a local object it does not need deleting
 			delete b;
 	}
 	balls.clear();
@@ -144,62 +158,56 @@ void GameEngine::quit()
 	SDL_Quit();
 }
 
-void GameEngine::deleteBalls()
-{
-	balls.erase(std::remove_if(balls.begin(), balls.end(),
-		[this](Ball* b)
-		{
-			if (b->getDeleteFlag())
-			{
-				delete b;
-				b = nullptr;
-				return true;
-			}
-			else return false;
-		}
-	), balls.end());
-}
-
+/// <summary>
+/// Handles the mouse and keyboard events.
+/// </summary>
 void GameEngine::eventHandler()
 {
 	while (SDL_PollEvent(&e))
 	{
-		if (e.type == SDL_QUIT) 
+		if (e.type == SDL_QUIT) // If the close button is pressed the game loop is stopped.
 			running = false;
 
 		whiteBall.eventHandler(&e);
 	}
 }
 
+/// <summary>
+/// Updates all the objects of the game.
+/// Calls delete function on any balls marked from being potted.
+/// </summary>
 void GameEngine::update()
 {
-
 	for (auto& b : balls)
 	{
-		b->update(balls);
+		b->update(balls); // Update all the balls
 	}
 
 	for (auto& pocket : pockets)
 	{
-		pocket.update(balls, pottedBalls);
+		pocket.update(balls, pottedBalls); // Update all the pockets
 	}
-	
-	players->update(whiteBall, pottedBalls, balls);
+
+	players->update(whiteBall, pottedBalls, balls); // Update the player info
 
 	// Delete Marked Balls
 	deleteBalls();
 }
 
+/// <summary>
+/// Render all the objects to screen.
+/// Clears the screen then renders the table, background, balls, pockets and player info.
+/// </summary>
 void GameEngine::render()
 {
 	//Clear screen
-	SDL_SetRenderDrawColor(renderer, 0xB0, 0xB0, 0xB0, 0xFF); // Set colour gray
+	SDL_SetRenderDrawColor(renderer, 0xB0, 0xB0, 0xB0, 0xFF); // Set colour grey
 	SDL_RenderClear(renderer);
 
-	// draw table
+	// Draw table
 	renderBackground();
 
-	// objects 
+	// Objects
 	for (auto& pocket : pockets)
 	{
 		pocket.render(renderer);
@@ -222,15 +230,15 @@ void GameEngine::renderBackground()
 {
 	SDL_SetRenderDrawColor(renderer, 0x00, 0xD2, 0x00, 0xFF); // Set colour green
 	SDL_RenderFillRect(renderer, &dropBallAreaFelt);
-	
+
 	Ball halfCircle = Ball(TABLE_X + TABLE_LINE_FROM_X, TABLE_Y + TABLE_HEIGHT / 2, SphereEntity::Colours::decor, 75);
 	halfCircle.render(renderer);
-	
+
 	SDL_RenderFillRect(renderer, &tableFelt);
-	
+
 	SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF); // Set colour black
 	SDL_RenderDrawLine(renderer, TABLE_X + TABLE_LINE_FROM_X, TABLE_Y, TABLE_X + TABLE_LINE_FROM_X, TABLE_Y2);
-	
+
 	Ball dot = Ball(BLACK_POINT_X, BLACK_POINT_Y, SphereEntity::Colours::black, 2);
 	dot.render(renderer);
 
@@ -246,10 +254,34 @@ void GameEngine::renderBackground()
 	SDL_RenderDrawRect(renderer, &tableWallOutline);
 }
 
+/// <summary>
+/// Delete and remove all the balls marked for delete after being potted from the vector of balls.
+/// Thus removing them from the table.
+/// </summary>
+void GameEngine::deleteBalls()
+{
+	balls.erase(std::remove_if(balls.begin(), balls.end(),
+		[this](Ball* b)
+		{
+			if (b->getDeleteFlag()) // If marked delete pointer
+			{
+				delete b;
+				b = nullptr;
+				return true;	// return true to remove from vector
+			}
+			else return false;
+		}
+	), balls.end());
+}
+
+/// <summary>
+/// Place all the balls into the default triangle position on screen ready for break of a new game.
+/// Balls are centred around BLACK_POINT_X and BLACK_POINT_Y.
+/// </summary>
 void GameEngine::placeNewBalls()
 {
 	balls.push_back(new Ball(BLACK_POINT_X - 40, BLACK_POINT_Y, SphereEntity::Colours::red));
-	balls.push_back(new Ball(BLACK_POINT_X, BLACK_POINT_Y, SphereEntity::Colours::black));
+	balls.push_back(new Ball(BLACK_POINT_X, BLACK_POINT_Y, SphereEntity::Colours::black)); // Black Ball
 
 	balls.push_back(new Ball(BLACK_POINT_X - 20, BLACK_POINT_Y - 10, SphereEntity::Colours::yellow));
 	balls.push_back(new Ball(BLACK_POINT_X - 20, BLACK_POINT_Y + 10, SphereEntity::Colours::yellow));
@@ -271,9 +303,14 @@ void GameEngine::placeNewBalls()
 	balls.push_back(new Ball(BLACK_POINT_X + 40, BLACK_POINT_Y - 40, SphereEntity::Colours::red));
 	balls.push_back(new Ball(BLACK_POINT_X + 40, BLACK_POINT_Y + 40, SphereEntity::Colours::red));
 
-	balls.push_back(&whiteBall);
+	balls.push_back(&whiteBall); // White Wall takes no position because it starts in the players hand ready to be dropped behind the line.
 }
 
+/// <summary>
+/// Saves the state of the table to file.
+/// Saves all the balls positions (x and y values)
+/// and all the player info.
+/// </summary>
 void GameEngine::saveStateOfTable()
 {
 	using namespace std;
@@ -287,7 +324,8 @@ void GameEngine::saveStateOfTable()
 		ballFile << b->getPosition().getY() << endl;
 		ballFile << (int)b->getColour() << endl;
 	}
-	
+
+	// Save game info is pulled out of the player object as a struct of information.
 	Players::saveVariables saveVar = players->getSaveVariables();
 	playerFile << saveVar.isPlayer1Turn << endl;
 	playerFile << saveVar.arePlayerColoursSetup << endl;
@@ -295,6 +333,10 @@ void GameEngine::saveStateOfTable()
 	playerFile << saveVar.player2.ShotsLeft << endl;
 	playerFile << (int)saveVar.player1.Colour << endl;
 	playerFile << (int)saveVar.player2.Colour << endl;
+	for (auto& displayBall : saveVar.displayBalls)
+	{
+		playerFile << (int)displayBall.getColour() << endl;
+	}
 
 	ballFile.close();
 	playerFile.close();
@@ -342,6 +384,13 @@ void GameEngine::setupBallsAndPlayersFromFile()
 	playerFile >> colour2;
 	saveVar.player1.Colour = (SphereEntity::Colours)colour1;
 	saveVar.player2.Colour = (SphereEntity::Colours)colour2;
+	int colour3;
+	while (true)
+	{
+		playerFile >> colour3;
+		if (playerFile.eof()) break;
+		saveVar.displayBalls.push_back(Ball(0, 0, (SphereEntity::Colours)colour3));
+	}
 
 	players->setVariablesFromFile(saveVar);
 
@@ -351,13 +400,15 @@ void GameEngine::setupBallsAndPlayersFromFile()
 void GameEngine::saveGameDialog()
 {
 	HWND hwnd = GetConsoleWindow();
-	SetForegroundWindow(hwnd); // Brings the console window the the front to allow save game functionality
+	SetForegroundWindow(hwnd); // Brings the console window the front to allow save game functionality
 
 	while (true)
 	{
 		std::string answer;
 		std::cout << "Do You Wish To Save The Game? y or n" << std::endl;
 		std::cin >> answer;
+		std::cin.clear();
+		std::cin.ignore(INT_MAX, '\n');
 		switch (answer[0])
 		{
 		case 'y':
@@ -377,7 +428,7 @@ SDL_Surface* GameEngine::loadImage(const char* filePath)
 	SDL_Surface* surface = SDL_LoadBMP(filePath);
 	if (!surface)
 	{
-		std::cout << "load image didnt work! " << SDL_GetError() << std::endl;
+		std::cout << "load image didn't work! " << SDL_GetError() << std::endl;
 	}
 	return surface;
 }
@@ -390,14 +441,14 @@ SDL_Texture* GameEngine::loadTexture(const char* filePath)
 
 	if (loadedSurface == NULL)
 	{
-		std::cout << "load image didnt work! " << SDL_GetError() << std::endl;
+		std::cout << "load image didn't work! " << SDL_GetError() << std::endl;
 	}
 	else
 	{
 		newTexture = SDL_CreateTextureFromSurface(renderer, loadedSurface);
 		if (newTexture == NULL)
 		{
-			std::cout << "load texture didnt work! " << SDL_GetError() << std::endl;
+			std::cout << "load texture didn't work! " << SDL_GetError() << std::endl;
 		}
 
 		//Get rid of old loaded surface

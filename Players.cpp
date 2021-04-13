@@ -1,7 +1,7 @@
 #include "Players.h"
 
 Players::Players()
-	: arePlayerColoursSetup(false), foulBall(false), isPlayer1Turn(true), gameOver(false), player1Won(false), player1({1, black}), player2({ 0, black })
+	: arePlayerColoursSetup(false), foulBall(false), isPlayer1Turn(true), gameOver(false), player1Won(false), player1({ 1, black }), player2({ 0, black })
 {
 	font = TTF_OpenFont("Fonts/arial.ttf", 28);
 	if (font == NULL)
@@ -15,7 +15,7 @@ Players::~Players()
 	// free SDL pointers
 	if (textSurface)
 	{
-		SDL_FreeSurface(textSurface); 
+		SDL_FreeSurface(textSurface);
 		textSurface = NULL;
 	}
 	if (textTexture)
@@ -37,10 +37,10 @@ void Players::update(WhiteBall& white, std::vector<Ball>& pottedBalls, std::vect
 		whiteHitOrMissOtherBall(white, balls);
 		resolvePottedBalls(pottedBalls, balls, white);
 		resolvePlayerTurn();
-		
+
 		for (auto& b : pottedBalls)
 		{
-			if(b.getColour() != SphereEntity::Colours::white)
+			if (b.getColour() != SphereEntity::Colours::white)
 				displayBalls.push_back(b);
 		}
 		// reset white ball info
@@ -127,7 +127,7 @@ void Players::whiteHitOrMissOtherBall(WhiteBall& white, std::vector<Ball*>& ball
 		switch (white.info.colourHitFirst)
 		{
 		case SphereEntity::Colours::red:
-			if (getCurrentPlayer().Colour == yellow) 
+			if (getCurrentPlayer().Colour == yellow)
 			{
 				foulBall = true;
 			}
@@ -138,7 +138,7 @@ void Players::whiteHitOrMissOtherBall(WhiteBall& white, std::vector<Ball*>& ball
 				foulBall = true;
 			}
 			break;
-		case SphereEntity::Colours::black: // impliment if u hit black and it your last ball you dont foul.
+		case SphereEntity::Colours::black: // implement if u hit black and it your last ball you don't foul.
 			for (auto& ball : balls) // checks if player has a ball left on the table
 			{
 				if (ball->getColour() == getCurrentPlayer().Colour)
@@ -147,9 +147,9 @@ void Players::whiteHitOrMissOtherBall(WhiteBall& white, std::vector<Ball*>& ball
 					break;
 				}
 			}
-				break;
+			break;
 		default:
-			std::cout << "something went wrong with hiting other ball flag" << std::endl;
+			std::cout << "something went wrong with hitting other ball flag" << std::endl;
 			break;
 		}
 	}
@@ -160,7 +160,7 @@ void Players::resolvePottedBalls(std::vector<Ball>& pottedBalls, std::vector<Bal
 	if (!pottedBalls.empty())
 	{
 		SphereEntity::Colours firstBallColour = pottedBalls[0].getColour();
-		
+
 		if (!arePlayerColoursSetup)
 			setupColours(pottedBalls, firstBallColour);
 
@@ -182,7 +182,7 @@ void Players::resolvePottedBalls(std::vector<Ball>& pottedBalls, std::vector<Bal
 
 			if (pottedBalls[i].getColour() == black)
 			{
-				resolveWinner(pottedBalls, balls, whiteBall, i);	
+				resolveWinner(pottedBalls, balls, whiteBall, i);
 			}
 		}
 	}
@@ -236,7 +236,7 @@ void Players::resolveWinner(std::vector<Ball>& pottedBalls, std::vector<Ball*>& 
 	cout << "black Index: " << blackIndex << endl;
 }
 
-void Players::setupColours(std::vector<Ball>& pottedBalls, SphereEntity::Colours & firstBallColour)
+void Players::setupColours(std::vector<Ball>& pottedBalls, SphereEntity::Colours& firstBallColour)
 {
 	if (firstBallColour != white && firstBallColour != black)
 	{
@@ -266,9 +266,6 @@ void Players::resolvePlayerTurn()
 		}
 	}
 }
-
-
-
 
 Players::Player& Players::getCurrentPlayer()
 {
@@ -314,7 +311,7 @@ std::string Players::getColourString()
 
 Players::saveVariables Players::getSaveVariables()
 {
-	return { arePlayerColoursSetup, isPlayer1Turn, player1, player2 };
+	return { arePlayerColoursSetup, isPlayer1Turn, player1, player2, displayBalls };
 }
 
 void Players::setVariablesFromFile(saveVariables saveVar)
@@ -323,6 +320,7 @@ void Players::setVariablesFromFile(saveVariables saveVar)
 	isPlayer1Turn = saveVar.isPlayer1Turn;
 	player1 = saveVar.player1;
 	player2 = saveVar.player2;
+	displayBalls = saveVar.displayBalls;
 }
 
 bool Players::getGameOver()
