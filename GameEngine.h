@@ -54,11 +54,9 @@ private:
 	void render();
 	void renderBackground();
 	void run();
-	void saveGameDialog();
+	void saveGameDialogue();
 	void saveStateOfTable();
 	void setupBallsAndPlayersFromFile();
 	void update();
-
-	SDL_Surface* loadImage(const char* filePath);
 	SDL_Texture* loadTexture(const char* filePath);
 };

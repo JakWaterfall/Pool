@@ -131,7 +131,7 @@ void GameEngine::quit()
 {
 	if (!players->getGameOver()) // If game is not over present save game option.
 	{
-		saveGameDialog();
+		saveGameDialogue();
 	}
 
 	// Delete all the ball, player, texture and sound pointers
@@ -327,6 +327,7 @@ void GameEngine::saveStateOfTable()
 
 	// Save game info is pulled out of the player object as a struct of information.
 	Players::saveVariables saveVar = players->getSaveVariables();
+
 	playerFile << saveVar.isPlayer1Turn << endl;
 	playerFile << saveVar.arePlayerColoursSetup << endl;
 	playerFile << saveVar.player1.ShotsLeft << endl;
@@ -335,13 +336,16 @@ void GameEngine::saveStateOfTable()
 	playerFile << (int)saveVar.player2.Colour << endl;
 	for (auto& displayBall : saveVar.displayBalls)
 	{
-		playerFile << (int)displayBall.getColour() << endl;
+		playerFile << (int)displayBall.getColour() << endl; // All the display balls are saved to file
 	}
 
 	ballFile.close();
 	playerFile.close();
 }
 
+/// <summary>
+/// Sets up the player and ball objects from file for the resume game functionality.
+/// </summary>
 void GameEngine::setupBallsAndPlayersFromFile()
 {
 	using namespace std;
@@ -355,10 +359,11 @@ void GameEngine::setupBallsAndPlayersFromFile()
 
 	while (true)
 	{
+		// Ball info is pulled from file.
 		ballFile >> x;
 		ballFile >> y;
 		ballFile >> colour;
-		if (ballFile.eof()) break;
+		if (ballFile.eof()) break; // Balls are added to the ball vector until we reach the end of file.
 		if ((SphereEntity::Colours)colour == SphereEntity::Colours::white)
 		{
 			whiteBall = WhiteBall(x, y, false, pockets);
@@ -373,6 +378,7 @@ void GameEngine::setupBallsAndPlayersFromFile()
 
 	ifstream playerFile("player.txt");
 
+	// Player save game data is packaged into a struct and sent back to the players object.
 	Players::saveVariables saveVar;
 	playerFile >> saveVar.isPlayer1Turn;
 	playerFile >> saveVar.arePlayerColoursSetup;
@@ -388,65 +394,66 @@ void GameEngine::setupBallsAndPlayersFromFile()
 	while (true)
 	{
 		playerFile >> colour3;
-		if (playerFile.eof()) break;
+		if (playerFile.eof()) break; // display balls are added to the vector until end off file.
 		saveVar.displayBalls.push_back(Ball(0, 0, (SphereEntity::Colours)colour3));
 	}
 
-	players->setVariablesFromFile(saveVar);
+	players->setVariablesFromFile(saveVar); // Player save variables are set back in the players object
 
 	playerFile.close();
 }
 
-void GameEngine::saveGameDialog()
+/// <summary>
+/// Shows the user that save game dialogue that allows the player to choose
+/// whether they want to save the game to file after quitting.
+/// </summary>
+void GameEngine::saveGameDialogue()
 {
+	using namespace std;
 	HWND hwnd = GetConsoleWindow();
 	SetForegroundWindow(hwnd); // Brings the console window the front to allow save game functionality
 
-	while (true)
+	while (true) // Loops until user gives valid answer
 	{
-		std::string answer;
-		std::cout << "Do You Wish To Save The Game? y or n" << std::endl;
-		std::cin >> answer;
-		std::cin.clear();
-		std::cin.ignore(INT_MAX, '\n');
+		string answer;
+		cout << "Do You Wish To Save The Game? y or n" << endl;
+		cin >> answer;
+		cin.clear(); // clears and ignores vales stored in cin for next loop
+		cin.ignore(INT_MAX, '\n');
 		switch (answer[0])
 		{
 		case 'y':
-			saveStateOfTable();
+			saveStateOfTable(); // if the user inputs 'y' save the game to file.
 			return;
 		case 'n':
 			return;
 		default:
-			std::cout << "Incorrect answer chosen. Place type 'y' or 'n' " << std::endl;
+			cout << "Incorrect answer chosen. Place type 'y' or 'n' " << endl;
 			break;
 		}
 	}
 }
 
-SDL_Surface* GameEngine::loadImage(const char* filePath)
-{
-	SDL_Surface* surface = SDL_LoadBMP(filePath);
-	if (!surface)
-	{
-		std::cout << "load image didn't work! " << SDL_GetError() << std::endl;
-	}
-	return surface;
-}
-
+/// <summary>
+///	Loads a texture from a file.
+/// Used to load in the ball and pocket textures.
+/// </summary>
+/// <param name="filePath">The relative file path to the image.</param>
+/// <returns>Returns a SDL_Texture of the image from file.</returns>
 SDL_Texture* GameEngine::loadTexture(const char* filePath)
 {
 	SDL_Texture* newTexture = NULL;
 
-	SDL_Surface* loadedSurface = loadImage(filePath);
+	SDL_Surface* loadedSurface = SDL_LoadBMP(filePath);
 
-	if (loadedSurface == NULL)
+	if (loadedSurface == NULL) // If the surface didn't load properly print an error.
 	{
 		std::cout << "load image didn't work! " << SDL_GetError() << std::endl;
 	}
 	else
 	{
 		newTexture = SDL_CreateTextureFromSurface(renderer, loadedSurface);
-		if (newTexture == NULL)
+		if (newTexture == NULL) // If the Texture didn't load properly print an error.
 		{
 			std::cout << "load texture didn't work! " << SDL_GetError() << std::endl;
 		}
@@ -454,6 +461,5 @@ SDL_Texture* GameEngine::loadTexture(const char* filePath)
 		//Get rid of old loaded surface
 		SDL_FreeSurface(loadedSurface);
 	}
-
 	return newTexture;
 }
