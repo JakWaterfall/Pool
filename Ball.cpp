@@ -8,8 +8,12 @@ Ball::Ball(float _x, float _y, SphereEntity::Colours colour, int radius)
 {
 }
 
-
-void Ball::update(std::vector<Ball*> & balls)
+/// <summary>
+/// Updates the position of the ball based on the velocity.
+/// Applies friction and calculates wall and ball collisions.
+/// </summary>
+/// <param name="balls">vector of all the balls on the table for ball collision testing.</param>
+void Ball::update(std::vector<Ball*>& balls)
 {
 	position += velocity;
 	applyFriction();
@@ -17,7 +21,10 @@ void Ball::update(std::vector<Ball*> & balls)
 	ballCollision(balls);
 }
 
-
+/// <summary>
+/// Applies friction to the ball back creating a vector which points backwards to the ball movement direction
+/// and sets its magnitude to a constant strength and adds it to the velocity thereby slowing the ball down.
+/// </summary>
 void Ball::applyFriction()
 {
 	if (ballMoving())
@@ -25,7 +32,7 @@ void Ball::applyFriction()
 		Vector friction = position - (position + velocity); // Create a vector(friction) pointing from the direction the ball is going to the ball
 		friction.setMagnitude(frictionStrength);			// set the magnitude to be a much smaller length so the strength is not too much.
 		velocity += friction;								// apply the friction to the velocity to slow the ball down to create the illusion of friction.
-		
+
 		// clamp velocity so when its close enough to 0; it sets x and y to 0
 		if (velocity.getX() < 0.5f && velocity.getX() > -0.5f)
 		{
@@ -38,6 +45,9 @@ void Ball::applyFriction()
 	}
 }
 
+/// <summary>
+/// Tests For a collision with the wall and inverts the x or y velocity based on which wall was hit.
+/// </summary>
 void Ball::wallCollision()
 {
 	int x = (int)position.getX();
@@ -45,8 +55,8 @@ void Ball::wallCollision()
 
 	if (x - radius < TABLE_X)
 	{
-		velocity.setX(-velocity.getX());
-		position.setX((float)TABLE_X+radius);
+		velocity.setX(-velocity.getX()); // Invert velocity away from wall
+		position.setX((float)TABLE_X + radius); // set position to be just touching the wall so that the ball may never protrude past the wall
 		Mix_PlayChannel(-1, hitWallSoundEffect, 0);
 	}
 	if (x + radius > TABLE_X2)
@@ -58,7 +68,7 @@ void Ball::wallCollision()
 	if (y - radius < TABLE_Y)
 	{
 		velocity.setY(-velocity.getY());
-		position.setY((float)TABLE_Y+radius);
+		position.setY((float)TABLE_Y + radius);
 		Mix_PlayChannel(-1, hitWallSoundEffect, 0);
 	}
 	if (y + radius > TABLE_Y2)
@@ -69,53 +79,45 @@ void Ball::wallCollision()
 	}
 }
 
+/// <summary>
+/// Returns a boolean on whether or not he ball is moving.
+/// </summary>
+/// <returns>Whether or not he ball is moving</returns>
 bool Ball::ballMoving()
 {
-	return velocity.getX() != 0.0f || velocity.getY() != 0.0f;
+	return velocity.getX() != 0.0f || velocity.getY() != 0.0f; // if there is a velocity in either the x or y direction the wall is moving.
 }
 
-
-bool Ball::testCollision(Vector & v_FromBallToBall, SphereEntity& object)
-{
-	v_FromBallToBall = position - object.getPosition();	// Create a vector which points from one object to another.
-	float dist = v_FromBallToBall.magnitude();			// return the magnitude of that vector to work out the distance between them.
-
-	// Test to see if the distance between the 2 objects is greater then thier radii, which would indicate the objects were colliding.
-	if (dist < radius + object.getRadius() && object.getIsInteractable()) // isInteractable so when the white ball is being dropped it dosent hit the other balls
-	{
-		return true;
-	}
-	return false; 
-}
-
+/// <summary>
+///	Calculates and implements the trajectories of the ball after colliding with another ball.
+/// </summary>
+/// <param name="balls">vector of all the balls on the table for ball collision testing.</param>
 void Ball::ballCollision(std::vector<Ball*>& balls)
 {
 	Vector v_FromBallToBall;
 	for (auto& b : balls)
 	{
-		if (b == this) // dont check ball with itself
+		if (b == this) // Don't check ball with itself
 			continue;
 
 		if (testCollision(v_FromBallToBall, *b))
 		{
-			v_FromBallToBall.setMagnitude(ballCollisionStrenght); //!!!!!!!! impliment vs speed as well. so calc how fast it was going and use that(poistion - (poistion + velocity))= vector in dir its going then get the magnitude for speed value.
-			velocity += v_FromBallToBall; // apply vector to velocity to push ball away from colliding ball in the direction they got hit from.
+			// Vector passed to testCollision function will now hold a vector that is pointing from collided ball and this ball
+			// therefore the vector is pointing in the direction in which this ball must be pushed after colliding.
+			v_FromBallToBall.setMagnitude(ballCollisionStrenght); // If collided set the magnitude to a constant strength.
+			velocity += v_FromBallToBall; // Apply vector to velocity to push ball away from colliding ball in the direction it got hit from.
 
-			// play hit sound
+			// Play hit sound
 			auto now = std::chrono::steady_clock::now();
 			delta = now - lastTime;
-			if (delta.count() > halfSecond)
+			if (delta.count() > halfSecond) // Sound only plays if it had not played in the last half a second as there are many collisions a second.
 			{
 				Mix_PlayChannel(-1, hitSoundEffect, 0);
 				lastTime = std::chrono::steady_clock::now();
 			}
-
 		}
 	}
-	
 }
-
-
 
 void Ball::potted()
 {

@@ -1,5 +1,10 @@
 #include "GameEngine.h"
 
+/// <summary>
+///	Constructor initialise the SDL framework and variables to play the game.
+/// </summary>
+/// <param name="resume">Whether the user is resuming the game from a previous save.</param>
+/// <param name="pocketSize">The size of the pockets.</param>
 GameEngine::GameEngine(bool resume, int pocketSize) : whiteBall(0, 0, true, pockets), running(true), players(NULL)
 {
 	if (SDL_Init(SDL_INIT_VIDEO) < 0) // Initialise SDL.

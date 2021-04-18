@@ -5,7 +5,7 @@
 
 class Players
 {
-	struct Player
+	struct Player // Player struct will hold the info for both players (Their colour and how many shots they have left)
 	{
 		int ShotsLeft;
 		SphereEntity::Colours Colour;
@@ -18,21 +18,19 @@ class Players
 	bool foulBall;
 	bool arePlayerColoursSetup;
 	bool isPlayer1Turn;
+	bool gameOver;
+	bool player1Won;
 	Player player1;
 	Player player2;
 
-	bool gameOver;
-	bool player1Won;
-
 	TTF_Font* font = NULL;
-	//SDL_Color textColor = { 0, 0, 0 };
 	SDL_Surface* textSurface = NULL;
 	SDL_Texture* textTexture = NULL;
 
 	std::vector<Ball> displayBalls;
 
 public:
-	struct saveVariables
+	struct saveVariables // Save variables struct packages the relevant data required to save and load from file.
 	{
 		bool arePlayerColoursSetup;
 		bool isPlayer1Turn;
@@ -42,16 +40,18 @@ public:
 	};
 
 public:
+	// Constructor / Destructor
 	Players();
 	~Players();
 
+	// Functions
 	void update(WhiteBall& white, std::vector<Ball>& pottedBalls, std::vector<Ball*>& balls);
 	void render(SDL_Renderer* renderer);
+	bool getGameOver();
 
 	// Getters / Setter from file
 	saveVariables getSaveVariables();
 	void setVariablesFromFile(saveVariables saveVar);
-	bool getGameOver();
 
 private:
 	void whiteHitOrMissOtherBall(WhiteBall& white, std::vector<Ball*>& balls);
@@ -61,10 +61,8 @@ private:
 	void resolveWinner(std::vector<Ball>& pottedBalls, std::vector<Ball*>& balls, WhiteBall& whiteBall, int blackIndex);
 	void renderText(SDL_Renderer* renderer, const char* text, int x, int y, SDL_Color textColour = { 0, 0, 0 });
 	void renderDisplayBalls(SDL_Renderer* renderer);
+	std::string getColourString();
 
 	Player& getCurrentPlayer();
 	Player& getOtherPlayer();
-
-	void debugConsoleLogInfo();
-	std::string getColourString();
 };

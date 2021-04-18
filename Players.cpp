@@ -1,5 +1,8 @@
 #include "Players.h"
 
+/// <summary>
+/// Inits variables and Fonts for text on screen.
+/// </summary>
 Players::Players()
 	: arePlayerColoursSetup(false), foulBall(false), isPlayer1Turn(true), gameOver(false), player1Won(false), player1({ 1, black }), player2({ 0, black })
 {
@@ -30,6 +33,14 @@ Players::~Players()
 	}
 }
 
+/// <summary>
+/// At the end of every turn, all the variables that make up the turn action are resolved including
+/// Whether the white ball hit another ball, which balls had been potted and in which order and
+/// resolve whether the current player had a foul ball or not.
+/// </summary>
+/// <param name="white">White Ball.</param>
+/// <param name="pottedBalls">Balls that have been potted this turn.</param>
+/// <param name="balls">All the alls on the table.</param>
 void Players::update(WhiteBall& white, std::vector<Ball>& pottedBalls, std::vector<Ball*>& balls)
 {
 	if (white.info.endTurn)
@@ -40,27 +51,32 @@ void Players::update(WhiteBall& white, std::vector<Ball>& pottedBalls, std::vect
 
 		for (auto& b : pottedBalls)
 		{
-			if (b.getColour() != SphereEntity::Colours::white)
+			if (b.getColour() != SphereEntity::Colours::white) // Display all the potted balls except the white balls.
 				displayBalls.push_back(b);
 		}
-		// reset white ball info
+		// reset white ball info & clear potted balls ready for next turn.
 		pottedBalls.clear();
 		white.resetInfo();
-
-		debugConsoleLogInfo(); // debug
 	}
 }
 
+/// <summary>
+///	Renders relevant player info to the screen such current player turn, their colour and how many shots left.
+/// Also renders end game text of which player won.
+/// </summary>
+/// <param name="renderer">SDL renderer object that draws to screen.</param>
 void Players::render(SDL_Renderer* renderer)
 {
 	renderDisplayBalls(renderer);
 	std::string newScring;
 	if (!gameOver)
 	{
+		// Renders who's turn it is
 		newScring = "Player: ";
 		newScring += (isPlayer1Turn) ? "1" : "2";
 		renderText(renderer, newScring.c_str(), 10, 0);
 
+		// Renders current players colour
 		newScring = "Colour: " + getColourString();
 		SDL_Color textColour;
 		if (getColourString() == "Red")
@@ -77,18 +93,28 @@ void Players::render(SDL_Renderer* renderer)
 		}
 		renderText(renderer, newScring.c_str(), 10, 30, textColour);
 
+		// Renders number of shots left
 		newScring = "Shots Left: ";
 		newScring += std::to_string(getCurrentPlayer().ShotsLeft);
 		renderText(renderer, newScring.c_str(), 10, 60);
 	}
 	else
 	{
+		// Renders winning player text
 		newScring = "WINNER!!! Player: ";
 		newScring += (player1Won) ? "1" : "2";
 		renderText(renderer, newScring.c_str(), 500, 25);
 	}
 }
 
+/// <summary>
+///	Renders text to screen given the string, position (x,y) and text colour.
+/// </summary>
+/// <param name="renderer">SDL renderer object that draws to screen.</param>
+/// <param name="text">String to print.</param>
+/// <param name="x">X value on screen.</param>
+/// <param name="y">Y value on screen.</param>
+/// <param name="textColour">Text colour.</param>
 void Players::renderText(SDL_Renderer* renderer, const char* text, int x, int y, SDL_Color textColour)
 {
 	textSurface = TTF_RenderText_Solid(font, text, textColour);
@@ -105,26 +131,37 @@ void Players::renderText(SDL_Renderer* renderer, const char* text, int x, int y,
 	textTexture = NULL;
 }
 
+/// <summary>
+/// Renders the display balls (balls that have been potted) to screen.
+/// </summary>
+/// <param name="renderer">SDL renderer object that draws to screen.</param>
 void Players::renderDisplayBalls(SDL_Renderer* renderer)
 {
 	int i = 0;
-	for (auto& ball : displayBalls)
+	for (auto& ball : displayBalls) // Loops though all the balls, offsetting them by the diameter of the ball and rendering.
 	{
-		SDL_Rect frame = { 250 + i, 50, (int)ball.getRadius() * 2, (int)ball.getRadius() * 2 };
-		SDL_RenderCopy(renderer, ball.getTexture(), NULL, &frame);
-		i = i + (int)ball.getRadius() * 2;
+		int ballDiameter = (int)ball.getRadius() * 2;
+		SDL_Rect ballFrame = { 250 + i, 50, ballDiameter, ballDiameter };
+		SDL_RenderCopy(renderer, ball.getTexture(), NULL, &ballFrame);
+		i = i + ballDiameter; // i is incremented up by the diameter of the balls.
 	}
 }
 
+/// <summary>
+/// Checks for foul balls.
+/// Checks by testing if the white ball hit another ball or a ball which was not the players colour first.
+/// </summary>
+/// <param name="white">White Ball.</param>
+/// <param name="balls">All the alls on the table.</param>
 void Players::whiteHitOrMissOtherBall(WhiteBall& white, std::vector<Ball*>& balls)
 {
 	if (!white.info.hitOtherBall)
 	{
-		foulBall = true;
+		foulBall = true; // Foul if player missed every ball.
 	}
 	else
 	{
-		switch (white.info.colourHitFirst)
+		switch (white.info.colourHitFirst) // Foul ball if player colour is set and they hit the wrong colour ball
 		{
 		case SphereEntity::Colours::red:
 			if (getCurrentPlayer().Colour == yellow)
@@ -138,71 +175,82 @@ void Players::whiteHitOrMissOtherBall(WhiteBall& white, std::vector<Ball*>& ball
 				foulBall = true;
 			}
 			break;
-		case SphereEntity::Colours::black: // implement if u hit black and it your last ball you don't foul.
-			for (auto& ball : balls) // checks if player has a ball left on the table
+		case SphereEntity::Colours::black:
+			for (auto& ball : balls) // Checks if player has a ball left on the table
 			{
 				if (ball->getColour() == getCurrentPlayer().Colour)
 				{
-					foulBall = true;
+					foulBall = true; // Foul ball if a player hits the black ball first when they have other balls on the table left.
 					break;
 				}
 			}
 			break;
 		default:
-			std::cout << "something went wrong with hitting other ball flag" << std::endl;
 			break;
 		}
 	}
 }
 
+/// <summary>
+///	Resolves the turn action in relation to the balls that had been potted.
+/// Sets up player colours if they have not been set.
+/// </summary>
+/// <param name="pottedBalls">Balls that have been potted this turn.</param>
+/// <param name="balls">All the alls on the table.</param>
+/// <param name="whiteBall">White Ball.</param>
 void Players::resolvePottedBalls(std::vector<Ball>& pottedBalls, std::vector<Ball*>& balls, WhiteBall& whiteBall)
 {
-	if (!pottedBalls.empty())
+	if (!pottedBalls.empty()) // If any balls have been potted.
 	{
 		SphereEntity::Colours firstBallColour = pottedBalls[0].getColour();
 
 		if (!arePlayerColoursSetup)
-			setupColours(pottedBalls, firstBallColour);
+			setupColours(pottedBalls, firstBallColour); // Set up player colours.
 
 		if (getCurrentPlayer().Colour == firstBallColour)
 		{
-			getCurrentPlayer().ShotsLeft++;
+			getCurrentPlayer().ShotsLeft++; // If player pockets one of their balls first give them extra shot.
 		}
 		else
 		{
-			foulBall = true;
+			foulBall = true; // If player pockets any other ball first they foul.
 		}
 
-		for (size_t i = 0; i < pottedBalls.size(); i++)
+		for (size_t i = 0; i < pottedBalls.size(); i++) // Check every potted ball.
 		{
 			if (pottedBalls[i].getColour() == white)
 			{
-				foulBall = true;
+				foulBall = true; // If player pockets white ball they foul.
 			}
 
 			if (pottedBalls[i].getColour() == black)
 			{
-				resolveWinner(pottedBalls, balls, whiteBall, i);
+				resolveWinner(pottedBalls, balls, whiteBall, i); // If player pockets black ball the game is over.
 			}
 		}
 	}
 }
 
+/// <summary>
+///	Resolve who won the game by analysing how many balls the player has left on the table, which ball they hit first and in what order did they pot each ball.
+/// </summary>
+/// <param name="pottedBalls">Balls that have been potted this turn.</param>
+/// <param name="balls">All the alls on the table.</param>
+/// <param name="whiteBall">White Ball.</param>
+/// <param name="blackIndex">Black ball position in the potted balls vector.</param>
 void Players::resolveWinner(std::vector<Ball>& pottedBalls, std::vector<Ball*>& balls, WhiteBall& whiteBall, int blackIndex)
 {
-	using namespace std; // DEGBUG REMOVE !!!
-
 	bool win = true;
 	gameOver = true;
 	SphereEntity::Colours playerColour = getCurrentPlayer().Colour;
 
-	if (playerColour == black) // this checks if they potted the black ball before they have a colour assosiated to them
+	if (playerColour == black) // Lost if player potted the black ball before player has a colour associated to them.
 		win = false;
 
-	if (whiteBall.info.colourHitFirst == getOtherPlayer().Colour) // check player didnt hit opponants ball first before potting black
+	if (whiteBall.info.colourHitFirst == getOtherPlayer().Colour) // Lost if player hit opponents ball first before potting black.
 		win = false;
 
-	for (auto& ball : balls) // checks if player has a ball left on the table
+	for (auto& ball : balls) // Lost if player has a ball left on the table.
 	{
 		if (ball->getColour() == playerColour)
 		{
@@ -214,7 +262,7 @@ void Players::resolveWinner(std::vector<Ball>& pottedBalls, std::vector<Ball*>& 
 	int lastColourIndex = -1;
 	for (size_t j = 0; j < pottedBalls.size(); j++)
 	{
-		if (pottedBalls[j].getColour() == white)
+		if (pottedBalls[j].getColour() == white) // Lost if player potted the white ball on the same turn as the black ball.
 		{
 			win = false;
 			break;
@@ -223,22 +271,23 @@ void Players::resolveWinner(std::vector<Ball>& pottedBalls, std::vector<Ball*>& 
 		if (pottedBalls[j].getColour() == playerColour)
 			lastColourIndex = j;
 	}
-	if (lastColourIndex > blackIndex) // this checks if the player potted the black ball first before thier last colour ball.
+	if (lastColourIndex > blackIndex) // Lost if player potted the black ball first before their last colour ball.
 		win = false;
 
-	if (win)
+	if (win) // Test which player won by who's turn it currently is.
 		isPlayer1Turn ? player1Won = true : player1Won = false;
 	else
-		!isPlayer1Turn ? player1Won = true : player1Won = false;
-
-	cout << "did player win: " << win << endl;
-	cout << "last colour index: " << lastColourIndex << endl;
-	cout << "black Index: " << blackIndex << endl;
+		isPlayer1Turn ? player1Won = false : player1Won = true;
 }
 
+/// <summary>
+///	Sets up the players colours based on which colour was potted first.
+/// </summary>
+/// <param name="pottedBalls">Balls that have been potted this turn.</param>
+/// <param name="firstBallColour">Colour of the first ball potted.</param>
 void Players::setupColours(std::vector<Ball>& pottedBalls, SphereEntity::Colours& firstBallColour)
 {
-	if (firstBallColour != white && firstBallColour != black)
+	if (firstBallColour != white && firstBallColour != black) // Checks first colour wasn't a foul ball.
 	{
 		SphereEntity::Colours secondBallColour = firstBallColour == red ? yellow : red;
 
@@ -249,6 +298,10 @@ void Players::setupColours(std::vector<Ball>& pottedBalls, SphereEntity::Colours
 	}
 }
 
+/// <summary>
+/// Resolves player turn. If current player got a foul ball they give the opposing player 2 shots and change turns
+/// otherwise they use up a shot and if they have less than 1 shot left they change turns.
+/// </summary>
 void Players::resolvePlayerTurn()
 {
 	if (foulBall)
@@ -277,16 +330,10 @@ Players::Player& Players::getOtherPlayer()
 	return isPlayer1Turn ? player2 : player1;
 }
 
-void Players::debugConsoleLogInfo()
-{
-	// DEGUB
-	using namespace std;
-	cout << "player turn: " << (isPlayer1Turn ? "1" : "2") << endl;
-	cout << "shots left: " << getCurrentPlayer().ShotsLeft << endl;
-
-	cout << "colour: " << getColourString() << endl << endl;
-}
-
+/// <summary>
+/// Returns string of the current players colour.
+/// </summary>
+/// <returns>String of the current players colour</returns>
 std::string Players::getColourString()
 {
 	switch (getCurrentPlayer().Colour)
@@ -295,7 +342,7 @@ std::string Players::getColourString()
 		return "white";
 		break;
 	case SphereEntity::Colours::black:
-		return "Free Colour";
+		return "Free Colour"; // Players are given the colour of black as default before colours are set up.
 		break;
 	case SphereEntity::Colours::red:
 		return "Red";

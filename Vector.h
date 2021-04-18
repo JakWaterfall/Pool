@@ -6,12 +6,14 @@ class Vector
 	float x, y;
 
 public:
+	// Constructor
 	Vector(float x = 0, float y = 0);
 
-	float getX() const { return x; }
-	float getY() const { return y; }
-	void setX(float _x) { x = _x; }
-	void setY(float _y) { y = _y; }
+	// Functions
+	float getX() const;
+	float getY() const;
+	void setX(float _x);
+	void setY(float _y);
 	float magnitude();
 	void normalise();
 	void setMagnitude(float scaler);
@@ -26,4 +28,3 @@ public:
 	Vector& operator += (Vector& rhs);
 	Vector& operator -= (Vector& rhs);
 };
-

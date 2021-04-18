@@ -1,17 +1,25 @@
 #include "WhiteBall.h"
 
 WhiteBall::WhiteBall(float _x, float _y, bool dropBall, std::vector<Pocket>& pockets, SphereEntity::Colours colour)
-	: Ball(_x, _y, colour), mouse({ 0, 0 }), dropBall(dropBall), pockets(pockets), info({false, false, false, SphereEntity::Colours::white})
+	: Ball(_x, _y, colour), mouse({ 0, 0 }), dropBall(dropBall), pockets(pockets), info({ false, false, false, SphereEntity::Colours::white })
 {
 }
 
+/// <summary>
+///	Checks if any balls on the table are moving.
+/// If currently in drop ball state, it forces the white ball to be kept in the drop ball area,
+/// enlargers the radius to give the illusion that the ball is being held above the table and finally
+/// checks if the white ball will collide with all balls or pockets so that the ball cannot be dropped onto the other balls or into a pocket.
+/// The white ball then updates its position and applies friction as per the Ball::Update function.
+/// </summary>
+/// <param name="balls">vector of all the balls on the table for ball collision testing.</param>
 void WhiteBall::update(std::vector<Ball*>& balls)
 {
 	anyBallsMoving = checkIfballsMoving(balls);
 	if (dropBall)
 	{
-		radius = 15; // maybe remove this and put in potted
-		isInteractable = false; // maybe remove this and put in potted
+		radius = 15;
+		isInteractable = false; // if the white ball is being held above the table is must not interact with other balls and pockets
 		collideWithBall = willCollideWithBall(balls);
 		collideWithPocket = willCollideWithPocket();
 		keepInDropBallArea();
@@ -20,15 +28,19 @@ void WhiteBall::update(std::vector<Ball*>& balls)
 	Ball::update(balls);
 }
 
-
+/// <summary>
+///	Renders the white ball and renders a aimer line from the ball and the direction the player is aiming the hit the ball to screen.
+/// </summary>
+/// <param name="renderer">SDL renderer object that draws to screen.</param>
 void WhiteBall::render(SDL_Renderer* renderer)
 {
-	Vector target = position - mouse;		// creates a vector which points from the mouse to the white ball.
+	Vector v_fromMouseToBall = position - mouse;		// Creates a vector which points from the mouse to the white ball.
 
-	if (target.magnitude() > aimerMaxLenght)
-		target.setMagnitude(aimerMaxLenght); // clamp vector magnitude so the aimer doesn't get too big.
-	
-	Vector aimer = position + target; // adds the vector to the white balls position; transforming the tail of the vector from the mouse to the white ball.
+	if (v_fromMouseToBall.magnitude() > aimerMaxLenght)
+		v_fromMouseToBall.setMagnitude(aimerMaxLenght); // Clamp vector magnitude so the aimer doesn't get too big.
+
+	// Add the vector to the white balls position; transforming the vector so that the head of the vector starts that the white ball and points away from the mouse.
+	Vector aimer = position + v_fromMouseToBall;
 
 	if (!ballMoving() && !dropBall)
 		SDL_RenderDrawLine(renderer, (int)position.getX(), (int)position.getY(), (int)aimer.getX(), (int)aimer.getY());
@@ -36,9 +48,13 @@ void WhiteBall::render(SDL_Renderer* renderer)
 	SphereEntity::render(renderer);
 }
 
+/// <summary>
+///	Handles events such as clicking the mouse for hitting the white ball or dropping the white ball.
+/// </summary>
+/// <param name="e">SDL Event object that queues up keyboard and mouse events.</param>
 void WhiteBall::eventHandler(SDL_Event* e)
 {
-	// debug
+	// Debug press any key to make the white ball into dropping mode.
 	if (e->type == SDL_KEYUP)
 	{
 		velocity.setX(0);
@@ -48,115 +64,117 @@ void WhiteBall::eventHandler(SDL_Event* e)
 	if (e->type == SDL_MOUSEMOTION)
 	{
 		int x, y;
-		SDL_GetMouseState(&x, &y);
+		SDL_GetMouseState(&x, &y);				// Get state of mouse for manipulating the white ball (hit it, drop it).
 		mouse.setX((float)x);
 		mouse.setY((float)y);
 	}
 	if (dropBall)
 	{
 		droppingBall(e);
-		return;
+		return;									// if dropping ball mode return so that the player can not hit the ball.
 	}
-	if (e->type == SDL_MOUSEBUTTONDOWN && !anyBallsMoving) 
+	if (e->type == SDL_MOUSEBUTTONDOWN && !anyBallsMoving)
 	{
-		info.hit = true;
+		info.hit = true;						// Marks as hitting the white ball.
 
-		Vector hit = position - mouse;
-		hit *= 0.1f;
-		if (hit.magnitude() > maxHitStrength)
+		Vector hit = position - mouse;			// Create vector which points from the mouse to the white ball.
+		hit *= 0.1f;							// Remove 90% of the magnitude of the vector to apply a smaller force.
+		if (hit.magnitude() > maxHitStrength)	// Clamp hit strength to reasonable force for game play.
 		{
 			hit.setMagnitude(maxHitStrength);
 		}
-		velocity += hit;
+		velocity += hit;						// Add hit vector to velocity to move ball in that direction and speed.
 	}
 }
 
+/// <summary>
+/// Calculates and implements the trajectories of the ball after colliding with another ball.
+/// </summary>
+/// <param name="balls">vector of all the balls on the table for ball collision testing.</param>
 void WhiteBall::ballCollision(std::vector<Ball*>& balls)
 {
 	Vector v_FromBallToBall;
 	for (auto& b : balls)
 	{
-		if (b == this) // dont check ball with itself
+		if (b == this) // Don't check ball with itself.
 			continue;
 
 		if (testCollision(v_FromBallToBall, *b))
 		{
-			v_FromBallToBall.setMagnitude(ballCollisionStrenght); //!!!!!!!! impliment vs speed as well. so calc how fast it was going and use that(poistion - (poistion + velocity))= vector in dir its going then get the magnitude for speed value.
-			velocity += v_FromBallToBall; // apply vector to velocity to push ball away from colliding ball in the direction they got hit from.
+			// Vector passed to testCollision function will now hold a vector that is pointing from collided ball and this ball
+			// therefore the vector is pointing in the direction in which this ball must be pushed after colliding.
+			v_FromBallToBall.setMagnitude(ballCollisionStrenght); // if collided set the magnitude to a constant strength.
+			velocity += v_FromBallToBall; // Apply vector to velocity to push ball away from colliding ball in the direction it got hit from.
 
-			if (!info.hitOtherBall)
+			if (!info.hitOtherBall) // Only triggers if the white ball had not hit another ball previously.
 			{
-				info.hitOtherBall = true;
-				info.colourHitFirst = b->getColour();
-
-				// debug
-				std::string colour;
-				switch (b->getColour())
-				{
-				case SphereEntity::Colours::white:
-					colour = "white";
-					break;
-				case SphereEntity::Colours::black:
-					colour = "black";
-					break;
-				case SphereEntity::Colours::red:
-					colour = "red";
-					break;
-				case SphereEntity::Colours::yellow:
-					colour = "yellow";
-					break;
-				default:
-					break;
-				}
-				std::cout << "first ball hit " << colour << std::endl << std::endl;
+				info.hitOtherBall = true;				// Marks as hitting another ball after.
+				info.colourHitFirst = b->getColour();	// Stores the colour of the first ball it hit.
 			}
 		}
 	}
-
 }
 
+/// <summary>
+///	Checks every ball on the table if any are currently moving.
+/// </summary>
+/// <param name="balls">vector of all the balls on the table.</param>
+/// <returns>Whether or not if any balls on the table are moving.</returns>
 bool WhiteBall::checkIfballsMoving(std::vector<Ball*>& balls)
 {
 	for (auto& b : balls)
 	{
-		if (b->ballMoving())
+		if (b->ballMoving())	// Check if any ball is moving; return true if so.
 			return true;
 	}
 	if (info.hit)
-		info.endTurn = true;
+		info.endTurn = true;	// If the white ball had been hit and all the balls have come to a stop then turn is over.
 	return false;
 }
 
+/// <summary>
+/// Allows the player to drop the ball from inside the drop ball area (behind the line with the semi-circle).
+/// </summary>
+/// <param name="e">SDL Event object that queues up keyboard and mouse events.</param>
 void WhiteBall::droppingBall(SDL_Event* e)
 {
-	if (mouseWithinDropBallArea())
+	if (mouseWithinDropBallArea())	// Only allows the user to drop the ball if mouse is within the drop ball area.
 	{
-		position = mouse;
-		if (!collideWithBall && !collideWithPocket && !anyBallsMoving)
+		position = mouse; // Places the white ball onto the cursor.
+		if (!collideWithBall && !collideWithPocket && !anyBallsMoving) // Cannot drop the ball onto another ball or pocket, or if any other ball is currently moving.
 		{
 			if (e->type == SDL_MOUSEBUTTONDOWN)
 			{
-				radius = 10;
-				isInteractable = true;
+				radius = 10;			// Radius returned to normal to give the illusion the ball is now back on the table.
+				isInteractable = true;	// Other balls may now interact with it.
 				dropBall = false;
 			}
 		}
 	}
 }
 
+/// <summary>
+///	Returns a boolean of whether or not the mouse is within the drop ball area.
+/// </summary>
+/// <returns>Whether or not the mouse is within the drop ball area.</returns>
 bool WhiteBall::mouseWithinDropBallArea()
 {
 	return	mouse.getX() < TABLE_X + TABLE_LINE_FROM_X &&
-			mouse.getX() > TABLE_X &&
-			mouse.getY() < TABLE_Y2 &&
-			mouse.getY() > TABLE_Y;
+		mouse.getX() > TABLE_X &&
+		mouse.getY() < TABLE_Y2 &&
+		mouse.getY() > TABLE_Y;
 }
 
+/// <summary>
+///	Tests whether or not the white ball will collide with another ball.
+/// </summary>
+/// <param name="balls">vector of all the balls on the table.</param>
+/// <returns>Whether or not the white ball will collide with another ball.</returns>
 bool WhiteBall::willCollideWithBall(const std::vector<Ball*>& balls)
 {
 	for (auto& b : balls)
 	{
-		if (b == this)
+		if (b == this) // Don't test with itself
 			continue;
 
 		Vector v_FromBallToBall;
@@ -166,6 +184,10 @@ bool WhiteBall::willCollideWithBall(const std::vector<Ball*>& balls)
 	return false;
 }
 
+/// <summary>
+/// Tests whether or not the white ball will collide with a pocket.
+/// </summary>
+/// <returns>Whether or not the white ball will collide with a pocket.</returns>
 bool WhiteBall::willCollideWithPocket()
 {
 	for (auto& pocket : pockets)
@@ -177,11 +199,16 @@ bool WhiteBall::willCollideWithPocket()
 	return false;
 }
 
+/// <summary>
+/// Stops the white ball from leaving the drop ball area.
+/// This function is used when in drop ball mode.
+/// </summary>
 void WhiteBall::keepInDropBallArea()
 {
 	int x = (int)position.getX();
 	int y = (int)position.getY();
 
+	// Checks whether the white ball is out of bounds of the drop ball area and sets its position accordingly if so.
 	if (x - radius < TABLE_X)
 	{
 		position.setX((float)TABLE_X + radius);
@@ -205,15 +232,14 @@ void WhiteBall::potted()
 	velocity.setX(0);
 	velocity.setY(0);
 	dropBall = true;
-	anyBallsMoving = false; // dont think this needs to be here? 
-
-	isInteractable = false; // this up update one needs removing?
 }
 
+/// <summary>
+/// This function is called from the Players object and resets the Info data ready for the next turn.
+/// </summary>
 void WhiteBall::resetInfo()
 {
 	info.hit = false;
 	info.endTurn = false;
 	info.hitOtherBall = false;
 }
-
