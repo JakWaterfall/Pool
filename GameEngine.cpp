@@ -309,7 +309,7 @@ void GameEngine::saveStateOfTable()
 	}
 
 	// Save game info is pulled out of the player object as a struct of information.
-	Players::saveVariables saveVar = players->getSaveVariables();
+	Players::SaveVariables saveVar = players->getSaveVariables();
 
 	playerFile << saveVar.isPlayer1Turn << endl;
 	playerFile << saveVar.arePlayerColoursSetup << endl;
@@ -360,7 +360,7 @@ void GameEngine::setupBallsAndPlayersFromFile()
 	ifstream playerFile("player.txt");
 
 	// Player save game data is packaged into a struct and sent back to the players object.
-	Players::saveVariables saveVar;
+	Players::SaveVariables saveVar;
 	playerFile >> saveVar.isPlayer1Turn;
 	playerFile >> saveVar.arePlayerColoursSetup;
 	playerFile >> saveVar.player1.ShotsLeft;

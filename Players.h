@@ -30,7 +30,7 @@ class Players
 	std::vector<Ball> displayBalls;
 
 public:
-	struct saveVariables // Save variables struct packages the relevant data required to save and load from file.
+	struct SaveVariables // Save variables struct packages the relevant data required to save and load from file.
 	{
 		bool arePlayerColoursSetup;
 		bool isPlayer1Turn;
@@ -50,8 +50,8 @@ public:
 	bool getGameOver();
 
 	// Getters / Setter from file
-	saveVariables getSaveVariables();
-	void setVariablesFromFile(saveVariables saveVar);
+	SaveVariables getSaveVariables();
+	void setVariablesFromFile(SaveVariables saveVar);
 
 private:
 	void whiteHitOrMissOtherBall(WhiteBall& white, std::vector<Ball*>& balls);

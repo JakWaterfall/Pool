@@ -312,12 +312,12 @@ std::string Players::getColourString()
 	}
 }
 
-Players::saveVariables Players::getSaveVariables()
+Players::SaveVariables Players::getSaveVariables()
 {
 	return { arePlayerColoursSetup, isPlayer1Turn, player1, player2, displayBalls };
 }
 
-void Players::setVariablesFromFile(saveVariables saveVar)
+void Players::setVariablesFromFile(SaveVariables saveVar)
 {
 	arePlayerColoursSetup = saveVar.arePlayerColoursSetup;
 	isPlayer1Turn = saveVar.isPlayer1Turn;
