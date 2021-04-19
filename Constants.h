@@ -1,8 +1,6 @@
 #pragma once
 
-/// <summary>
 /// Constants for the screen size and table dimensions so all objects can interact with the table
-/// </summary>
 constexpr int SCREEN_WIDTH = 1280;
 constexpr int SCREEN_HEIGHT = 720;
 

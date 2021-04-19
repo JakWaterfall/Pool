@@ -5,14 +5,11 @@ WhiteBall::WhiteBall(float _x, float _y, bool dropBall, std::vector<Pocket>& poc
 {
 }
 
-/// <summary>
 ///	Checks if any balls on the table are moving.
 /// If currently in drop ball state, it forces the white ball to be kept in the drop ball area,
 /// enlargers the radius to give the illusion that the ball is being held above the table and finally
 /// checks if the white ball will collide with all balls or pockets so that the ball cannot be dropped onto the other balls or into a pocket.
 /// The white ball then updates its position and applies friction as per the Ball::Update function.
-/// </summary>
-/// <param name="balls">vector of all the balls on the table for ball collision testing.</param>
 void WhiteBall::update(std::vector<Ball*>& balls)
 {
 	anyBallsMoving = checkIfballsMoving(balls);
@@ -28,10 +25,7 @@ void WhiteBall::update(std::vector<Ball*>& balls)
 	Ball::update(balls);
 }
 
-/// <summary>
 ///	Renders the white ball and renders a aimer line from the ball and the direction the player is aiming the hit the ball to screen.
-/// </summary>
-/// <param name="renderer">SDL renderer object that draws to screen.</param>
 void WhiteBall::render(SDL_Renderer* renderer)
 {
 	Vector v_fromMouseToBall = position - mouse;		// Creates a vector which points from the mouse to the white ball.
@@ -48,10 +42,7 @@ void WhiteBall::render(SDL_Renderer* renderer)
 	SphereEntity::render(renderer);
 }
 
-/// <summary>
 ///	Handles events such as clicking the mouse for hitting the white ball or dropping the white ball.
-/// </summary>
-/// <param name="e">SDL Event object that queues up keyboard and mouse events.</param>
 void WhiteBall::eventHandler(SDL_Event* e)
 {
 	// Debug press any key to make the white ball into dropping mode.
@@ -87,10 +78,7 @@ void WhiteBall::eventHandler(SDL_Event* e)
 	}
 }
 
-/// <summary>
 /// Calculates and implements the trajectories of the ball after colliding with another ball.
-/// </summary>
-/// <param name="balls">vector of all the balls on the table for ball collision testing.</param>
 void WhiteBall::ballCollision(std::vector<Ball*>& balls)
 {
 	Vector v_FromBallToBall;
@@ -115,11 +103,7 @@ void WhiteBall::ballCollision(std::vector<Ball*>& balls)
 	}
 }
 
-/// <summary>
 ///	Checks every ball on the table if any are currently moving.
-/// </summary>
-/// <param name="balls">vector of all the balls on the table.</param>
-/// <returns>Whether or not if any balls on the table are moving.</returns>
 bool WhiteBall::checkIfballsMoving(std::vector<Ball*>& balls)
 {
 	for (auto& b : balls)
@@ -132,10 +116,7 @@ bool WhiteBall::checkIfballsMoving(std::vector<Ball*>& balls)
 	return false;
 }
 
-/// <summary>
 /// Allows the player to drop the ball from inside the drop ball area (behind the line with the semi-circle).
-/// </summary>
-/// <param name="e">SDL Event object that queues up keyboard and mouse events.</param>
 void WhiteBall::droppingBall(SDL_Event* e)
 {
 	if (mouseWithinDropBallArea())	// Only allows the user to drop the ball if mouse is within the drop ball area.
@@ -153,10 +134,7 @@ void WhiteBall::droppingBall(SDL_Event* e)
 	}
 }
 
-/// <summary>
 ///	Returns a boolean of whether or not the mouse is within the drop ball area.
-/// </summary>
-/// <returns>Whether or not the mouse is within the drop ball area.</returns>
 bool WhiteBall::mouseWithinDropBallArea()
 {
 	return	mouse.getX() < TABLE_X + TABLE_LINE_FROM_X &&
@@ -165,11 +143,7 @@ bool WhiteBall::mouseWithinDropBallArea()
 		mouse.getY() > TABLE_Y;
 }
 
-/// <summary>
 ///	Tests whether or not the white ball will collide with another ball.
-/// </summary>
-/// <param name="balls">vector of all the balls on the table.</param>
-/// <returns>Whether or not the white ball will collide with another ball.</returns>
 bool WhiteBall::willCollideWithBall(const std::vector<Ball*>& balls)
 {
 	for (auto& b : balls)
@@ -184,10 +158,7 @@ bool WhiteBall::willCollideWithBall(const std::vector<Ball*>& balls)
 	return false;
 }
 
-/// <summary>
 /// Tests whether or not the white ball will collide with a pocket.
-/// </summary>
-/// <returns>Whether or not the white ball will collide with a pocket.</returns>
 bool WhiteBall::willCollideWithPocket()
 {
 	for (auto& pocket : pockets)
@@ -199,10 +170,8 @@ bool WhiteBall::willCollideWithPocket()
 	return false;
 }
 
-/// <summary>
 /// Stops the white ball from leaving the drop ball area.
 /// This function is used when in drop ball mode.
-/// </summary>
 void WhiteBall::keepInDropBallArea()
 {
 	int x = (int)position.getX();
@@ -234,9 +203,7 @@ void WhiteBall::potted()
 	dropBall = true;
 }
 
-/// <summary>
 /// This function is called from the Players object and resets the Info data ready for the next turn.
-/// </summary>
 void WhiteBall::resetInfo()
 {
 	info.hit = false;

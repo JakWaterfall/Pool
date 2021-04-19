@@ -14,10 +14,7 @@ int main(int argc, char* args[])
 	return 0;
 }
 
-/// <summary>
 /// Asks the player if they wish to resume a previously saved game.
-/// </summary>
-/// <returns>Boolean of whether or not the user is resuming game.</returns>
 bool checkResumingGame()
 {
 	std::ifstream ballFile("balls.txt");
@@ -53,10 +50,7 @@ bool checkResumingGame()
 	return false;
 }
 
-/// <summary>
 /// Asks the player which size pocket to play with of 3 choices small, medium and large.
-/// </summary>
-/// <returns>Size of the pockets.</returns>
 int getPocketSize()
 {
 	while (true) // Loop until user gives a valid answer.

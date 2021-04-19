@@ -8,13 +8,7 @@ SDL_Texture* SphereEntity::yellowTexture = NULL;
 SDL_Texture* SphereEntity::pocketTexture = NULL;
 SDL_Texture* SphereEntity::decorTexture = NULL;
 
-/// <summary>
 ///	Constructor that sets the texture of the sphere based on the colour enum passed.
-/// </summary>
-/// <param name="_x">X value of position.</param>
-/// <param name="_y">Y value of position.</param>
-/// <param name="colour">Colour of sphere.</param>
-/// <param name="_radius">Radius of sphere.</param>
 SphereEntity::SphereEntity(float _x, float _y, Colours colour, int _radius)
 	: position({ _x, _y }), radius(_radius), colour(colour)
 {
@@ -43,25 +37,14 @@ SphereEntity::SphereEntity(float _x, float _y, Colours colour, int _radius)
 	}
 }
 
-/// <summary>
 ///	Draws the sphere to screen based on its x/y coordinates, radius and texture.
-/// </summary>
-/// <param name="renderer">SDL renderer object that draws to screen.</param>
 void SphereEntity::render(SDL_Renderer* renderer)
 {
 	SDL_Rect ball = { (int)position.getX() - radius, (int)position.getY() - radius, (int)radius * 2, (int)radius * 2 };
 	SDL_RenderCopy(renderer, texture, NULL, &ball);
 }
 
-/// <summary>
 ///	sets all the static textures for use by all of the sphere objects.
-/// </summary>
-/// <param name="black">Texture for Black Ball.</param>
-/// <param name="white">Texture for White Ball.</param>
-/// <param name="red">Texture for Red Ball.</param>
-/// <param name="yellow">Texture for Yellow Ball.</param>
-/// <param name="pocket">Texture for Pocket.</param>
-/// <param name="decor">Texture for Decoration (semi circle on table).</param>
 void SphereEntity::setTextures(SDL_Texture* black, SDL_Texture* white, SDL_Texture* red, SDL_Texture* yellow, SDL_Texture* pocket, SDL_Texture* decor)
 {
 	blackTexture = black;
@@ -72,9 +55,7 @@ void SphereEntity::setTextures(SDL_Texture* black, SDL_Texture* white, SDL_Textu
 	decorTexture = decor;
 }
 
-/// <summary>
 /// Deletes all the textures and free's up the memory.
-/// </summary>
 void SphereEntity::destroyTextures()
 {
 	if (whiteTexture)
@@ -109,14 +90,9 @@ void SphereEntity::destroyTextures()
 	}
 }
 
-/// <summary>
 ///	Tests if two sphere objects collided and returns a boolean.
 /// Requires a reference to a 2Dvector to preform the calculation which can be used
 /// later in the code that called the testCollision function. For example, the magnitude of the 2Dvector may be used.
-/// </summary>
-/// <param name="v_FromBallToBall">2DVector to preform the calculations on.</param>
-/// <param name="sphere">Object to check a collision for.</param>
-/// <returns>Returns a boolean on whether a collision happened.</returns>
 bool SphereEntity::testCollision(Vector& v_FromBallToBall, SphereEntity& sphere)
 {
 	v_FromBallToBall = position - sphere.getPosition();	// Create a vector which points from one object to another.

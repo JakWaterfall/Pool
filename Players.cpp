@@ -1,8 +1,6 @@
 #include "Players.h"
 
-/// <summary>
 /// Inits variables and Fonts for text on screen.
-/// </summary>
 Players::Players()
 	: arePlayerColoursSetup(false), foulBall(false), isPlayer1Turn(true), gameOver(false), player1Won(false), player1({ 1, black }), player2({ 0, black })
 {
@@ -33,14 +31,9 @@ Players::~Players()
 	}
 }
 
-/// <summary>
 /// At the end of every turn, all the variables that make up the turn action are resolved including
 /// Whether the white ball hit another ball, which balls had been potted and in which order and
 /// resolve whether the current player had a foul ball or not.
-/// </summary>
-/// <param name="white">White Ball.</param>
-/// <param name="pottedBalls">Balls that have been potted this turn.</param>
-/// <param name="balls">All the alls on the table.</param>
 void Players::update(WhiteBall& white, std::vector<Ball>& pottedBalls, std::vector<Ball*>& balls)
 {
 	if (white.info.endTurn)
@@ -60,11 +53,8 @@ void Players::update(WhiteBall& white, std::vector<Ball>& pottedBalls, std::vect
 	}
 }
 
-/// <summary>
 ///	Renders relevant player info to the screen such current player turn, their colour and how many shots left.
 /// Also renders end game text of which player won.
-/// </summary>
-/// <param name="renderer">SDL renderer object that draws to screen.</param>
 void Players::render(SDL_Renderer* renderer)
 {
 	renderDisplayBalls(renderer);
@@ -107,14 +97,7 @@ void Players::render(SDL_Renderer* renderer)
 	}
 }
 
-/// <summary>
 ///	Renders text to screen given the string, position (x,y) and text colour.
-/// </summary>
-/// <param name="renderer">SDL renderer object that draws to screen.</param>
-/// <param name="text">String to print.</param>
-/// <param name="x">X value on screen.</param>
-/// <param name="y">Y value on screen.</param>
-/// <param name="textColour">Text colour.</param>
 void Players::renderText(SDL_Renderer* renderer, const char* text, int x, int y, SDL_Color textColour)
 {
 	textSurface = TTF_RenderText_Solid(font, text, textColour);
@@ -131,10 +114,7 @@ void Players::renderText(SDL_Renderer* renderer, const char* text, int x, int y,
 	textTexture = NULL;
 }
 
-/// <summary>
 /// Renders the display balls (balls that have been potted) to screen.
-/// </summary>
-/// <param name="renderer">SDL renderer object that draws to screen.</param>
 void Players::renderDisplayBalls(SDL_Renderer* renderer)
 {
 	int i = 0;
@@ -147,12 +127,8 @@ void Players::renderDisplayBalls(SDL_Renderer* renderer)
 	}
 }
 
-/// <summary>
 /// Checks for foul balls.
 /// Checks by testing if the white ball hit another ball or a ball which was not the players colour first.
-/// </summary>
-/// <param name="white">White Ball.</param>
-/// <param name="balls">All the alls on the table.</param>
 void Players::whiteHitOrMissOtherBall(WhiteBall& white, std::vector<Ball*>& balls)
 {
 	if (!white.info.hitOtherBall)
@@ -191,13 +167,8 @@ void Players::whiteHitOrMissOtherBall(WhiteBall& white, std::vector<Ball*>& ball
 	}
 }
 
-/// <summary>
 ///	Resolves the turn action in relation to the balls that had been potted.
 /// Sets up player colours if they have not been set.
-/// </summary>
-/// <param name="pottedBalls">Balls that have been potted this turn.</param>
-/// <param name="balls">All the alls on the table.</param>
-/// <param name="whiteBall">White Ball.</param>
 void Players::resolvePottedBalls(std::vector<Ball>& pottedBalls, std::vector<Ball*>& balls, WhiteBall& whiteBall)
 {
 	if (!pottedBalls.empty()) // If any balls have been potted.
@@ -231,13 +202,7 @@ void Players::resolvePottedBalls(std::vector<Ball>& pottedBalls, std::vector<Bal
 	}
 }
 
-/// <summary>
 ///	Resolve who won the game by analysing how many balls the player has left on the table, which ball they hit first and in what order did they pot each ball.
-/// </summary>
-/// <param name="pottedBalls">Balls that have been potted this turn.</param>
-/// <param name="balls">All the alls on the table.</param>
-/// <param name="whiteBall">White Ball.</param>
-/// <param name="blackIndex">Black ball position in the potted balls vector.</param>
 void Players::resolveWinner(std::vector<Ball>& pottedBalls, std::vector<Ball*>& balls, WhiteBall& whiteBall, int blackIndex)
 {
 	bool win = true;
@@ -280,11 +245,7 @@ void Players::resolveWinner(std::vector<Ball>& pottedBalls, std::vector<Ball*>& 
 		isPlayer1Turn ? player1Won = false : player1Won = true;
 }
 
-/// <summary>
 ///	Sets up the players colours based on which colour was potted first.
-/// </summary>
-/// <param name="pottedBalls">Balls that have been potted this turn.</param>
-/// <param name="firstBallColour">Colour of the first ball potted.</param>
 void Players::setupColours(std::vector<Ball>& pottedBalls, SphereEntity::Colours& firstBallColour)
 {
 	if (firstBallColour != white && firstBallColour != black) // Checks first colour wasn't a foul ball.
@@ -298,10 +259,8 @@ void Players::setupColours(std::vector<Ball>& pottedBalls, SphereEntity::Colours
 	}
 }
 
-/// <summary>
 /// Resolves player turn. If current player got a foul ball they give the opposing player 2 shots and change turns
 /// otherwise they use up a shot and if they have less than 1 shot left they change turns.
-/// </summary>
 void Players::resolvePlayerTurn()
 {
 	if (foulBall)
@@ -330,10 +289,7 @@ Players::Player& Players::getOtherPlayer()
 	return isPlayer1Turn ? player2 : player1;
 }
 
-/// <summary>
 /// Returns string of the current players colour.
-/// </summary>
-/// <returns>String of the current players colour</returns>
 std::string Players::getColourString()
 {
 	switch (getCurrentPlayer().Colour)

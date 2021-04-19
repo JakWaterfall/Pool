@@ -8,11 +8,8 @@ Ball::Ball(float _x, float _y, SphereEntity::Colours colour, int radius)
 {
 }
 
-/// <summary>
 /// Updates the position of the ball based on the velocity.
 /// Applies friction and calculates wall and ball collisions.
-/// </summary>
-/// <param name="balls">vector of all the balls on the table for ball collision testing.</param>
 void Ball::update(std::vector<Ball*>& balls)
 {
 	position += velocity;
@@ -21,10 +18,8 @@ void Ball::update(std::vector<Ball*>& balls)
 	ballCollision(balls);
 }
 
-/// <summary>
 /// Applies friction to the ball back creating a vector which points backwards to the ball movement direction
 /// and sets its magnitude to a constant strength and adds it to the velocity thereby slowing the ball down.
-/// </summary>
 void Ball::applyFriction()
 {
 	if (ballMoving())
@@ -45,9 +40,7 @@ void Ball::applyFriction()
 	}
 }
 
-/// <summary>
 /// Tests For a collision with the wall and inverts the x or y velocity based on which wall was hit.
-/// </summary>
 void Ball::wallCollision()
 {
 	int x = (int)position.getX();
@@ -79,19 +72,13 @@ void Ball::wallCollision()
 	}
 }
 
-/// <summary>
 /// Returns a boolean on whether or not he ball is moving.
-/// </summary>
-/// <returns>Whether or not he ball is moving</returns>
 bool Ball::ballMoving()
 {
 	return velocity.getX() != 0.0f || velocity.getY() != 0.0f; // if there is a velocity in either the x or y direction the wall is moving.
 }
 
-/// <summary>
 ///	Calculates and implements the trajectories of the ball after colliding with another ball.
-/// </summary>
-/// <param name="balls">vector of all the balls on the table for ball collision testing.</param>
 void Ball::ballCollision(std::vector<Ball*>& balls)
 {
 	Vector v_FromBallToBall;

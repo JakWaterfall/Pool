@@ -5,6 +5,7 @@
 
 class Ball : public SphereEntity
 {
+private:
 	// Time Variables
 	std::chrono::duration<float> delta;
 	std::chrono::steady_clock::time_point lastTime = std::chrono::steady_clock::now();

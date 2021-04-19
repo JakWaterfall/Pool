@@ -6,24 +6,16 @@ Pocket::Pocket(float _x, float _y, int radius) : SphereEntity(_x, _y, SphereEnti
 {
 }
 
-/// <summary>
 /// Update function just calls the object collision function as all
 /// the pockets job is to detect when a ball collides with them and pockets them.
-/// </summary>
-/// <param name="balls">Vector of all the balls on the table.</param>
-/// <param name="pottedBalls">Vector of all the ball that have been potted.</param>
 void Pocket::update(std::vector<Ball*>& balls, std::vector<Ball>& pottedBalls)
 {
 	objectCollision(balls, pottedBalls);
 }
 
-/// <summary>
 /// Detects if a ball collides with the pocket and pockets them if true.
 /// Marks the potted balls for removal for the vector (table).
 ///	Adds the potted balls to a vector for the player object to inspect and make logical decisions on.
-/// </summary>
-/// <param name="balls">Vector of all the balls on the table.</param>
-/// <param name="pottedBalls">Vector of all the ball that have been potted.</param>
 void Pocket::objectCollision(std::vector<Ball*>& balls, std::vector<Ball>& pottedBalls) // change name from object collision
 {
 	Vector v_FromBallToPocket;

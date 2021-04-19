@@ -1,10 +1,6 @@
 #include "GameEngine.h"
 
-/// <summary>
 ///	Constructor initialise the SDL framework and variables to play the game.
-/// </summary>
-/// <param name="resume">Whether the user is resuming the game from a previous save.</param>
-/// <param name="pocketSize">The size of the pockets.</param>
 GameEngine::GameEngine(bool resume, int pocketSize) : whiteBall(0, 0, true, pockets), running(true), players(NULL)
 {
 	if (SDL_Init(SDL_INIT_VIDEO) < 0) // Initialise SDL.
@@ -92,7 +88,6 @@ GameEngine::GameEngine(bool resume, int pocketSize) : whiteBall(0, 0, true, pock
 	}
 }
 
-/// <summary>
 /// Runs the game loop. Game loop consists of 3 phases
 /// 1st it handles all the events (such as mouse and keyboard events)
 /// 2nd it updates all the objects (such as ball positions and collisions)
@@ -100,7 +95,6 @@ GameEngine::GameEngine(bool resume, int pocketSize) : whiteBall(0, 0, true, pock
 ///
 /// To keep simulation speed equal on all machines the update cycle is based on time.
 /// The update function is triggered around 60 times a second.
-/// </summary>
 void GameEngine::run()
 {
 	// 60 Updates per second by calling update function every 0.01633 seconds.
@@ -127,11 +121,9 @@ void GameEngine::run()
 	quit(); // Quits the game on exit
 }
 
-/// <summary>
 /// Quits the game after the game loop has finished.
 /// If the game is not over it allows the player to save to game to file.
 /// Deletes all the objects and pointers.
-/// </summary>
 void GameEngine::quit()
 {
 	if (!players->getGameOver()) // If game is not over present save game option.
@@ -163,9 +155,7 @@ void GameEngine::quit()
 	SDL_Quit();
 }
 
-/// <summary>
 /// Handles the mouse and keyboard events.
-/// </summary>
 void GameEngine::eventHandler()
 {
 	while (SDL_PollEvent(&e))
@@ -177,10 +167,8 @@ void GameEngine::eventHandler()
 	}
 }
 
-/// <summary>
 /// Updates all the objects of the game.
 /// Calls delete function on any balls marked from being potted.
-/// </summary>
 void GameEngine::update()
 {
 	for (auto& b : balls)
@@ -199,10 +187,8 @@ void GameEngine::update()
 	deleteBalls();
 }
 
-/// <summary>
 /// Render all the objects to screen.
 /// Clears the screen then renders the table, background, balls, pockets and player info.
-/// </summary>
 void GameEngine::render()
 {
 	//Clear screen
@@ -228,9 +214,7 @@ void GameEngine::render()
 	SDL_RenderPresent(renderer);
 }
 
-/// <summary>
 /// Renders the background and table.
-/// </summary>
 void GameEngine::renderBackground()
 {
 	SDL_SetRenderDrawColor(renderer, 0x00, 0xD2, 0x00, 0xFF); // Set colour green
@@ -259,10 +243,8 @@ void GameEngine::renderBackground()
 	SDL_RenderDrawRect(renderer, &tableWallOutline);
 }
 
-/// <summary>
 /// Delete and remove all the balls marked for delete after being potted from the vector of balls.
 /// Thus removing them from the table.
-/// </summary>
 void GameEngine::deleteBalls()
 {
 	balls.erase(std::remove_if(balls.begin(), balls.end(),
@@ -279,10 +261,8 @@ void GameEngine::deleteBalls()
 	), balls.end());
 }
 
-/// <summary>
 /// Place all the balls into the default triangle position on screen ready for break of a new game.
 /// Balls are centred around BLACK_POINT_X and BLACK_POINT_Y.
-/// </summary>
 void GameEngine::placeNewBalls()
 {
 	balls.push_back(new Ball(BLACK_POINT_X - 40, BLACK_POINT_Y, SphereEntity::Colours::red));
@@ -311,11 +291,9 @@ void GameEngine::placeNewBalls()
 	balls.push_back(&whiteBall); // White Wall takes no position because it starts in the players hand ready to be dropped behind the line.
 }
 
-/// <summary>
 /// Saves the state of the table to file.
 /// Saves all the balls positions (x and y values)
 /// and all the player info.
-/// </summary>
 void GameEngine::saveStateOfTable()
 {
 	using namespace std;
@@ -348,9 +326,7 @@ void GameEngine::saveStateOfTable()
 	playerFile.close();
 }
 
-/// <summary>
 /// Sets up the player and ball objects from file for the resume game functionality.
-/// </summary>
 void GameEngine::setupBallsAndPlayersFromFile()
 {
 	using namespace std;
@@ -408,10 +384,8 @@ void GameEngine::setupBallsAndPlayersFromFile()
 	playerFile.close();
 }
 
-/// <summary>
 /// Shows the user that save game dialogue that allows the player to choose
 /// whether they want to save the game to file after quitting.
-/// </summary>
 void GameEngine::saveGameDialogue()
 {
 	using namespace std;
@@ -439,12 +413,8 @@ void GameEngine::saveGameDialogue()
 	}
 }
 
-/// <summary>
 ///	Loads a texture from a file.
 /// Used to load in the ball and pocket textures.
-/// </summary>
-/// <param name="filePath">The relative file path to the image.</param>
-/// <returns>Returns a SDL_Texture of the image from file.</returns>
 SDL_Texture* GameEngine::loadTexture(const char* filePath)
 {
 	SDL_Texture* newTexture = NULL;
