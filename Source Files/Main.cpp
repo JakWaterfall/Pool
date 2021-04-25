@@ -25,7 +25,7 @@ bool checkResumingGame()
 		std::string answer;
 		std::cout << "Do You Wish To Resume Your Last Game? y or n" << std::endl;
 		std::cin >> answer;
-		std::cin.clear();
+		std::cin.clear(); // clears and ignores values stored in cin for next loop
 		std::cin.ignore(INT_MAX, '\n');
 
 		switch (answer[0])
@@ -59,7 +59,7 @@ int getPocketSize()
 		std::cout << "Choose Pocket Size:" << std::endl;
 		std::cout << "1 = Small | 2 = Medium | 3 = Large " << std::endl;
 		std::cin >> answer;
-		std::cin.clear();
+		std::cin.clear(); // clears and ignores values stored in cin for next loop
 		std::cin.ignore(INT_MAX, '\n');
 		switch (answer[0])
 		{

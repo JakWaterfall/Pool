@@ -397,7 +397,7 @@ void GameEngine::saveGameDialogue()
 		string answer;
 		cout << "Do You Wish To Save The Game? y or n" << endl;
 		cin >> answer;
-		cin.clear(); // clears and ignores vales stored in cin for next loop
+		cin.clear(); // clears and ignores values stored in cin for next loop
 		cin.ignore(INT_MAX, '\n');
 		switch (answer[0])
 		{
