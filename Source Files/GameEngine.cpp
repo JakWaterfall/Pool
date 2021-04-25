@@ -298,8 +298,8 @@ void GameEngine::saveStateOfTable()
 {
 	using namespace std;
 
-	ofstream ballFile("balls.txt");
-	ofstream playerFile("player.txt");
+	ofstream ballFile("Save/balls.txt");
+	ofstream playerFile("Save/player.txt");
 
 	for (auto& b : balls)
 	{
@@ -331,7 +331,7 @@ void GameEngine::setupBallsAndPlayersFromFile()
 {
 	using namespace std;
 
-	ifstream ballFile("balls.txt");
+	ifstream ballFile("Save/balls.txt");
 	balls.clear();
 
 	float x;
@@ -357,7 +357,7 @@ void GameEngine::setupBallsAndPlayersFromFile()
 	}
 	ballFile.close();
 
-	ifstream playerFile("player.txt");
+	ifstream playerFile("Save/player.txt");
 
 	// Player save game data is packaged into a struct and sent back to the players object.
 	Players::SaveVariables saveVar;

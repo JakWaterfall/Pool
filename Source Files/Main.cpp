@@ -17,8 +17,8 @@ int main(int argc, char* args[])
 /// Asks the player if they wish to resume a previously saved game.
 bool checkResumingGame()
 {
-	std::ifstream ballFile("balls.txt");
-	std::ifstream playersFile("player.txt");
+	std::ifstream ballFile("Save/balls.txt");
+	std::ifstream playersFile("Save/player.txt");
 
 	while (ballFile.good() && playersFile.good()) // Loop until user gives a valid answer.
 	{
