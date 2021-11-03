@@ -75,7 +75,7 @@ void Ball::wallCollision()
 /// Returns a boolean on whether or not he ball is moving.
 bool Ball::ballMoving()
 {
-	return velocity.getX() != 0.0f || velocity.getY() != 0.0f; // if there is a velocity in either the x or y direction the wall is moving.
+	return velocity.getX() != 0.0f || velocity.getY() != 0.0f; // if there is a velocity in either the x or y direction the ball is moving.
 }
 
 ///	Calculates and implements the trajectories of the ball after colliding with another ball.

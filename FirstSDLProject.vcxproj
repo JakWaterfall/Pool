@@ -19,16 +19,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Header Files\Ball.h" />
-    <ClInclude Include="Header Files\Constants.h" />
-    <ClInclude Include="Header Files\GameEngine.h" />
-    <ClInclude Include="Header Files\Players.h" />
-    <ClInclude Include="Header Files\Pocket.h" />
-    <ClInclude Include="Header Files\SphereEntity.h" />
-    <ClInclude Include="Header Files\Vector.h" />
-    <ClInclude Include="Header Files\WhiteBall.h" />
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="Source Files\Ball.cpp" />
     <ClCompile Include="Source Files\GameEngine.cpp" />
     <ClCompile Include="Source Files\Main.cpp" />
@@ -37,6 +27,16 @@
     <ClCompile Include="Source Files\SphereEntity.cpp" />
     <ClCompile Include="Source Files\Vector.cpp" />
     <ClCompile Include="Source Files\WhiteBall.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Source Files\Ball.h" />
+    <ClInclude Include="Source Files\Constants.h" />
+    <ClInclude Include="Source Files\GameEngine.h" />
+    <ClInclude Include="Source Files\Players.h" />
+    <ClInclude Include="Source Files\Pocket.h" />
+    <ClInclude Include="Source Files\SphereEntity.h" />
+    <ClInclude Include="Source Files\Vector.h" />
+    <ClInclude Include="Source Files\WhiteBall.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
